@@ -1,0 +1,23 @@
+import { Card, Icon } from './ui'
+
+export function FeaturePlaceholder({ icon, eyebrow, title, description }) {
+  return (
+    <main className="grid min-h-0 place-items-start pt-5 lg:overflow-y-auto lg:pt-12">
+      <Card className="w-full p-10 text-center">
+        <span className="inline-grid h-[58px] w-[58px] place-items-center rounded-2xl bg-[#eaf2ff] text-[#1764c0]">
+          <Icon name={icon} size={28} />
+        </span>
+        <p className="mb-1 mt-4 text-[12px] font-bold uppercase tracking-wide text-[#1764c0]">
+          {eyebrow}
+        </p>
+        <h1 className="m-0 text-[26px] font-bold">{title}</h1>
+        <p className="mx-auto my-3 max-w-md text-[14px] leading-relaxed text-[#6c7890]">
+          {description}
+        </p>
+        <button className="rounded-lg border-0 bg-[#1764c0] px-4 py-2.5 text-[13px] font-bold text-white">
+          Coming soon
+        </button>
+      </Card>
+    </main>
+  );
+}
