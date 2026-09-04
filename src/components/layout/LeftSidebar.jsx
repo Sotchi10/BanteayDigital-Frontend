@@ -1,65 +1,21 @@
+import { NavLink } from "react-router-dom";
 import { currentUser } from "../../data/mockCommunity";
-import { Avatar, Badge, Card, Icon } from "../ui";
+import { Avatar, Card, Icon } from "../ui";
 
-const secondaryNavigation = [
-  
-];
-
-const utilityNavigation = [
-  { label: "Settings", icon: "settings" },
-  { label: "Help & Support", icon: "help" },
-];
-
-const Nav = ({ items }) => (
-  <nav className="grid gap-0.5">
-    {items.map((item) => (
-      <button
-        key={item.label}
-        className="flex items-center gap-3 rounded-lg border-0 bg-transparent px-2 py-2 text-left text-[13px] font-semibold text-[#3e4c63] hover:bg-[#eef4fc] hover:text-[#0c4698]"
-      >
-        <Icon name={item.icon} size={18} />
-        {item.label}
-      </button>
-    ))}
-  </nav>
-);
 export function LeftSidebar() {
   return (
-    <aside className="hidden min-h-0 flex-col gap-3.5 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex">
-      <Card className="p-[18px] text-center">
-        <Avatar name={currentUser.name} size="xl" />
-        <h2 className="mt-2 text-[15px] font-bold">{currentUser.name}</h2>
-        <Badge tone="blue">Community member</Badge>
-        <dl className="mt-4 grid gap-2 border-t border-[#e5eaf1] pt-3 text-left text-[12px] text-[#6c7890]">
-          <div className="flex">
-            <dt>
-              <Icon name="edit" size={14} /> Reports
-            </dt>
-            <dd className="ml-auto font-bold text-[#15233b]">
-              {currentUser.reports}
-            </dd>
-          </div>
-          <div>
-            <dt>
-              <Icon name="chart" size={14} /> {currentUser.joined}
-            </dt>
-          </div>
-        </dl>
+    <aside className="sticky top-[88px] hidden self-start flex-col gap-4 lg:flex" aria-label="Profile and safety shortcuts">
+      <Card className="p-4">
+        <div className="flex items-center gap-3"><Avatar name={currentUser.name} size="md" /><div className="min-w-0"><h2 className="m-0 truncate text-sm font-bold">{currentUser.name}</h2><p className="m-0 text-xs text-muted">{currentUser.handle}</p></div></div>
+        <div className="mt-4 flex items-center justify-between border-t border-line pt-3 text-xs text-muted"><span>{currentUser.reports} reports</span><span>{currentUser.joined.replace("Joined ", "Since ")}</span></div>
       </Card>
-      <Nav items={secondaryNavigation} />
-      <div className="mx-2 h-px bg-[#e5eaf1]" />
-      <Nav items={utilityNavigation} />
-      <Card className="p-4 text-center">
-        <Icon name="shield" size={30} />
-        <strong className="block text-[14px] text-[#082f6b]">
-          Be smart. Be safe.
-        </strong>
-        <p className="text-[12px] text-[#6c7890]">
-          Check before you trust. Think before you click.
-        </p>
-        <button className="border-0 bg-transparent p-0 text-[12px] font-bold text-[#1764c0]">
-          Learn more
-        </button>
+      <nav className="grid gap-1" aria-label="Safety shortcuts">
+        <NavLink to="/analysis" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold text-[#40546b] hover:bg-white hover:text-brand-800"><Icon name="shield" size={18} />Check a scam</NavLink>
+        <NavLink to="/community" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold text-[#40546b] hover:bg-white hover:text-brand-800"><Icon name="users" size={18} />Community safety</NavLink>
+      </nav>
+      <Card className="p-4">
+        <div className="mb-2 flex items-center gap-2 text-brand-800"><Icon name="shield" size={19} /><strong className="text-sm">Before you respond</strong></div>
+        <ul className="m-0 grid gap-2 pl-5 text-xs leading-relaxed text-muted"><li>Check the sender and link carefully.</li><li>Never share an OTP or password.</li><li>Report suspicious requests quickly.</li></ul>
       </Card>
     </aside>
   );

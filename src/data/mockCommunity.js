@@ -3,17 +3,17 @@ export const currentUser = { name: 'Sreynich Chan', handle: '@sreynich', reports
 
 export const posts = [
   {
-    id: 'telegram-prize', author: 'Sokchea', time: '2 hours ago', risk: 'High', category: 'Phishing',
-    title: 'Fake prize claim on Telegram', description: 'They claim you qualify for a prize but first ask for a shipping fee and personal information. Do not share your details. Becareful when seeing something like this. I dont want anyone to face the same trouble or you might lose lots of money', image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80',
+    id: 'telegram-prize', author: 'Sokchea', time: '2 hours ago', risk: 'High', category: 'Phishing', verified: true, aiAssessed: false,
+    title: 'Fake prize claim on Telegram', description: 'They claim you qualify for a prize but first ask for a shipping fee and personal information. Do not share your details. Be careful when you see something like this—you could lose money or expose your personal information.', image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80',
     evidence: { type: 'message', heading: 'Congratulations!', body: 'You won $1000. Click the link below to claim your prize.', link: 'https://claim-now.cc/win-prize' }, helpful: 87, comments: 15, shares: 31,
   },
   {
-    id: 'shop-page', author: 'Rathana', time: '5 hours ago', risk: 'Medium', category: 'Online Shop Scam',
+    id: 'shop-page', author: 'Rathana', time: '5 hours ago', risk: 'Medium', category: 'Online Shop Scam', verified: true, aiAssessed: true,
     title: 'Suspicious Facebook page', description: 'This page is selling phones at very low prices. Many people already lost money after paying a deposit.', image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
     evidence: { type: 'link', heading: 'Tech Store Cambodia', body: 'Big sale — 50% off electronics', link: 'facebook.com/techstorecambodia' }, helpful: 51, comments: 8, shares: 12,
   },
   {
-    id: 'sms-alert', author: 'Panha', time: '8 hours ago', risk: 'Low', category: 'SMS Scam',
+    id: 'sms-alert', author: 'Panha', time: '8 hours ago', risk: 'Low', category: 'SMS Scam', verified: false, aiAssessed: false,
     title: 'Suspicious SMS received', description: 'Received this message asking me to update my bank information. The link looks suspicious.', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=80',
     evidence: { type: 'message', heading: 'ABA Security Notice', body: 'Your account will be suspended. Please update your information here:', link: 'http://aba-support.info' }, helpful: 34, comments: 4, shares: 6,
   },

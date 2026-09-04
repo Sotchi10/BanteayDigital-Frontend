@@ -1,30 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Kantumruy+Pro:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kantumruy+Pro:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-    --color-brand-900: #082f6b;
-    --color-brand-800: #0c4698;
-    --color-brand-700: #1764c0;
-    --color-brand-100: #eaf2ff;
+    --color-brand-900: #102a43;
+    --color-brand-800: #0757a6;
+    --color-brand-700: #1677d2;
+    --color-brand-100: #eaf2fb;
     --color-surface: #ffffff;
-    --color-canvas: #f6f8fb;
-    --color-ink: #15233b;
-    --color-muted: #6c7890;
-    --color-line: #e5eaf1;
-    --color-risk-high: #dc4455;
-    --color-risk-medium: #c98311;
-    --color-risk-low: #25845a;
-    --font-sans: "DM Sans", "Kantumruy Pro", sans-serif;
+    --color-canvas: #f5f7fa;
+    --color-ink: #102a43;
+    --color-muted: #607089;
+    --color-line: #dce4ed;
+    --color-risk-high: #d92d3a;
+    --color-risk-medium: #d97706;
+    --color-risk-low: #14866d;
+    --font-sans: "Inter", "Kantumruy Pro", system-ui, sans-serif;
 }
 
-html {
-    font-family: var(--font-sans);
-    background: var(--color-canvas);
-    color: var(--color-ink);
-}
-
-body {
-    margin: 0;
-    min-width: 320px;
-    background: var(--color-canvas);
-}
+:root { color-scheme: light; --radius-card: 0.875rem; --shadow-card: 0 1px 2px rgb(16 42 67 / 0.04); }
+* { box-sizing: border-box; }
+html { min-width: 320px; overflow-x: hidden; font-family: var(--font-sans); background: var(--color-canvas); color: var(--color-ink); scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; overflow-x: hidden; background: var(--color-canvas); line-height: 1.55; }
+button, input, select { font: inherit; }
+button, a, select { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid rgb(22 119 210 / 0.3); outline-offset: 2px; }
+::selection { background: #cfe5fa; color: #102a43; }
