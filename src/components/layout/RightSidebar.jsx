@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Badge, Card, Icon, SectionHeader } from "../ui";
 import { recentAlerts, statistics, trendingScams } from "../../data/mockCommunity";
 
@@ -11,7 +12,7 @@ export function RightSidebar() {
         <div className="grid gap-2.5">{trendingScams.slice(0, 4).map((item) => <div key={item.label}><div className="mb-1 flex justify-between gap-3 text-sm text-[#52647a]"><span>{item.label}</span><strong>{item.value}%</strong></div><span className="block h-2 overflow-hidden rounded-full bg-[#e8edf3]"><span className="block h-full rounded-full bg-brand-800" style={{ width: `${item.value}%` }} /></span></div>)}</div>
       </Card>
       <Card className="w-full px-5 py-4">
-        <SectionHeader title="Recent verified alerts" action="View alerts" />
+        <div className="mb-3 flex min-h-11 items-center justify-between gap-3"><h2 className="m-0 text-base font-bold text-ink">Recent verified alerts</h2><Link to="/alerts" className="text-sm font-semibold text-brand-800 hover:text-brand-700">View alerts</Link></div>
         <ul className="m-0 grid list-none gap-3 p-0">{recentAlerts.map((alert) => <li key={alert.title} className="border-b border-line pb-3 last:border-0 last:pb-0"><div className="flex items-center justify-between gap-2"><Badge tone={alert.risk.toLowerCase()}><Icon name="alert" size={13} />{alert.risk} risk</Badge><small className="shrink-0 text-[13px] text-muted">{alert.time}</small></div><p className="mb-0 mt-1.5 text-sm font-semibold leading-relaxed text-ink">{alert.title}</p></li>)}</ul>
       </Card>
       <Card className="w-full px-5 py-4">
