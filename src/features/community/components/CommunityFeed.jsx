@@ -23,7 +23,7 @@ export function CommunityFeed() {
   }, [filter, query, sort]);
 
   return (
-    <main className="flex min-w-0 flex-col gap-4" id="main-content">
+    <main className="flex min-w-0 flex-col gap-4 lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:[scrollbar-color:#b8c8d9_transparent] lg:[scrollbar-width:thin]" id="main-content">
       <Card className="border-[#cbdcf0] p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <span className="hidden h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-100 text-brand-800 sm:grid"><Icon name="shield" size={20} /></span>
