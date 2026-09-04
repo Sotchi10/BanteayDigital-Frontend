@@ -14,7 +14,7 @@ export function TopNavbar() {
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-[68px] max-w-[1440px] items-center gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-[68px] max-w-[1500px] items-center gap-4 px-4 sm:px-6 lg:px-8">
           <NavLink className="flex min-w-0 items-center gap-2.5" to="/" aria-label="BanteayDigital home">
             <img className="h-9 w-9" src="/BanteayDigitalLogo.svg" alt="BanteayDigital logo" />
             <span className="hidden leading-tight sm:grid"><strong className="text-[15px] text-brand-900">BanteayDigital</strong><small className="text-[11px] text-muted">Digital safety community</small></span>

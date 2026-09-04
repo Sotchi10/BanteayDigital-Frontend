@@ -24,22 +24,23 @@ export function CommunityFeed() {
 
   return (
     <main className="flex min-w-0 flex-col gap-4" id="main-content">
-      <Card className="overflow-hidden border-[#bed5ea] p-5 sm:p-6">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="max-w-md"><span className="mb-3 inline-grid h-10 w-10 place-items-center rounded-xl bg-brand-100 text-brand-800"><Icon name="shield" size={21} /></span><h1 className="m-0 text-xl font-bold tracking-[-0.02em] text-brand-900 sm:text-2xl">Not sure if something is a scam?</h1><p className="mb-0 mt-2 text-sm leading-relaxed text-muted">Upload a screenshot, paste a suspicious message, or enter a link.</p></div>
-          <Link to="/analysis" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white transition hover:bg-brand-700"><Icon name="upload" size={18} />Analyse a scam</Link>
+      <Card className="border-[#cbdcf0] p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <span className="hidden h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-100 text-brand-800 sm:grid"><Icon name="shield" size={20} /></span>
+          <div className="min-w-0 flex-1"><h1 className="m-0 text-base font-bold text-brand-900 sm:text-lg">Not sure if something is a scam?</h1><p className="m-0 mt-0.5 text-sm text-muted">Check a screenshot, suspicious message, or link before you trust it.</p></div>
+          <Link to="/analysis" className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-800 px-4 text-sm font-bold text-white transition hover:bg-brand-700"><Icon name="upload" size={17} />Analyse a scam</Link>
         </div>
       </Card>
 
       <PostComposer value={query} onChange={setQuery} />
 
       <section aria-labelledby="community-feed-heading">
-        <div className="mb-3 flex flex-col gap-3 px-0.5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-3 flex flex-col gap-2 px-0.5 sm:flex-row sm:items-end sm:justify-between">
           <div><p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-brand-800">Community warnings</p><h2 id="community-feed-heading" className="m-0 mt-0.5 text-lg font-bold text-brand-900">Latest scam reports</h2></div>
           <label className="flex min-h-11 items-center gap-2 text-sm font-medium text-muted"><span>Sort by</span><select className="min-h-11 rounded-lg border border-line bg-white px-3 text-sm font-semibold text-ink outline-none hover:border-[#b8c8d9] focus:border-brand-700" value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Sort community reports"><option value="latest">Latest</option><option value="helpful">Most helpful</option></select></label>
         </div>
         <div className="mb-4 flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filter community reports">
-          {filters.map((item) => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)} className={`min-h-11 shrink-0 rounded-full border px-4 text-sm font-semibold transition ${filter === item ? "border-brand-800 bg-brand-800 text-white" : "border-line bg-white text-[#52647a] hover:border-[#9ebad5] hover:text-brand-800"}`}>{item}</button>)}
+          {filters.map((item) => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)} className={`min-h-9 shrink-0 rounded-full border px-3.5 text-sm font-semibold transition ${filter === item ? "border-brand-800 bg-brand-800 text-white" : "border-line bg-white text-[#52647a] hover:border-[#9ebad5] hover:text-brand-800"}`}>{item}</button>)}
         </div>
         <div className="grid gap-4">
           {visiblePosts.map((post) => <ScamPostCard key={post.id} post={post} />)}

@@ -5,7 +5,7 @@ export const RiskBadge = ({ level, aiAssessed = false }) => <Badge tone={aiAsses
 export const CategoryBadge = ({ category }) => <Badge tone="category">{category}</Badge>;
 
 function EvidenceImage({ src, alt }) {
-  return <img className="mt-4 aspect-video max-h-[360px] w-full rounded-xl border border-line bg-[#f5f8fc] object-cover" src={src || "/evidence-placeholder.svg"} alt={alt} loading="lazy" onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = "/evidence-placeholder.svg"; }} />;
+  return <img className="mt-4 h-[280px] w-full rounded-xl border border-line bg-[#f5f8fc] object-cover sm:h-[340px]" src={src || "/evidence-placeholder.svg"} alt={alt} loading="lazy" onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = "/evidence-placeholder.svg"; }} />;
 }
 
 function ExpandableDescription({ children }) {
@@ -36,14 +36,14 @@ export function ScamPostCard({ post }) {
         <div className="p-4 sm:p-5">
           <header className="flex items-center gap-3">
             <Avatar name={post.author} tone="indigo" />
-            <div className="min-w-0 flex-1"><strong className="block truncate text-sm">{post.author}</strong><p className="m-0 text-xs text-muted">{post.time} · Community report</p></div>
+            <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-1.5"><strong className="truncate text-[15px]">{post.author}</strong>{post.verified ? <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-700"><Icon name="shield" size={13} />Verified</span> : null}</div><p className="m-0 text-xs text-muted">{post.time} · Community report</p></div>
             <IconButton label="More report options" icon="more" />
           </header>
           <div className="mt-4 flex flex-wrap gap-2"><CategoryBadge category={post.category} /><RiskBadge level={post.risk} aiAssessed={post.aiAssessed} /></div>
           <h2 id={`report-title-${post.id}`} className="mb-0 mt-4 text-lg font-bold leading-snug tracking-[-0.01em] text-brand-900">{post.title}</h2>
           <ExpandableDescription>{post.description}</ExpandableDescription>
           <EvidenceImage src={post.image} alt={`Evidence submitted for report: ${post.title}`} />
-          <div className={`mt-4 flex items-start gap-2 rounded-lg border p-3 text-sm ${post.verified ? "border-[#b9e4d7] bg-[#eaf8f3] text-[#116c59]" : "border-[#dce4ed] bg-[#f2f4f7] text-[#52647a]"}`}>
+          <div className={`mt-4 flex items-start gap-2 rounded-lg border px-3 py-2.5 text-sm ${post.verified ? "border-[#b9e4d7] bg-[#eaf8f3] text-[#116c59]" : "border-[#dce4ed] bg-[#f2f4f7] text-[#52647a]"}`}>
             <Icon name={post.verified ? "check" : "clock"} size={18} className="mt-0.5 shrink-0" />
             <div><strong className="block">{post.verified ? "Verified by moderator" : "Community report · Not yet verified"}</strong><span className="text-xs">{post.verified ? "Evidence reviewed by the BanteayDigital moderation team." : "Review pending. Use caution while details are checked."}</span></div>
           </div>
