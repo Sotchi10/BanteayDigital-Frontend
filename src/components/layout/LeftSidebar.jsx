@@ -5,7 +5,7 @@ import { Avatar, Badge, Card, Icon } from "../ui";
 export function LeftSidebar() {
   const shortcutClass = ({ isActive }) => `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-white text-brand-800 shadow-[var(--shadow-card)]" : "text-[#40546b] hover:bg-white hover:text-brand-800"}`;
   return (
-    <aside className="sticky top-[92px] hidden self-start flex-col gap-4 lg:flex" aria-label="Profile and safety shortcuts">
+    <aside className="hidden h-full self-start flex-col gap-4 overflow-hidden lg:flex" aria-label="Profile and safety shortcuts">
       <Card className="p-5 text-center">
         <Avatar name={currentUser.name} size="xl" />
         <h2 className="mb-0 mt-2 text-base font-bold">{currentUser.name}</h2>
