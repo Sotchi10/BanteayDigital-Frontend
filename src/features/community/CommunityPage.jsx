@@ -56,7 +56,7 @@ export function CommunityPage() {
     [normalizedQuery],
   );
   return (
-    <main className="min-w-0" id="main-content">
+    <main className="min-w-0 px-10" id="main-content">
       
       <label className="mb-4 flex min-h-12 items-center gap-3 rounded-xl border border-line bg-white px-4 text-muted shadow-[var(--shadow-card)] focus-within:border-brand-700 focus-within:ring-2 focus-within:ring-[#d9ebfa]">
         <Icon name="search" size={16} />
@@ -74,11 +74,11 @@ export function CommunityPage() {
         <div className="mb-3">
           <h2
             id="scam-types-heading"
-            className="m-0 text-lg font-bold text-brand-900"
+            className="m-0 text-lg font-bold text-ink"
           >
             Common scam types in Cambodia
           </h2>
-          <p className="mb-0 mt-1 text-sm text-muted">
+          <p className="mb-0 mt-1 text-sm text-[#40546b]">
             Know the patterns before a scammer has the chance to rush you.
           </p>
         </div>
@@ -92,10 +92,10 @@ export function CommunityPage() {
                 <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-100 text-brand-800">
                   <Icon name={item.icon} size={19} />
                 </span>
-                <h3 className="mb-1 mt-3 text-base font-bold text-brand-900">
+                <h3 className="mb-1 mt-3 text-base font-bold text-ink">
                   {item.title}
                 </h3>
-                <p className="m-0 text-sm leading-relaxed text-muted">
+                <p className="m-0 text-sm leading-relaxed text-[#40546b]">
                   {item.description}
                 </p>
                 <Link
@@ -109,10 +109,10 @@ export function CommunityPage() {
           </div>
         ) : (
           <Card className="p-6 text-center">
-            <h3 className="m-0 text-base font-bold text-brand-900">
+            <h3 className="m-0 text-base font-bold text-ink">
               No matching scam topics
             </h3>
-            <p className="mb-0 mt-1 text-sm text-muted">
+            <p className="mb-0 mt-1 text-sm text-[#40546b]">
               Try a broader search term or clear your search.
             </p>
           </Card>

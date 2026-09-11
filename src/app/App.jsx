@@ -1,5 +1,6 @@
 import { AppRoutes } from './AppRoutes'
+import { AuthProvider } from '../state/AuthStore'
 
 export default function App() {
-  return <AppRoutes />
+  return <AuthProvider><AppRoutes /></AuthProvider>
 }

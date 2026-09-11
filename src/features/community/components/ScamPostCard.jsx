@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Avatar, Badge, Card, Icon } from "../../../components/ui";
+import { useAuth } from "../../../state/AuthStore";
 
 export const RiskBadge = ({ level, aiAssessed = false }) => (
   <Badge tone={aiAssessed ? "ai" : level.toLowerCase()}>
@@ -50,6 +52,8 @@ function ExpandableDescription({ children }) {
 }
 
 function PostActions({ post }) {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [helpful, setHelpful] = useState(false);
   const [saved, setSaved] = useState(false);
   const [commenting, setCommenting] = useState(false);
@@ -70,6 +74,10 @@ function PostActions({ post }) {
     } catch {
       setShareStatus("");
     }
+  };
+  const savePost = () => {
+    if (!isAuthenticated) { navigate("/login", { state: { from: "/" } }); return; }
+    setSaved((value) => !value);
   };
 
   return (
@@ -108,7 +116,7 @@ function PostActions({ post }) {
           className={`flex min-h-10 items-center justify-center gap-1.5 border-0 bg-transparent px-1 text-xs font-semibold hover:bg-[#f8fafc] ${saved ? "text-brand-800" : "text-muted hover:text-brand-800"}`}
           type="button"
           aria-pressed={saved}
-          onClick={() => setSaved((value) => !value)}
+          onClick={savePost}
         >
           <Icon name="bookmark" size={12} />
           <span className="hidden sm:inline text-sm">{saved ? "Saved" : "Save"}</span>

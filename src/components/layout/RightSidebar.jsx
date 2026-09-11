@@ -102,7 +102,7 @@ function UsefulResourcesCard() {
 }
 
 function NeedHelpCard() {
-  return <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4"><h2 className="m-0 text-base font-bold text-brand-900">Need help?</h2><p className="mb-3 mt-1 text-sm leading-relaxed text-muted">Start with a quick safety check before deciding whether to report.</p><Link to="/analysis" className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"><Icon name="shield" size={17} />Analyze suspicious content</Link></Card>;
+  return <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4"><h2 className="m-0 text-base font-bold text-ink">Need help?</h2><p className="mb-3 mt-1 text-sm leading-relaxed text-[#40546b]">Start with a quick safety check before deciding whether to report.</p><Link to="/analysis" className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"><Icon name="shield" size={17} />Analyze suspicious content</Link></Card>;
 }
 
 function RiskLevelCard() {

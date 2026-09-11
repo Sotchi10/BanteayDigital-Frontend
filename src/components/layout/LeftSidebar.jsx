@@ -36,11 +36,11 @@ export function LeftSidebar() {
         </NavLink>
       </nav>
       <Card className="p-4">
-        <div className="mb-2 flex items-center gap-2 text-brand-800">
-          <Icon name="shield" size={19} />
-          <strong className="text-sm">Before you respond</strong>
+        <div className="mb-2 flex items-center gap-2">
+          <Icon name="shield" size={19} className="text-brand-800" />
+          <strong className="text-sm text-ink">Before you respond</strong>
         </div>
-        <ul className="m-0 grid gap-2 pl-5 text-xs leading-relaxed text-muted">
+        <ul className="m-0 grid gap-2 pl-5 text-xs leading-relaxed text-[#40546b]">
           <li>Check the sender and link carefully.</li>
           <li>Never share an OTP or password.</li>
           <li>Report suspicious requests quickly.</li>
