@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Badge, Card, Icon, SectionHeader } from "../ui";
-import { recentAlerts, statistics, trendingScams } from "../../data/mockCommunity";
+import { statistics, trendingScams } from "../../data/mockCommunity";
 
 const guidanceByRoute = {
   "/analysis": {
@@ -21,17 +21,6 @@ const guidanceByRoute = {
       "Evidence with names and private details removed.",
     ],
   },
-};
-
-const communityGuidance = {
-  title: "Share safely",
-  icon: "users",
-  action: { label: "Share a report", to: "/report" },
-  items: [
-    "Describe the warning signs without exposing personal details.",
-    "Include clear evidence that moderators can review.",
-    "Focus on what will help others avoid the same scam.",
-  ],
 };
 
 const alertGuidance = {
@@ -61,21 +50,21 @@ function TrendingScamsCard() {
   );
 }
 
-function RecentAlertsCard() {
-  return (
-    <Card className="w-full shrink-0 p-4">
-      <div className="mb-2 flex min-h-9 items-center justify-between gap-3"><h2 className="m-0 text-base font-bold text-ink">Recent verified alerts</h2><Link to="/alerts" className="shrink-0 text-sm font-semibold text-brand-800 hover:text-brand-700">View alerts</Link></div>
-      <ul className="m-0 list-none divide-y divide-line p-0">
-        {recentAlerts.map((alert) => (
-          <li key={alert.title} className="py-2.5 first:pt-0 last:pb-0">
-            <div className="flex items-center justify-between gap-2"><Badge tone={alert.risk.toLowerCase()}><Icon name="alert" size={13} />{alert.risk} risk</Badge><small className="shrink-0 text-xs text-muted">{alert.time}</small></div>
-            <p className="mb-0 mt-1.5 text-sm font-semibold leading-5 text-ink">{alert.title}</p>
-          </li>
-        ))}
-      </ul>
-    </Card>
-  );
-}
+//function RecentAlertsCard() {
+//  return (
+//    <Card className="w-full shrink-0 p-4">
+//      <div className="mb-2 flex min-h-9 items-center justify-between gap-3"><h2 className="m-0 text-base font-bold text-ink">Recent verified alerts</h2><Link to="/alerts" className="shrink-0 text-sm font-semibold text-brand-800 hover:text-brand-700">View alerts</Link></div>
+//      <ul className="m-0 list-none divide-y divide-line p-0">
+//        {recentAlerts.map((alert) => (
+//          <li key={alert.title} className="py-2.5 first:pt-0 last:pb-0">
+//            <div className="flex items-center justify-between gap-2"><Badge tone={alert.risk.toLowerCase()}><Icon name="alert" size={13} />{alert.risk} risk</Badge><small className="shrink-0 text-xs text-muted">{alert.time}</small></div>
+//            <p className="mb-0 mt-1.5 text-sm font-semibold leading-5 text-ink">{alert.title}</p>
+//          </li>
+//        ))}
+//      </ul>
+//    </Card>
+//  );
+//}
 
 function CommunityImpactCard() {
   const reports = statistics.find((item) => item.label === "Reports")?.value;
@@ -101,17 +90,19 @@ function GuidanceCard({ guidance }) {
   );
 }
 
-function VerificationProcessCard() {
-  const steps = ["Report submitted", "Evidence reviewed", "Warning verified"];
 
-  return (
-    <Card className="w-full shrink-0 p-4">
-      <SectionHeader title="How verification works" action={null} />
-      <ol className="m-0 grid list-none gap-0 p-0">
-        {steps.map((step, index) => <li key={step} className="flex items-center gap-3 border-b border-line py-2.5 first:pt-0 last:border-0 last:pb-0"><span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-bold text-brand-800">{index + 1}</span><span className="text-sm font-semibold text-[#40546b]">{step}</span></li>)}
-      </ol>
-    </Card>
-  );
+function UsefulResourcesCard() {
+  const resources = [
+    { label: "Check a suspicious message", detail: "Run a quick safety check", to: "/analysis", icon: "shield" },
+    { label: "Verified safety alerts", detail: "Review current warnings", to: "/alerts", icon: "alert" },
+    { label: "How to report a scam", detail: "Share details safely", to: "/report", icon: "edit" },
+  ];
+
+  return <Card className="w-full shrink-0 p-4"><SectionHeader title="Useful Resources" action={null} /><div className="grid divide-y divide-line">{resources.map((resource) => <Link key={resource.label} to={resource.to} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#f2f5f8] text-brand-800"><Icon name={resource.icon} size={16} /></span><span className="min-w-0 flex-1"><strong className="block text-sm text-[#40546b]">{resource.label}</strong><small className="block text-xs text-muted">{resource.detail}</small></span><Icon name="chevron" size={16} className="shrink-0 text-brand-800" /></Link>)}</div></Card>;
+}
+
+function NeedHelpCard() {
+  return <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4"><h2 className="m-0 text-base font-bold text-brand-900">Need help?</h2><p className="mb-3 mt-1 text-sm leading-relaxed text-muted">If you see a suspicious request, share it so others can stay aware.</p><Link to="/report" className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"><Icon name="plus" size={17} />Report a scam</Link></Card>;
 }
 
 function RiskLevelCard() {
@@ -134,16 +125,16 @@ function RiskLevelCard() {
 export function RightSidebar() {
   const { pathname } = useLocation();
   const showTrending = pathname === "/";
-  const showRecentAlerts = pathname === "/";
   const showCommunityImpact = ["/", "/leaderboard"].includes(pathname);
   const guidance = guidanceByRoute[pathname];
 
   return (
-    <aside className="hidden h-full min-h-0 w-full self-start flex-col gap-4 overflow-hidden [&_h2]:text-base xl:flex" aria-label="Page information">
-      {showTrending ? <TrendingScamsCard /> : null}
-      {showRecentAlerts ? <RecentAlertsCard /> : null}
+    <aside className="hidden h-full min-h-0 w-full self-start flex-col gap-4 overflow-hidden [&_h2]:text-base xl:flex xl:overflow-y-auto xl:overscroll-contain xl:pr-1 xl:[scrollbar-color:#b8c8d9_transparent] xl:[scrollbar-width:thin]" aria-label="Page information">
       {showCommunityImpact ? <CommunityImpactCard /> : null}
-      {pathname === "/community" ? <><GuidanceCard guidance={communityGuidance} /><VerificationProcessCard /></> : null}
+      {showTrending ? <TrendingScamsCard /> : null}
+      {/*{showRecentAlerts ? <RecentAlertsCard /> : null}*/}
+      
+      {pathname === "/community" ? <><NeedHelpCard /><UsefulResourcesCard /></> : null}
       {pathname === "/alerts" ? <><GuidanceCard guidance={alertGuidance} /><RiskLevelCard /></> : null}
       {guidance ? <GuidanceCard guidance={guidance} /> : null}
     </aside>

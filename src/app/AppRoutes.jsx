@@ -6,6 +6,7 @@ import { CommunityPage } from "../features/community/CommunityPage";
 import { HomePage } from "../features/home/HomePage";
 import { LeaderboardPage } from "../features/leaderboard/LeaderboardPage";
 import { ReportPage } from "../features/report/ReportPage";
+import { FeaturePlaceholder } from "../components/FeaturePlaceholder";
 
 export function AppRoutes() {
   return (
@@ -17,6 +18,9 @@ export function AppRoutes() {
         <Route path="report" element={<ReportPage />} />
         <Route path="analysis" element={<AnalysisPage />} />
         <Route path="alerts" element={<AlertsPage />} />
+        <Route path="saved" element={<FeaturePlaceholder icon="bookmark" eyebrow="Your saved items" title="Saved" description="Keep useful scam alerts, community posts, and safety resources here for quick reference." />} />
+        <Route path="history" element={<FeaturePlaceholder icon="clock" eyebrow="Your activity" title="History" description="Review your previous scam analyses, reports, and safety activity in one place." />} />
+        <Route path="about" element={<FeaturePlaceholder icon="book" eyebrow="Learn more" title="About BanteayDigital" description="Learn how BanteayDigital helps the community recognise, report, and prevent digital scams." />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
