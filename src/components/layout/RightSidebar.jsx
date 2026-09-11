@@ -95,14 +95,14 @@ function UsefulResourcesCard() {
   const resources = [
     { label: "Check a suspicious message", detail: "Run a quick safety check", to: "/analysis", icon: "shield" },
     { label: "Verified safety alerts", detail: "Review current warnings", to: "/alerts", icon: "alert" },
-    { label: "How to report a scam", detail: "Share details safely", to: "/report", icon: "edit" },
+    { label: "Analyze before reporting", detail: "Check suspicious content first", to: "/analysis", icon: "shield" },
   ];
 
   return <Card className="w-full shrink-0 p-4"><SectionHeader title="Useful Resources" action={null} /><div className="grid divide-y divide-line">{resources.map((resource) => <Link key={resource.label} to={resource.to} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#f2f5f8] text-brand-800"><Icon name={resource.icon} size={16} /></span><span className="min-w-0 flex-1"><strong className="block text-sm text-[#40546b]">{resource.label}</strong><small className="block text-xs text-muted">{resource.detail}</small></span><Icon name="chevron" size={16} className="shrink-0 text-brand-800" /></Link>)}</div></Card>;
 }
 
 function NeedHelpCard() {
-  return <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4"><h2 className="m-0 text-base font-bold text-brand-900">Need help?</h2><p className="mb-3 mt-1 text-sm leading-relaxed text-muted">If you see a suspicious request, share it so others can stay aware.</p><Link to="/report" className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"><Icon name="plus" size={17} />Report a scam</Link></Card>;
+  return <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4"><h2 className="m-0 text-base font-bold text-brand-900">Need help?</h2><p className="mb-3 mt-1 text-sm leading-relaxed text-muted">Start with a quick safety check before deciding whether to report.</p><Link to="/analysis" className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"><Icon name="shield" size={17} />Analyze suspicious content</Link></Card>;
 }
 
 function RiskLevelCard() {

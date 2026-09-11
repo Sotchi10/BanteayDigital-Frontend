@@ -33,7 +33,7 @@ export function TopNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
+      <header className="app-navbar sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-[68px] max-w-[1600px] items-center gap-4 px-4 sm:px-6 lg:px-8 xl:grid xl:grid-cols-[240px_minmax(0,800px)_minmax(280px,1fr)] xl:gap-6">
           <NavLink className="flex min-w-0 items-center gap-2.5 xl:col-start-1" to="/" aria-label="BanteayDigital home">
             <img className="h-9 w-9" src="/BanteayDigitalLogo.svg" alt="BanteayDigital logo" />
@@ -41,7 +41,6 @@ export function TopNavbar() {
           </NavLink>
           <nav className="ml-6 hidden items-center gap-1 lg:flex xl:col-start-2 xl:ml-0 xl:justify-self-center" aria-label="Main navigation">
             {navigation.slice(0, 2).map((item) => <NavLink key={item.label} to={item.to} end={item.to === "/"} className={desktopNavClass}><Icon name={item.icon} size={17} />{item.label}</NavLink>)}
-            <NavLink to="/report" className={desktopNavClass}><Icon name="plus" size={17} />Report a scam</NavLink>
             {navigation.slice(2).map((item) => <NavLink key={item.label} to={item.to} className={desktopNavClass}><Icon name={item.icon} size={17} />{item.label}</NavLink>)}
           </nav>
           <div className="ml-auto flex items-center gap-1.5 xl:col-start-3 xl:ml-0 xl:justify-self-end">
@@ -61,7 +60,7 @@ export function TopNavbar() {
                   <div className="min-w-0"><strong className="block truncate text-sm text-ink">{currentUser.name}</strong><span className="block truncate text-xs text-muted">{currentUser.handle}</span></div>
                 </div>
                 <div className="my-1 border-t border-line" />
-                <button type="button" role="menuitem" className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"><Icon name="settings" size={17} />Settings</button>
+                <NavLink to="/settings" onClick={() => setProfileMenuOpen(false)} role="menuitem" className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"><Icon name="settings" size={17} />Settings</NavLink>
                 <button type="button" role="menuitem" className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"><Icon name="globe" size={17} />Display &amp; Appearance</button>
                 <div className="my-1 border-t border-line" />
                 <button type="button" role="menuitem" className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-risk-high transition hover:bg-[#fff0f1]"><Icon name="logout" size={17} />Log Out</button>
@@ -73,7 +72,6 @@ export function TopNavbar() {
       <nav className="fixed inset-x-0 bottom-0 z-30 flex h-16 border-t border-line bg-white lg:hidden" aria-label="Mobile navigation">
         {navigation.map((item) => <NavLink key={item.label} to={item.to} end={item.to === "/"} className={mobileNavClass}><Icon name={item.icon} size={20} /><span>{item.label}</span></NavLink>)}
       </nav>
-      <NavLink to="/report" className="fixed bottom-20 right-4 z-30 inline-flex min-h-12 items-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-bold text-white shadow-[0_6px_18px_rgb(7_87_166/0.24)] hover:bg-brand-700 lg:hidden" aria-label="Report a scam"><Icon name="plus" size={19} />Report</NavLink>
     </>
   );
 }

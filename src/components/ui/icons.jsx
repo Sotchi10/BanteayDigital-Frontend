@@ -18,6 +18,7 @@ import {
   FiHome,
   FiImage,
   FiLink,
+  FiLock,
   FiLogOut,
   FiMessageCircle,
   FiMoreHorizontal,
@@ -29,6 +30,7 @@ import {
   FiShoppingBag,
   FiTrendingUp,
   FiUsers,
+  FiUser,
   FiUploadCloud,
 } from 'react-icons/fi'
 
@@ -51,6 +53,7 @@ const icons = {
   gift: FiGift,
   image: FiImage,
   link: FiLink,
+  lock: FiLock,
   logout: FiLogOut,
   message: FiMessageCircle,
   more: FiMoreHorizontal,
@@ -63,6 +66,7 @@ const icons = {
   trendingUp: FiTrendingUp,
   trophy: FiAward,
   users: FiUsers,
+  user: FiUser,
   upload: FiUploadCloud,
 }
 
