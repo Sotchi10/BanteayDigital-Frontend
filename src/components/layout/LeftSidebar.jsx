@@ -7,7 +7,7 @@ export function LeftSidebar() {
     `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-white text-brand-800 shadow-[var(--shadow-card)]" : "text-[#40546b] hover:bg-white hover:text-brand-800"}`;
   return (
     <aside
-      className="hidden h-full self-start flex-col gap-4 overflow-hidden lg:flex"
+      className="hidden self-start lg:sticky lg:top-[84px] lg:flex lg:flex-col lg:gap-4"
       aria-label="Profile and safety shortcuts"
     >
       <Card className="p-5">

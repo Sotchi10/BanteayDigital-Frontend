@@ -129,7 +129,7 @@ export function RightSidebar() {
   const guidance = guidanceByRoute[pathname];
 
   return (
-    <aside className="hidden h-full min-h-0 w-full self-start flex-col gap-4 overflow-hidden [&_h2]:text-base xl:flex xl:overflow-y-auto xl:overscroll-contain xl:pr-1 xl:[scrollbar-color:#b8c8d9_transparent] xl:[scrollbar-width:thin]" aria-label="Page information">
+    <aside className="hidden w-full self-start [&_h2]:text-base xl:sticky xl:top-[84px] xl:flex xl:flex-col xl:gap-4" aria-label="Page information">
       {showCommunityImpact ? <CommunityImpactCard /> : null}
       {showTrending ? <TrendingScamsCard /> : null}
       {/*{showRecentAlerts ? <RecentAlertsCard /> : null}*/}

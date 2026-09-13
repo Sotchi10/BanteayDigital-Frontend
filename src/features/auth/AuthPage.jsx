@@ -197,7 +197,7 @@ export function AuthPage() {
                     checked={remember}
                     onChange={(event) => setRemember(event.target.checked)}
                     type="checkbox"
-                    className="h-4 w-4 accent-[#0c4698]"
+                    className="h-4 w-4 accent-brand-800"
                   />
                   Remember me
                 </label>
