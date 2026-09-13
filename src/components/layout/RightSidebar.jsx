@@ -1,7 +1,6 @@
-import { Avatar, Badge, Card, Icon, SectionHeader } from "../ui";
+import { Avatar, Card, Icon, SectionHeader } from "../ui";
 import {
   contributors,
-  recentAlerts,
   statistics,
   trendingScams,
 } from "../../data/mockCommunity";
