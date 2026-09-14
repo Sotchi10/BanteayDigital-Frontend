@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Avatar, Badge, Card, Icon, IconButton } from "../../../components/ui";
 import { apiErrorMessage } from "../api/communityApi";
-import { CommentSection } from "./CommentSection";
 
 export const RiskBadge = ({ level }) =>
   level ? <Badge tone={level.toLowerCase()}>{level} risk</Badge> : null;
@@ -95,9 +94,8 @@ function copyText(value) {
 }
 
 function PostActions({
-  commentsOpen,
   onShare,
-  onToggleComments,
+  onOpenComments,
   onToggleLike,
   post,
 }) {
@@ -203,9 +201,8 @@ function PostActions({
           <span className="text-xs">{post.interaction.likeCount} </span>
         </button>
         <button
-          aria-expanded={commentsOpen}
-          className={`flex min-w-0 items-center justify-center gap-1.5 border-x border-[#e5eaf1] bg-transparent px-2 text-xs font-semibold ${commentsOpen ? "text-brand-700" : "text-[#61718a]"}`}
-          onClick={onToggleComments}
+          className="flex min-w-0 items-center justify-center gap-1.5 border-x border-[#e5eaf1] bg-transparent px-2 text-xs font-semibold text-[#61718a] hover:text-brand-700"
+          onClick={onOpenComments}
           type="button"
         >
           <Icon name="message" size={15} />
@@ -256,20 +253,18 @@ function PostActions({
 }
 
 export function ScamPostCard({
-  currentUser,
-  onCommentCountChange,
+  onOpenComments,
   onShare,
   onToggleLike,
   post,
 }) {
-  const [commentsOpen, setCommentsOpen] = useState(false);
-  const authorName = post.author?.name || "BanteayDigital Safety Team";
+  const authorName = post.author?.username || post.author?.name || "BanteayDigital Safety Team";
 
   return (
     <Card className="flex w-full flex-col overflow-hidden p-0">
       <article className="flex flex-col p-5">
         <header className="flex min-h-11 items-start gap-3">
-          <Avatar name={authorName} tone="indigo" />
+          <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" />
           <div className="min-w-0 flex-1">
             <div className="flex min-h-5 flex-wrap items-center gap-x-2 gap-y-0.5">
               <strong className="text-sm font-bold text-ink">
@@ -299,19 +294,11 @@ export function ScamPostCard({
         </section>
       </article>
       <PostActions
-        commentsOpen={commentsOpen}
         onShare={onShare}
-        onToggleComments={() => setCommentsOpen((value) => !value)}
+        onOpenComments={onOpenComments}
         onToggleLike={onToggleLike}
         post={post}
       />
-      {commentsOpen ? (
-        <CommentSection
-          currentUser={currentUser}
-          onCountChange={onCommentCountChange}
-          postId={post.id}
-        />
-      ) : null}
     </Card>
   );
 }

@@ -11,6 +11,7 @@ import {
 } from '../api/communityApi'
 import { PostComposer } from './PostComposer'
 import { ScamPostCard } from './ScamPostCard'
+import { PostDiscussionModal } from './PostDiscussionModal'
 
 export function CommunityFeed() {
   const { postId } = useParams()
@@ -21,6 +22,7 @@ export function CommunityFeed() {
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
+  const [discussionPost, setDiscussionPost] = useState(null)
 
   useEffect(() => {
     let active = true
@@ -89,6 +91,15 @@ export function CommunityFeed() {
     }))
   }
 
+  const changeDiscussionCommentCount = (amount) => {
+    if (!discussionPost) return
+    changeCommentCount(discussionPost.id, amount)
+    setDiscussionPost((current) => current ? {
+      ...current,
+      interaction: { ...current.interaction, commentCount: Math.max(0, current.interaction.commentCount + amount) },
+    } : null)
+  }
+
   const recordShare = async (sharedPostId, channel) => {
     const result = await recordCommunityPostShare(sharedPostId, channel)
     updateInteraction(sharedPostId, (interaction) => ({ ...interaction, shareCount: result.shareCount }))
@@ -131,14 +142,15 @@ export function CommunityFeed() {
 
       {visiblePosts.map((post) => (
         <ScamPostCard
-          currentUser={currentUser}
           key={post.id}
-          onCommentCountChange={(amount) => changeCommentCount(post.id, amount)}
+          onOpenComments={() => setDiscussionPost(post)}
           onToggleLike={() => toggleLike(post.id)}
           onShare={(channel) => recordShare(post.id, channel)}
           post={post}
         />
       ))}
+
+      {discussionPost ? <PostDiscussionModal currentUser={currentUser} onClose={() => setDiscussionPost(null)} onCommentCountChange={changeDiscussionCommentCount} post={discussionPost} /> : null}
 
       {meta && meta.page < meta.totalPages && !query ? (
         <button className="mb-2 rounded-xl border border-line bg-white py-3 text-[13px] font-semibold text-brand-700" disabled={loadingMore} onClick={loadMore} type="button">

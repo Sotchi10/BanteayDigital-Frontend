@@ -1,3 +1,4 @@
+import { cloneElement } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppLayout } from "../components/layout/AppLayout";
 import { AlertsPage } from "../features/alerts/AlertsPage";
@@ -18,9 +19,9 @@ import { PublicProfilePage } from "../features/profile/PublicProfilePage";
 import { useAuth } from "../state/AuthStore";
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const location = useLocation();
-  return isAuthenticated ? children : <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  return isAuthenticated ? cloneElement(children, { key: user.id }) : <Navigate to="/login" replace state={{ from: location.pathname }} />;
 }
 
 export function AppRoutes() {

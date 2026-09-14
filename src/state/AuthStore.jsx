@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from "react";
-import { request } from "../services/api";
+import { apiClient, request } from "../services/api";
 
 const AuthContext = createContext(null);
 const STORAGE_KEY = "banteay-auth-user";
@@ -8,12 +8,19 @@ function loadUser() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); } catch { return null; }
 }
 
+function clearClientAuthState() {
+  localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(STORAGE_KEY);
+  delete apiClient.defaults.headers.common.Authorization;
+  delete apiClient.defaults.headers.common.authorization;
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadUser);
   const persist = (nextUser) => {
     setUser(nextUser);
+    clearClientAuthState();
     if (nextUser) localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
-    else localStorage.removeItem(STORAGE_KEY);
   };
   const value = useMemo(() => ({
     user,
