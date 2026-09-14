@@ -1,7 +1,8 @@
 import { createContext, useContext, useMemo, useState } from "react";
+import { request } from "../services/api";
 
 const AuthContext = createContext(null);
-const STORAGE_KEY = "banteay-demo-auth-user";
+const STORAGE_KEY = "banteay-auth-user";
 
 function loadUser() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); } catch { return null; }
@@ -17,11 +18,19 @@ export function AuthProvider({ children }) {
   const value = useMemo(() => ({
     user,
     isAuthenticated: Boolean(user),
-    // Temporary local-session actions. Replace these with /api/v1/auth calls
-    // and /me session restoration when backend integration is enabled.
-    signIn: ({ email, phoneNumber }) => persist({ id: "frontend-demo-user", name: "Sreynich Chan", email: email || null, phoneNumber: phoneNumber || null, role: "USER" }),
-    signUp: ({ name, email, phoneNumber }) => persist({ id: "frontend-demo-user", name: name || "Community member", email: email || null, phoneNumber: phoneNumber || null, role: "USER" }),
-    logout: () => persist(null),
+    signIn: async (credentials) => {
+      const { user: nextUser } = await request("/v1/auth/login", { method: "post", data: credentials });
+      persist(nextUser);
+      return nextUser;
+    },
+    signUp: async (details) => {
+      const { user: nextUser } = await request("/v1/auth/register", { method: "post", data: details });
+      persist(nextUser);
+      return nextUser;
+    },
+    logout: async () => {
+      try { await request("/v1/auth/logout", { method: "post" }); } finally { persist(null); }
+    },
   }), [user]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

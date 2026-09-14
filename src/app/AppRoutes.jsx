@@ -23,6 +23,7 @@ export function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="community" element={<CommunityPage />} />
+        <Route path="community/posts/:postId" element={<CommunityPage />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />
         <Route path="report" element={<ProtectedRoute><ReportPage /></ProtectedRoute>} />
         <Route path="analysis" element={<AnalysisPage />} />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
+import { createImageScan, createScan } from "../../services/scans";
 
 const examples = [
   "You won a prize. Pay a small delivery fee to claim it now.",
@@ -23,7 +24,7 @@ const caseTone = (risk) =>
     : risk === "MEDIUM"
       ? "medium"
       : "low";
-const mockCases = [
+/*const mockCases = [
   { id: "case-otp", title: "Account verification request", riskLevel: "HIGH", similarity: 88, matchReason: "Uses a request for a verification code." },
   { id: "case-prize", title: "Unexpected prize claim", riskLevel: "MEDIUM", similarity: 74, matchReason: "Combines a prize offer with urgency or payment language." },
 ];
@@ -52,6 +53,18 @@ const buildLocalPreview = ({ inputType, value }) => {
     },
     matchedScamCases: indicators.length ? mockCases.slice(0, risk === "High" ? 2 : 1) : [],
   };
+};*/
+
+const riskFromAssessment = (assessment) => (
+  assessment === "STRONG_SCAM_INDICATORS" ? "High" :
+    assessment === "SUSPICIOUS" || assessment === "CAUTION" ? "Medium" : "Low"
+);
+
+const serializeResult = (scan) => ({ ...scan, risk: riskFromAssessment(scan.assessment) });
+
+const errorMessage = (requestError) => {
+  if (requestError.response?.status === 401) return "Please log in before analyzing content.";
+  return requestError.response?.data?.message || requestError.response?.data?.error || "We could not complete the scan. Please try again.";
 };
 
 function normalizeUrl(value) {
@@ -207,7 +220,7 @@ export function AnalysisPage() {
     setError("");
   };
 
-  const analyse = (event) => {
+  const analyse = async (event) => {
     event.preventDefault();
     let value = content.trim();
     if (inputType === "IMAGE") {
@@ -233,10 +246,16 @@ export function AnalysisPage() {
     setIsSubmitting(true);
     setError("");
     setResult(null);
-    window.setTimeout(() => {
-      setResult(buildLocalPreview({ inputType, value }));
+    try {
+      const response = inputType === "IMAGE"
+        ? await createImageScan(image)
+        : await createScan({ inputType, value });
+      setResult(serializeResult(response.scan));
+    } catch (requestError) {
+      setError(errorMessage(requestError));
+    } finally {
       setIsSubmitting(false);
-    }, 700);
+    }
   };
 
   return (

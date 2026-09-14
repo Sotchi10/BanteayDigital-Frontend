@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Icon } from "../../components/ui";
@@ -120,4 +121,10 @@ export function CommunityPage() {
       </section>
     </main>
   );
+=======
+import { CommunityFeed } from './components/CommunityFeed'
+
+export function CommunityPage() {
+  return <CommunityFeed />
+>>>>>>> ba42e1384dbc5b93e89a796e169e19b415a770a1
 }

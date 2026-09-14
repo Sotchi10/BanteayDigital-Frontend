@@ -1,6 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
-import { Badge, Card, Icon, SectionHeader } from "../ui";
-import { statistics, trendingScams } from "../../data/mockCommunity";
+import { Avatar, Card, Icon, SectionHeader } from "../ui";
+import {
+  contributors,
+  statistics,
+  trendingScams,
+} from "../../data/mockCommunity";
+const tones = {
+  red: "bg-[#ffe8eb] text-[#dc4455]",
+  blue: "bg-[#e7f0ff] text-[#1764c0]",
+  indigo: "bg-[#eceeff] text-[#535bc7]",
+  violet: "bg-[#f1eafd] text-[#7d4ac5]",
+};
 
 const guidanceByRoute = {
   "/analysis": {
@@ -41,8 +50,23 @@ function TrendingScamsCard() {
       <div className="grid gap-2">
         {trendingScams.slice(0, 4).map((item) => (
           <div key={item.label}>
-            <div className="mb-1 flex justify-between gap-3 text-sm leading-5 text-[#52647a]"><span>{item.label}</span><strong>{item.value}%</strong></div>
-            <span className="block h-1.5 overflow-hidden rounded-full bg-[#e8edf3]" role="meter" aria-label={`${item.label}: ${item.value}%`} aria-valuenow={item.value} aria-valuemin="0" aria-valuemax="100"><span className="block h-full rounded-full bg-brand-800" style={{ width: `${item.value}%` }} /></span>
+            <div className="mb-1 flex justify-between gap-3 text-sm leading-5 text-[#52647a]">
+              <span>{item.label}</span>
+              <strong>{item.value}%</strong>
+            </div>
+            <span
+              className="block h-1.5 overflow-hidden rounded-full bg-[#e8edf3]"
+              role="meter"
+              aria-label={`${item.label}: ${item.value}%`}
+              aria-valuenow={item.value}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span
+                className="block h-full rounded-full bg-brand-800"
+                style={{ width: `${item.value}%` }}
+              />
+            </span>
           </div>
         ))}
       </div>
@@ -73,7 +97,20 @@ function CommunityImpactCard() {
   return (
     <Card className="w-full shrink-0 p-4">
       <SectionHeader title="Community impact" action={null} />
-      <div className="grid grid-cols-2 gap-4"><div><strong className="block text-2xl leading-tight text-brand-900">{reports}</strong><span className="text-sm text-muted">Reports shared</span></div><div><strong className="block text-2xl leading-tight text-[#14866d]">{verified}</strong><span className="text-sm text-muted">Alerts verified</span></div></div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <strong className="block text-2xl leading-tight text-brand-900">
+            {reports}
+          </strong>
+          <span className="text-sm text-muted">Reports shared</span>
+        </div>
+        <div>
+          <strong className="block text-2xl leading-tight text-[#14866d]">
+            {verified}
+          </strong>
+          <span className="text-sm text-muted">Alerts verified</span>
+        </div>
+      </div>
     </Card>
   );
 }
@@ -81,28 +118,110 @@ function CommunityImpactCard() {
 function GuidanceCard({ guidance }) {
   return (
     <Card className="w-full shrink-0 p-4">
-      <div className="mb-3 flex items-center gap-2.5"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-100 text-brand-800"><Icon name={guidance.icon} size={18} /></span><h2 className="m-0 text-base font-bold text-ink">{guidance.title}</h2></div>
+      <div className="mb-3 flex items-center gap-2.5">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-100 text-brand-800">
+          <Icon name={guidance.icon} size={18} />
+        </span>
+        <h2 className="m-0 text-base font-bold text-ink">{guidance.title}</h2>
+      </div>
       <ul className="m-0 grid list-none gap-3 p-0">
-        {guidance.items.map((item) => <li key={item} className="flex items-start gap-2.5 text-sm leading-5 text-muted"><Icon name="check" size={16} className="mt-0.5 shrink-0 text-risk-low" /><span>{item}</span></li>)}
+        {guidance.items.map((item) => (
+          <li
+            key={item}
+            className="flex items-start gap-2.5 text-sm leading-5 text-muted"
+          >
+            <Icon
+              name="check"
+              size={16}
+              className="mt-0.5 shrink-0 text-risk-low"
+            />
+            <span>{item}</span>
+          </li>
+        ))}
       </ul>
-      {guidance.action ? <Link to={guidance.action.to} className="mt-4 inline-flex min-h-10 w-full items-center justify-center rounded-lg bg-brand-100 px-3 text-sm font-bold text-brand-800 hover:bg-[#dceaff]">{guidance.action.label}</Link> : null}
+      {guidance.action ? (
+        <Link
+          to={guidance.action.to}
+          className="mt-4 inline-flex min-h-10 w-full items-center justify-center rounded-lg bg-brand-100 px-3 text-sm font-bold text-brand-800 hover:bg-[#dceaff]"
+        >
+          {guidance.action.label}
+        </Link>
+      ) : null}
     </Card>
   );
 }
 
-
 function UsefulResourcesCard() {
   const resources = [
-    { label: "Check a suspicious message", detail: "Run a quick safety check", to: "/analysis", icon: "shield" },
-    { label: "Verified safety alerts", detail: "Review current warnings", to: "/alerts", icon: "alert" },
-    { label: "Analyze before reporting", detail: "Check suspicious content first", to: "/analysis", icon: "shield" },
+    {
+      label: "Check a suspicious message",
+      detail: "Run a quick safety check",
+      to: "/analysis",
+      icon: "shield",
+    },
+    {
+      label: "Verified safety alerts",
+      detail: "Review current warnings",
+      to: "/alerts",
+      icon: "alert",
+    },
+    {
+      label: "Analyze before reporting",
+      detail: "Check suspicious content first",
+      to: "/analysis",
+      icon: "shield",
+    },
   ];
 
-  return <Card className="w-full shrink-0 p-4"><SectionHeader title="Useful Resources" action={null} /><div className="grid divide-y divide-line">{resources.map((resource) => <Link key={resource.label} to={resource.to} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#f2f5f8] text-brand-800"><Icon name={resource.icon} size={16} /></span><span className="min-w-0 flex-1"><strong className="block text-sm text-[#40546b]">{resource.label}</strong><small className="block text-xs text-muted">{resource.detail}</small></span><Icon name="chevron" size={16} className="shrink-0 text-brand-800" /></Link>)}</div></Card>;
+  return (
+    <Card className="w-full shrink-0 p-4">
+      <SectionHeader title="Useful Resources" action={null} />
+      <div className="grid divide-y divide-line">
+        {resources.map((resource) => (
+          <Link
+            key={resource.label}
+            to={resource.to}
+            className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+          >
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#f2f5f8] text-brand-800">
+              <Icon name={resource.icon} size={16} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <strong className="block text-sm text-[#40546b]">
+                {resource.label}
+              </strong>
+              <small className="block text-xs text-muted">
+                {resource.detail}
+              </small>
+            </span>
+            <Icon
+              name="chevron"
+              size={16}
+              className="shrink-0 text-brand-800"
+            />
+          </Link>
+        ))}
+      </div>
+    </Card>
+  );
 }
 
 function NeedHelpCard() {
-  return <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4"><h2 className="m-0 text-base font-bold text-ink">Need help?</h2><p className="mb-3 mt-1 text-sm leading-relaxed text-[#40546b]">Start with a quick safety check before deciding whether to report.</p><Link to="/analysis" className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"><Icon name="shield" size={17} />Analyze suspicious content</Link></Card>;
+  return (
+    <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4">
+      <h2 className="m-0 text-base font-bold text-ink">Need help?</h2>
+      <p className="mb-3 mt-1 text-sm leading-relaxed text-[#40546b]">
+        Start with a quick safety check before deciding whether to report.
+      </p>
+      <Link
+        to="/analysis"
+        className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"
+      >
+        <Icon name="shield" size={17} />
+        Analyze suspicious content
+      </Link>
+    </Card>
+  );
 }
 
 function RiskLevelCard() {
@@ -116,27 +235,67 @@ function RiskLevelCard() {
     <Card className="w-full shrink-0 p-4">
       <SectionHeader title="Understanding risk levels" action={null} />
       <ul className="m-0 grid list-none gap-2.5 p-0">
-        {levels.map((level) => <li key={level.risk} className="flex items-center justify-between gap-3"><Badge tone={level.risk.toLowerCase()}>{level.risk}</Badge><span className="text-right text-xs text-muted">{level.detail}</span></li>)}
+        {levels.map((level) => (
+          <li
+            key={level.risk}
+            className="flex items-center justify-between gap-3"
+          >
+            <Badge tone={level.risk.toLowerCase()}>{level.risk}</Badge>
+            <span className="text-right text-xs text-muted">
+              {level.detail}
+            </span>
+          </li>
+        ))}
       </ul>
     </Card>
   );
 }
 
 export function RightSidebar() {
-  const { pathname } = useLocation();
-  const showTrending = pathname === "/";
-  const showCommunityImpact = ["/", "/leaderboard"].includes(pathname);
-  const guidance = guidanceByRoute[pathname];
-
   return (
-    <aside className="hidden w-full self-start [&_h2]:text-base xl:sticky xl:top-[84px] xl:flex xl:flex-col xl:gap-4" aria-label="Page information">
-      {showCommunityImpact ? <CommunityImpactCard /> : null}
-      {showTrending ? <TrendingScamsCard /> : null}
-      {/*{showRecentAlerts ? <RecentAlertsCard /> : null}*/}
-      
-      {pathname === "/community" ? <><NeedHelpCard /><UsefulResourcesCard /></> : null}
-      {pathname === "/alerts" ? <><GuidanceCard guidance={alertGuidance} /><RiskLevelCard /></> : null}
-      {guidance ? <GuidanceCard guidance={guidance} /> : null}
+    <aside className="hidden min-h-0 flex-col gap-3.5 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:flex">
+      <Card className="p-3.5">
+        <SectionHeader title="Scam statistics" action="This month" />
+        <div className="grid grid-cols-2 gap-2">
+          {statistics.map((item) => (
+            <div
+              key={item.label}
+              className="flex min-h-14 items-center gap-2 rounded-lg bg-[#f8faff] p-2"
+            >
+              <span
+                className={`grid h-[30px] w-[30px] place-items-center rounded-full ${tones[item.tone]}`}
+              >
+                <Icon name={item.icon} />
+              </span>
+              <div>
+                <strong className="block text-[15px]">{item.value}</strong>
+                <small className="text-[9px] text-[#6c7890]">
+                  {item.label}
+                </small>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+      <Card className="p-3.5">
+        <SectionHeader title="Trending scam types" />{" "}
+        <div className="grid gap-2.5">
+          {trendingScams.map((item) => (
+            <div key={item.label}>
+              <div className="mb-1 flex justify-between text-[12px] text-[#4c5c73]">
+                <span>{item.label}</span>
+                <strong>{item.value}%</strong>
+              </div>
+              <span className="block h-1 overflow-hidden rounded-full bg-[#eaf0f8]">
+                <span
+                  className="block h-full rounded-full bg-[#1764c0]"
+                  style={{ width: `${item.value}%` }}
+                />
+              </span>
+            </div>
+          ))}
+        </div>
+      </Card>
     </aside>
   );
 }

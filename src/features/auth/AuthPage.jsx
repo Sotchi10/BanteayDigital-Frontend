@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "../../components/ui";
 import { useAuth } from "../../state/AuthStore";
@@ -36,15 +36,12 @@ export function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [recoveryNotice, setRecoveryNotice] = useState("");
-  const submitTimerRef = useRef(null);
-
-  useEffect(() => () => window.clearTimeout(submitTimerRef.current), []);
   const changeMode = (nextPath) => {
     setError("");
     setRecoveryNotice("");
     navigate(nextPath, { replace: true });
   };
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault();
     const trimmedContact = contact.trim();
     if (!trimmedContact || !password) {
@@ -59,12 +56,15 @@ export function AuthPage() {
       ? { email: trimmedContact, password }
       : { phoneNumber: trimmedContact, password };
     setLoading(true);
-    // Local-only session feedback until the existing auth endpoints are wired.
-    submitTimerRef.current = window.setTimeout(() => {
-      if (isSignUp) signUp(payload);
-      else signIn(payload);
+    try {
+      if (isSignUp) await signUp(payload);
+      else await signIn(payload);
       navigate(location.state?.from || "/", { replace: true });
-    }, 450);
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || requestError.response?.data?.error || "Unable to sign in. Please check your details and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
