@@ -4,6 +4,9 @@ import { AlertsPage } from "../features/alerts/AlertsPage";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { CommunityPage } from "../features/community/CommunityPage";
 import { HomePage } from "../features/home/HomePage";
+import { ScanHistoryPage } from "../features/history/ScanHistoryPage";
+import { ScanDetailPage } from "../features/history/ScanDetailPage";
+import { ReportHistoryPage } from "../features/history/ReportHistoryPage";
 import { LeaderboardPage } from "../features/leaderboard/LeaderboardPage";
 import { ReportPage } from "../features/report/ReportPage";
 import { FeaturePlaceholder } from "../components/FeaturePlaceholder";
@@ -29,9 +32,11 @@ export function AppRoutes() {
         <Route path="analysis" element={<AnalysisPage />} />
         <Route path="alerts" element={<AlertsPage />} />
         <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-        <Route path="profile" element={<ProtectedRoute><FeaturePlaceholder icon="user" eyebrow="Your account" title="Profile" description="Review your BanteayDigital profile and account activity." /></ProtectedRoute>} />
+        <Route path="profile" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="saved" element={<ProtectedRoute><FeaturePlaceholder icon="bookmark" eyebrow="Your saved items" title="Saved" description="Keep useful scam alerts, community posts, and safety resources here for quick reference." /></ProtectedRoute>} />
-        <Route path="history" element={<ProtectedRoute><FeaturePlaceholder icon="clock" eyebrow="Your activity" title="History" description="Review your previous scam analyses, reports, and safety activity in one place." /></ProtectedRoute>} />
+        <Route path="history" element={<ProtectedRoute><ScanHistoryPage /></ProtectedRoute>} />
+        <Route path="history/:scanId" element={<ProtectedRoute><ScanDetailPage /></ProtectedRoute>} />
+        <Route path="reports/history" element={<ProtectedRoute><ReportHistoryPage /></ProtectedRoute>} />
         <Route path="about" element={<FeaturePlaceholder icon="book" eyebrow="Learn more" title="About BanteayDigital" description="Learn how BanteayDigital helps the community recognise, report, and prevent digital scams." />} />
       </Route>
       <Route path="login" element={<AuthPage />} />

@@ -28,6 +28,16 @@ export function AuthProvider({ children }) {
       persist(nextUser);
       return nextUser;
     },
+    refreshUser: async () => {
+      const { user: nextUser } = await request("/v1/auth/me");
+      persist(nextUser);
+      return nextUser;
+    },
+    updateProfile: async (details) => {
+      const { user: nextUser } = await request("/v1/auth/me", { method: "patch", data: details });
+      persist(nextUser);
+      return nextUser;
+    },
     logout: async () => {
       try { await request("/v1/auth/logout", { method: "post" }); } finally { persist(null); }
     },

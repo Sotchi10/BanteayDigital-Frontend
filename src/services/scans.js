@@ -14,4 +14,12 @@ function createImageScan(image) {
   });
 }
 
-export { createImageScan, createScan };
+function listScans() {
+  return request("/v1/scans", { method: "get", params: { limit: 100 } });
+}
+
+function getScan(scanId) {
+  return request(`/v1/scans/${scanId}`);
+}
+
+export { createImageScan, createScan, getScan, listScans };

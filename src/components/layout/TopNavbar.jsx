@@ -97,7 +97,7 @@ export function TopNavbar() {
                 className={desktopNavClass}
               >
                 <Icon name={item.icon} size={17} />
-                {item.label}
+                {/*{item.label}*/}
               </NavLink>
             ))}
             {navigation.slice(2).map((item) => (
@@ -107,7 +107,7 @@ export function TopNavbar() {
                 className={desktopNavClass}
               >
                 <Icon name={item.icon} size={17} />
-                {item.label}
+                {/*{item.label}*/}
               </NavLink>
             ))}
           </nav>
@@ -220,7 +220,7 @@ export function TopNavbar() {
             className={mobileNavClass}
           >
             <Icon name={item.icon} size={20} />
-            <span>{item.label}</span>
+            {/*<span>{item.label}</span>*/}
           </NavLink>
         ))}
       </nav>

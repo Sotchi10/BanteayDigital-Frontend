@@ -4,4 +4,8 @@ function createReportFromScan(scanId, data) {
   return request(`/v1/scans/${scanId}/report`, { method: "post", data });
 }
 
-export { createReportFromScan };
+function listReports() {
+  return request("/v1/reports", { method: "get", params: { limit: 100 } });
+}
+
+export { createReportFromScan, listReports };

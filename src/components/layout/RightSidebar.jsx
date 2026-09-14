@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import { Badge, Card, Icon, SectionHeader } from "../ui";
 import { Link, useLocation } from "react-router-dom";
-import { statistics, trendingScams } from "../../data/mockCommunity";
+
 const guidanceByRoute = {
   "/analysis": {
     title: "Before you check",
@@ -32,78 +33,6 @@ const alertGuidance = {
     "Warn people who may have received the same message.",
   ],
 };
-
-//function TrendingScamsCard() {
-//  return (
-//    <Card className="w-full shrink-0 p-4">
-//      <SectionHeader title="Trending scam types" action={null} />
-//      <div className="grid gap-2">
-//        {trendingScams.slice(0, 4).map((item) => (
-//          <div key={item.label}>
-//            <div className="mb-1 flex justify-between gap-3 text-sm leading-5 text-[#52647a]">
-//              <span>{item.label}</span>
-//              <strong>{item.value}%</strong>
-//            </div>
-//            <span
-//              className="block h-1.5 overflow-hidden rounded-full bg-[#e8edf3]"
-//              role="meter"
-//              aria-label={`${item.label}: ${item.value}%`}
-//              aria-valuenow={item.value}
-//              aria-valuemin="0"
-//              aria-valuemax="100"
-//            >
-//              <span
-//                className="block h-full rounded-full bg-brand-800"
-//                style={{ width: `${item.value}%` }}
-//              />
-//            </span>
-//          </div>
-//        ))}
-//      </div>
-//    </Card>
-//  );
-//}
-
-//function RecentAlertsCard() {
-//  return (
-//    <Card className="w-full shrink-0 p-4">
-//      <div className="mb-2 flex min-h-9 items-center justify-between gap-3"><h2 className="m-0 text-base font-bold text-ink">Recent verified alerts</h2><Link to="/alerts" className="shrink-0 text-sm font-semibold text-brand-800 hover:text-brand-700">View alerts</Link></div>
-//      <ul className="m-0 list-none divide-y divide-line p-0">
-//        {recentAlerts.map((alert) => (
-//          <li key={alert.title} className="py-2.5 first:pt-0 last:pb-0">
-//            <div className="flex items-center justify-between gap-2"><Badge tone={alert.risk.toLowerCase()}><Icon name="alert" size={13} />{alert.risk} risk</Badge><small className="shrink-0 text-xs text-muted">{alert.time}</small></div>
-//            <p className="mb-0 mt-1.5 text-sm font-semibold leading-5 text-ink">{alert.title}</p>
-//          </li>
-//        ))}
-//      </ul>
-//    </Card>
-//  );
-//}
-
-function CommunityImpactCard() {
-  const reports = statistics.find((item) => item.label === "Reports")?.value;
-  const verified = statistics.find((item) => item.label === "Verified")?.value;
-
-  return (
-    <Card className="w-full shrink-0 p-4">
-      <SectionHeader title="Community impact" action={null} />
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <strong className="block text-2xl leading-tight text-brand-900">
-            {reports}
-          </strong>
-          <span className="text-sm text-muted">Reports shared</span>
-        </div>
-        <div>
-          <strong className="block text-2xl leading-tight text-[#14866d]">
-            {verified}
-          </strong>
-          <span className="text-sm text-muted">Alerts verified</span>
-        </div>
-      </div>
-    </Card>
-  );
-}
 
 function GuidanceCard({ guidance }) {
   return (
@@ -259,7 +188,6 @@ export function RightSidebar() {
     </>
   ) : isCommunity ? (
     <>
-      <CommunityImpactCard />
       <NeedHelpCard />
     </>
   ) : (
