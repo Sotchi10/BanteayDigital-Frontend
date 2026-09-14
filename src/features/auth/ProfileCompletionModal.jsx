@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../../state/AuthStore";
 
 const usernamePattern = /^[a-zA-Z0-9_]+$/;
@@ -7,18 +7,17 @@ export function ProfileCompletionModal() {
   const { user, updateProfile } = useAuth();
   const needsName = !user?.name?.trim();
   const needsUsername = !user?.username?.trim();
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    setName(user?.name || "");
-    setUsername(user?.username || "");
-    setError("");
-  }, [user?.id, user?.name, user?.username]);
 
   if (!user || (!needsName && !needsUsername)) return null;
+
+  return <ProfileCompletionForm key={user.id} needsName={needsName} needsUsername={needsUsername} updateProfile={updateProfile} user={user} />;
+}
+
+function ProfileCompletionForm({ needsName, needsUsername, updateProfile, user }) {
+  const [name, setName] = useState(user.name || "");
+  const [username, setUsername] = useState(user.username || "");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const submit = async (event) => {
     event.preventDefault();
