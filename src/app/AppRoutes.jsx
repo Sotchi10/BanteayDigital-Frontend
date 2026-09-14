@@ -11,6 +11,8 @@ import { LeaderboardPage } from "../features/leaderboard/LeaderboardPage";
 import { ReportPage } from "../features/report/ReportPage";
 import { FeaturePlaceholder } from "../components/FeaturePlaceholder";
 import { SettingsPage } from "../features/settings/SettingsPage";
+import { SafetyKnowledgePage } from "../features/safety/SafetyKnowledgePage";
+import { SafetyKnowledgeDetailPage } from "../features/safety/SafetyKnowledgeDetailPage";
 import { AuthPage } from "../features/auth/AuthPage";
 import { useAuth } from "../state/AuthStore";
 
@@ -31,6 +33,8 @@ export function AppRoutes() {
         <Route path="report" element={<ProtectedRoute><ReportPage /></ProtectedRoute>} />
         <Route path="analysis" element={<AnalysisPage />} />
         <Route path="alerts" element={<AlertsPage />} />
+        <Route path="safety" element={<SafetyKnowledgePage />} />
+        <Route path="safety/:slug" element={<SafetyKnowledgeDetailPage />} />
         <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="profile" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="saved" element={<ProtectedRoute><FeaturePlaceholder icon="bookmark" eyebrow="Your saved items" title="Saved" description="Keep useful scam alerts, community posts, and safety resources here for quick reference." /></ProtectedRoute>} />

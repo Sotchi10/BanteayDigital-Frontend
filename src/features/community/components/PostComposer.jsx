@@ -1,4 +1,4 @@
-import { Card, Icon } from "../../../components/ui";
+import { Icon } from "../../../components/ui";
 
 export function PostComposer({ value, onChange }) {
   return (

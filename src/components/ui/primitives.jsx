@@ -26,7 +26,8 @@ export function Card({ className = "", children }) {
   );
 }
 export function Avatar({ name, size = "md", tone = "blue" }) {
-  const initials = name
+  const displayName = typeof name === "string" && name.trim() ? name.trim() : "User";
+  const initials = displayName
     .split(" ")
     .map((part) => part[0])
     .slice(0, 2)
@@ -34,7 +35,7 @@ export function Avatar({ name, size = "md", tone = "blue" }) {
   return (
     <span
       className={`inline-grid shrink-0 place-items-center rounded-full font-bold text-white ${avatarSizes[size]} ${avatarTones[tone]}`}
-      aria-label={`${name}'s profile`}
+      aria-label={`${displayName}'s profile`}
     >
       {initials}
     </span>

@@ -7,7 +7,7 @@ const navigation = [
   { label: "Home", icon: "home", to: "/" },
   { label: "Analyze Scam", icon: "shield", to: "/analysis" },
   { label: "Alerts", icon: "bookmark", to: "/alerts" },
-  { label: "Community Safety", icon: "users", to: "/community" },
+  { label: "Community Safety", icon: "users", to: "/safety" },
 ];
 const desktopNavClass = ({ isActive }) =>
   `flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#52647a] hover:bg-[#f2f5f8] hover:text-brand-800"}`;
@@ -143,7 +143,7 @@ export function TopNavbar() {
               >
                 <Avatar name={user.name} size="sm" />
                 <span className="hidden text-sm font-semibold xl:inline">
-                  {user.name.split(" ")[0]}
+                  {user.username}
                 </span>
                 <Icon
                   name="chevronDown"

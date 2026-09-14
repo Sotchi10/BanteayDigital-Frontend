@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Badge, Card, Icon, SectionHeader } from "../ui";
 import { Link, useLocation } from "react-router-dom";
 
@@ -70,7 +69,7 @@ function GuidanceCard({ guidance }) {
   );
 }
 
-function UsefulResourcesCard() {
+export function UsefulResourcesCard() {
   const resources = [
     {
       label: "Check a suspicious message",
