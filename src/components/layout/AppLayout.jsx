@@ -9,10 +9,10 @@ export function AppLayout() {
   const isSettings = pathname === "/settings";
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
+    window.scrollTo({ top: 0, behavior: "auto" });
     document
       .getElementById("main-content")
-      ?.scrollTo({ top: 0, behavior: "instant" });
+      ?.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname]);
 
   return (

@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
 import { createImageScan, createScan } from "../../services/scans";
-
-const examples = [
-  "You won a prize. Pay a small delivery fee to claim it now.",
-  "Your bank account is suspended. Click this link and enter your OTP.",
-];
+import { createReportFromScan } from "../../services/reports";
 
 const modes = [
   { id: "TEXT", label: "Text", detail: "Message or email", icon: "message" },
@@ -55,16 +51,26 @@ const buildLocalPreview = ({ inputType, value }) => {
   };
 };*/
 
-const riskFromAssessment = (assessment) => (
-  assessment === "STRONG_SCAM_INDICATORS" ? "High" :
-    assessment === "SUSPICIOUS" || assessment === "CAUTION" ? "Medium" : "Low"
-);
+const riskFromAssessment = (assessment) =>
+  assessment === "STRONG_SCAM_INDICATORS"
+    ? "High"
+    : assessment === "SUSPICIOUS" || assessment === "CAUTION"
+      ? "Medium"
+      : "Low";
 
-const serializeResult = (scan) => ({ ...scan, risk: riskFromAssessment(scan.assessment) });
+const serializeResult = (scan) => ({
+  ...scan,
+  risk: riskFromAssessment(scan.assessment),
+});
 
 const errorMessage = (requestError) => {
-  if (requestError.response?.status === 401) return "Please log in before analyzing content.";
-  return requestError.response?.data?.message || requestError.response?.data?.error || "We could not complete the scan. Please try again.";
+  if (requestError.response?.status === 401)
+    return "Please log in before analyzing content.";
+  return (
+    requestError.response?.data?.message ||
+    requestError.response?.data?.error ||
+    "We could not complete the scan. Please try again."
+  );
 };
 
 function normalizeUrl(value) {
@@ -85,10 +91,7 @@ function ProgressTracker({ hasResult }) {
   const steps = ["Scan", "Review", "Report"];
   const currentStep = hasResult ? 1 : 0;
   return (
-    <ol
-      className="mb-6 flex w-full items-center"
-      aria-label="Scan progress"
-    >
+    <ol className="mb-6 flex w-full items-center" aria-label="Scan progress">
       {steps.map((label, index) => (
         <li
           key={label}
@@ -171,13 +174,231 @@ function ScanningOverlay() {
   );
 }
 
+function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-[#071a33]/55 p-4"
+      role="presentation"
+    >
+      <section
+        aria-labelledby="scan-result-title"
+        aria-modal="true"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+        role="dialog"
+      >
+        <div className="border-b border-line p-5 sm:p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-brand-700">
+                Scan result
+              </p>
+              <h2
+                id="scan-result-title"
+                className="mb-0 mt-1 text-2xl font-extrabold text-brand-900"
+              >
+                {result.risk} risk
+              </h2>
+            </div>
+            <button
+              aria-label="Close scan result"
+              className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-brand-100 hover:text-brand-800"
+              onClick={onClose}
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+          <Badge tone={riskTone(result.risk)} className="mt-4 px-3 py-1.5">
+            {result.assessment.replaceAll("_", " ")}
+          </Badge>
+          <p className="mb-0 mt-4 text-base leading-7 text-[#40546b]">
+            {result.analysis.summary}
+          </p>
+        </div>
+        <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+          <section className="rounded-xl border border-line bg-[#fbfcfe] p-4">
+            <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-ink">
+              <Icon name="alert" size={16} />
+              Detected indicators
+            </h3>
+            <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
+              {result.analysis.reasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+          </section>
+          <section className="rounded-xl border border-brand-100 bg-brand-100/40 p-4">
+            <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
+              <Icon name="shield" size={16} />
+              Recommended action
+            </h3>
+            <p className="mb-0 mt-3 text-sm leading-6 text-muted">
+              {result.analysis.recommendedActions[0] ||
+                "Verify the sender through an official contact method."}
+            </p>
+          </section>
+        </div>
+        <div className="flex flex-col gap-2 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:justify-end sm:p-6">
+          <button
+            className="min-h-11 rounded-lg border border-line bg-white px-5 text-sm font-bold text-brand-800"
+            onClick={onNewScan}
+            type="button"
+          >
+            New scan
+          </button>
+          <button
+            className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
+            onClick={onReport}
+            type="button"
+          >
+            Report this scam
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function ReportDialog({ scanId, onClose, onSuccess }) {
+  const [reason, setReason] = useState("");
+  const [details, setDetails] = useState("");
+  const [evidence, setEvidence] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const submit = async (event) => {
+    event.preventDefault();
+    if (!reason || details.trim().length < 10) {
+      setError("Choose a reason and provide at least 10 characters of detail.");
+      return;
+    }
+    setSubmitting(true);
+    setError("");
+    try {
+      await createReportFromScan(scanId, {
+        title: reason,
+        reason,
+        details: details.trim(),
+        evidence: evidence.trim() || undefined,
+      });
+      onSuccess();
+    } catch (requestError) {
+      setError(
+        requestError.response?.data?.message ||
+          "We could not submit your report. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  return (
+    <div
+      className="fixed inset-0 z-[60] grid place-items-center bg-[#071a33]/55 p-4"
+      role="presentation"
+    >
+      <section
+        aria-labelledby="report-title"
+        aria-modal="true"
+        className="w-full max-w-xl rounded-2xl bg-white shadow-2xl"
+        role="dialog"
+      >
+        <form onSubmit={submit}>
+          <div className="border-b border-line p-5 sm:p-6">
+            <h2
+              id="report-title"
+              className="m-0 text-xl font-bold text-brand-900"
+            >
+              Report this scam
+            </h2>
+            <p className="mb-0 mt-1 text-sm text-muted">
+              Your report is private and will be reviewed before anything is
+              shared.
+            </p>
+          </div>
+          <div className="grid gap-4 p-5 sm:p-6">
+            <label className="grid gap-1.5 text-sm font-bold text-ink">
+              Report reason
+              <select
+                required
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                className="min-h-11 rounded-lg border border-line bg-white px-3 font-normal"
+              >
+                <option value="">Select a reason</option>
+                <option value="Scam attempt">Scam attempt</option>
+                <option value="Phishing or impersonation">
+                  Phishing or impersonation
+                </option>
+                <option value="Payment fraud">Payment fraud</option>
+                <option value="Other suspicious activity">
+                  Other suspicious activity
+                </option>
+              </select>
+            </label>
+            <label className="grid gap-1.5 text-sm font-bold text-ink">
+              Description and details
+              <textarea
+                required
+                rows="4"
+                value={details}
+                onChange={(event) => setDetails(event.target.value)}
+                className="resize-y rounded-lg border border-line p-3 font-normal"
+                placeholder="Describe what happened without passwords, OTPs, or banking details."
+              />
+            </label>
+            <label className="grid gap-1.5 text-sm font-bold text-ink">
+              Optional evidence
+              <label className="text-xs font-normal text-muted">
+                Add a safe reference or link (do not include sensitive
+                information).
+              </label>
+              <input
+                value={evidence}
+                onChange={(event) => setEvidence(event.target.value)}
+                className="min-h-11 rounded-lg border border-line px-3 font-normal"
+                placeholder="https://example.com or reference details"
+              />
+            </label>
+            {error ? (
+              <p
+                className="m-0 text-sm font-semibold text-risk-high"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
+          </div>
+          <div className="flex justify-end gap-3 border-t border-line bg-[#fbfcfe] p-5 sm:p-6">
+            <button
+              disabled={submitting}
+              className="min-h-11 px-4 text-sm font-bold text-muted"
+              onClick={onClose}
+              type="button"
+            >
+              Cancel
+            </button>
+            <button
+              disabled={submitting}
+              className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white disabled:opacity-60"
+              type="submit"
+            >
+              {submitting ? "Submitting…" : "Submit report"}
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  );
+}
+
 export function AnalysisPage() {
-  const navigate = useNavigate();
   const [inputType, setInputType] = useState("TEXT");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [result, setResult] = useState(null);
+  const [showResultDialog, setShowResultDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [reportSubmitted, setReportSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -247,10 +468,12 @@ export function AnalysisPage() {
     setError("");
     setResult(null);
     try {
-      const response = inputType === "IMAGE"
-        ? await createImageScan(image)
-        : await createScan({ inputType, value });
+      const response =
+        inputType === "IMAGE"
+          ? await createImageScan(image)
+          : await createScan({ inputType, value });
       setResult(serializeResult(response.scan));
+      setShowResultDialog(true);
     } catch (requestError) {
       setError(errorMessage(requestError));
     } finally {
@@ -259,10 +482,7 @@ export function AnalysisPage() {
   };
 
   return (
-    <main
-      className="px-10"
-      id="main-content"
-    >
+    <main className="px-10" id="main-content">
       <ProgressTracker hasResult={Boolean(result)} />
       <Card className="relative overflow-hidden p-4 sm:p-6">
         {isSubmitting ? <ScanningOverlay /> : null}
@@ -395,26 +615,7 @@ export function AnalysisPage() {
               {error}
             </p>
           ) : null}
-          {inputType === "TEXT" ? (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className="mr-1 text-xs font-bold uppercase tracking-wide text-muted">
-                Try an example
-              </span>
-              {examples.map((example, index) => (
-                <button
-                  key={example}
-                  type="button"
-                  onClick={() => {
-                    setContent(example);
-                    setError("");
-                  }}
-                  className="rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-brand-800 transition hover:-translate-y-px hover:border-brand-700 hover:bg-brand-100 focus:outline-none focus:ring-2 focus:ring-brand-700"
-                >
-                  Example {index + 1}
-                </button>
-              ))}
-            </div>
-          ) : null}
+
           <div className="mt-7 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="mb-0 flex items-center gap-2 text-xs leading-5 text-muted">
               <Icon name="shield" size={15} /> This check offers safety signals,
@@ -431,117 +632,172 @@ export function AnalysisPage() {
         </form>
       </Card>
       {result ? (
-        <Card
-          className={`mt-6 overflow-hidden border-l-4 shadow-lg ${result.risk === "High" ? "border-l-risk-high" : result.risk === "Medium" ? "border-l-risk-medium" : "border-l-risk-low"}`}
-        >
-          <div className="mx-auto max-w-4xl p-5 sm:p-7">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-brand-700">
-                  Scan result
-                </p>
-                <h2 className="mb-0 mt-1 text-2xl font-extrabold text-brand-900">
-                  {result.risk} risk
-                </h2>
+        <>
+          <Card
+            className={`mt-6 overflow-hidden border-l-4 shadow-lg ${result.risk === "High" ? "border-l-risk-high" : result.risk === "Medium" ? "border-l-risk-medium" : "border-l-risk-low"}`}
+          >
+            <div className="mx-auto max-w-4xl p-5 sm:p-7">
+              <div className="hidden flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-brand-700">
+                    Scan result
+                  </p>
+                  <h2 className="mb-0 mt-1 text-2xl font-extrabold text-brand-900">
+                    {result.risk} risk
+                  </h2>
+                </div>
+                <Badge tone={riskTone(result.risk)} className="px-3 py-1.5">
+                  {result.assessment.replaceAll("_", " ")}
+                </Badge>
               </div>
-              <Badge tone={riskTone(result.risk)} className="px-3 py-1.5">
-                {result.assessment.replaceAll("_", " ")}
-              </Badge>
-            </div>
-            <p className="mb-0 mt-4 max-w-3xl text-base leading-7 text-[#40546b]">
-              {result.analysis.summary}
-            </p>
-            <div className="mt-6 grid gap-4 lg:grid-cols-2">
-              <section className="rounded-xl border border-line bg-[#fbfcfe] p-4">
-                <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-ink">
-                  <Icon name="alert" size={16} /> Detected indicators
-                </h3>
-                <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
-                  {result.analysis.reasons.map((reason) => (
-                    <li key={reason}>{reason}</li>
-                  ))}
-                </ul>
-              </section>
-              <section className="rounded-xl border border-brand-100 bg-brand-100/40 p-4">
-                <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
-                  <Icon name="shield" size={16} /> Recommended action
-                </h3>
-                <p className="mb-0 mt-3 text-sm leading-6 text-muted">
-                  {result.analysis.recommendedActions[0] ||
-                    "Verify the sender through an official contact method."}
-                </p>
-              </section>
-            </div>
-            {result.matchedScamCases.length ? (
-              <section className="mt-6 border-t border-line pt-5">
-                <div className="flex items-center gap-2">
-                  <Icon name="search" size={17} className="text-brand-800" />
-                  <h3 className="m-0 text-lg font-bold text-brand-900">
-                    Similar scam cases
+              <p className="hidden mb-0 mt-4 max-w-3xl text-base leading-7 text-[#40546b]">
+                {result.analysis.summary}
+              </p>
+              <div className="hidden mt-6 grid gap-4 lg:grid-cols-2">
+                <section className="rounded-xl border border-line bg-[#fbfcfe] p-4">
+                  <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-ink">
+                    <Icon name="alert" size={16} /> Detected indicators
                   </h3>
-                </div>
-                <div className="mt-3 grid gap-3">
-                  {result.matchedScamCases.map((item) => (
-                    <article
-                      key={item.id}
-                      className="rounded-xl border border-line bg-white p-4 transition hover:border-brand-700 hover:shadow-sm"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <strong className="text-sm text-brand-900">
-                          {item.title}
-                        </strong>
-                        <Badge tone={caseTone(item.riskLevel)}>
-                          {item.similarity}% similar
-                        </Badge>
-                      </div>
-                      <p className="mb-0 mt-2 text-sm leading-6 text-muted">
-                        {item.matchReason}
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-          </div>
-          <section className="flex flex-col gap-3 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
-            <div>
-              <p className="m-0 text-sm font-bold text-brand-900">
-                Did you encounter this scam?
-              </p>
-              <p className="mb-0 mt-1 text-xs text-muted">
-                Your report can help protect the community.
-              </p>
+                  <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
+                    {result.analysis.reasons.map((reason) => (
+                      <li key={reason}>{reason}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section className="rounded-xl border border-brand-100 bg-brand-100/40 p-4">
+                  <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
+                    <Icon name="shield" size={16} /> Recommended action
+                  </h3>
+                  <p className="mb-0 mt-3 text-sm leading-6 text-muted">
+                    {result.analysis.recommendedActions[0] ||
+                      "Verify the sender through an official contact method."}
+                  </p>
+                </section>
+              </div>
+              {result.matchedScamCases.length ? (
+                <section>
+                  <div className="flex items-center gap-2">
+                    <Icon name="search" size={17} className="text-brand-800" />
+                    <h3 className="m-0 text-lg font-bold text-brand-900">
+                      Similar scam cases
+                    </h3>
+                  </div>
+                  <div className="mt-3 grid gap-3">
+                    {result.matchedScamCases.map((item) => (
+                      <article
+                        key={item.id}
+                        className="rounded-xl border border-line bg-white p-4 transition hover:border-brand-700 hover:shadow-sm"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <strong className="text-sm text-brand-900">
+                            {item.title}
+                          </strong>
+                          <Badge tone={caseTone(item.riskLevel)}>
+                            {item.similarity}% similar
+                          </Badge>
+                        </div>
+                        <p className="mb-0 mt-2 text-sm leading-6 text-muted">
+                          {item.matchReason}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              ) : (
+                <p className="m-0 text-sm text-muted">
+                  No closely related scam cases were found for this scan.
+                </p>
+              )}
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <button
-                type="button"
-                onClick={() =>
-                  navigate("/report", { state: { analysis: result } })
-                }
-                className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white transition hover:bg-brand-700"
+            <section className="hidden flex-col gap-3 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+              <div>
+                <p className="m-0 text-sm font-bold text-brand-900">
+                  Did you encounter this scam?
+                </p>
+                <p className="mb-0 mt-1 text-xs text-muted">
+                  Your report can help protect the community.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => setShowReportDialog(true)}
+                  className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white transition hover:bg-brand-700"
+                >
+                  Report this scam
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResult(null);
+                    setContent("");
+                    clearImage();
+                  }}
+                  className="min-h-11 rounded-lg border border-line bg-white px-5 text-sm font-bold text-brand-800 transition hover:border-brand-700 hover:bg-brand-100"
+                >
+                  New scan
+                </button>
+                <Link
+                  to="/alerts"
+                  className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-brand-800 hover:underline"
+                >
+                  View alerts
+                </Link>
+              </div>
+            </section>
+          </Card>
+          {showResultDialog ? (
+            <ScanResultDialog
+              result={result}
+              onClose={() => setShowResultDialog(false)}
+              onNewScan={() => {
+                setShowResultDialog(false);
+                setResult(null);
+                setContent("");
+                clearImage();
+              }}
+              onReport={() => {
+                setShowResultDialog(false);
+                setShowReportDialog(true);
+              }}
+            />
+          ) : null}
+          {showReportDialog ? (
+            <ReportDialog
+              scanId={result.id}
+              onClose={() => setShowReportDialog(false)}
+              onSuccess={() => {
+                setShowReportDialog(false);
+                setReportSubmitted(true);
+              }}
+            />
+          ) : null}
+          {reportSubmitted ? (
+            <div className="fixed inset-0 z-[60] grid place-items-center bg-[#071a33]/55 p-4">
+              <div
+                className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl"
+                role="status"
               >
-                Report this scam
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setResult(null);
-                  setContent("");
-                  clearImage();
-                }}
-                className="min-h-11 rounded-lg border border-line bg-white px-5 text-sm font-bold text-brand-800 transition hover:border-brand-700 hover:bg-brand-100"
-              >
-                New scan
-              </button>
-              <Link
-                to="/alerts"
-                className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-brand-800 hover:underline"
-              >
-                View alerts
-              </Link>
+                <span className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-[#eaf8f3] text-risk-low">
+                  <Icon name="check" size={22} />
+                </span>
+                <h2 className="mb-1 mt-4 text-xl font-bold text-brand-900">
+                  Report submitted
+                </h2>
+                <p className="m-0 text-sm leading-6 text-muted">
+                  Thank you. Your report has been saved for review.
+                </p>
+                <button
+                  className="mt-5 min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
+                  onClick={() => setReportSubmitted(false)}
+                  type="button"
+                >
+                  Done
+                </button>
+              </div>
             </div>
-          </section>
-        </Card>
+          ) : null}
+        </>
       ) : null}
     </main>
   );

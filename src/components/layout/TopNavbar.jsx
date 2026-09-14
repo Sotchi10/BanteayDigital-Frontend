@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, Icon } from "../ui";
 import { useAuth } from "../../state/AuthStore";
 
@@ -16,8 +16,28 @@ const mobileNavClass = ({ isActive }) =>
 
 export function TopNavbar() {
   const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const profileMenuRef = useRef(null);
+  const cancelLogoutRef = useRef(null);
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await logout();
+    } catch {
+      // The local session is cleared by AuthStore even if the server session
+      // has already expired, so the user can still safely leave the account.
+    } finally {
+      setProfileMenuOpen(false);
+      setLogoutConfirmOpen(false);
+      setLoggingOut(false);
+      navigate("/", { replace: true });
+    }
+  };
 
   useEffect(() => {
     const closeMenu = (event) => {
@@ -25,7 +45,10 @@ export function TopNavbar() {
         setProfileMenuOpen(false);
     };
     const closeOnEscape = (event) => {
-      if (event.key === "Escape") setProfileMenuOpen(false);
+      if (event.key === "Escape") {
+        setProfileMenuOpen(false);
+        if (!loggingOut) setLogoutConfirmOpen(false);
+      }
     };
     document.addEventListener("pointerdown", closeMenu);
     document.addEventListener("keydown", closeOnEscape);
@@ -33,7 +56,11 @@ export function TopNavbar() {
       document.removeEventListener("pointerdown", closeMenu);
       document.removeEventListener("keydown", closeOnEscape);
     };
-  }, []);
+  }, [loggingOut]);
+
+  useEffect(() => {
+    if (logoutConfirmOpen) cancelLogoutRef.current?.focus();
+  }, [logoutConfirmOpen]);
 
   return (
     <>
@@ -155,7 +182,7 @@ export function TopNavbar() {
                   <button
                     type="button"
                     role="menuitem"
-                    onClick={() => { logout(); setProfileMenuOpen(false); }}
+                    onClick={() => setProfileMenuOpen(false)}
                     className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                   >
                     <Icon name="globe" size={17} />
@@ -165,10 +192,15 @@ export function TopNavbar() {
                   <button
                     type="button"
                     role="menuitem"
+                    disabled={loggingOut}
+                    onClick={() => {
+                      setProfileMenuOpen(false);
+                      setLogoutConfirmOpen(true);
+                    }}
                     className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-risk-high transition hover:bg-[#fff0f1]"
                   >
                     <Icon name="logout" size={17} />
-                    Log Out
+                    {loggingOut ? "Logging out…" : "Log Out"}
                   </button>
                 </div>
               ) : null}
@@ -192,6 +224,48 @@ export function TopNavbar() {
           </NavLink>
         ))}
       </nav>
+      {logoutConfirmOpen ? (
+        <div
+          aria-labelledby="logout-confirmation-title"
+          aria-modal="true"
+          className="fixed inset-0 z-[60] grid place-items-center bg-[#071a33]/55 p-4"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !loggingOut) setLogoutConfirmOpen(false);
+          }}
+          role="dialog"
+        >
+          <section className="w-full max-w-sm rounded-2xl border border-line bg-white p-5 shadow-2xl sm:p-6">
+            <div className="flex items-start gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#fff0f1] text-risk-high">
+                <Icon name="logout" size={19} />
+              </span>
+              <div>
+                <h2 className="m-0 text-lg font-bold text-ink" id="logout-confirmation-title">Log out?</h2>
+                <p className="mb-0 mt-1 text-sm leading-6 text-muted">You will need to sign in again to access your account.</p>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="min-h-10 rounded-lg border border-line bg-white px-4 text-sm font-semibold text-[#40546b] hover:bg-[#f2f5f8]"
+                disabled={loggingOut}
+                onClick={() => setLogoutConfirmOpen(false)}
+                ref={cancelLogoutRef}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="min-h-10 rounded-lg bg-risk-high px-4 text-sm font-bold text-white hover:opacity-90 disabled:opacity-60"
+                disabled={loggingOut}
+                onClick={handleLogout}
+                type="button"
+              >
+                {loggingOut ? "Logging out…" : "Log out"}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </>
   );
 }
