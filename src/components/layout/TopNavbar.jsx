@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, Icon } from "../ui";
 import { useAuth } from "../../state/AuthStore";
+import { useTranslation } from "react-i18next";
 
 const navigation = [
   { label: "Home", icon: "home", to: "/" },
@@ -16,6 +17,7 @@ const mobileNavClass = ({ isActive }) =>
 
 export function TopNavbar() {
   const { isAuthenticated, user, logout } = useAuth();
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
@@ -114,13 +116,14 @@ export function TopNavbar() {
           <div className="ml-auto flex items-center gap-1.5 xl:col-start-3 xl:ml-0 xl:justify-self-end">
             <button
               type="button"
+              onClick={() => i18n.changeLanguage(i18n.resolvedLanguage === "km" ? "en" : "km")}
               className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-white px-3 text-sm font-semibold text-[#40546b] hover:border-[#b8c8d9] hover:bg-[#f8fafc]"
-              aria-label="Language: Khmer or English"
+              aria-label={t("nav.language")}
             >
               <Icon name="globe" size={16} />
-              <span lang="km">ខ្មែរ</span>
+              <span lang={i18n.resolvedLanguage === "km" ? "en" : "km"}>{i18n.resolvedLanguage === "km" ? "EN" : "ខ្មែរ"}</span>
               <span className="text-[#9aa7b5]">|</span>
-              <span>EN</span>
+              <span>{i18n.resolvedLanguage === "km" ? "ខ្មែរ" : "EN"}</span>
             </button>
             <NavLink
               to="/alerts"
@@ -155,7 +158,7 @@ export function TopNavbar() {
                 <div
                   id="profile-menu"
                   role="menu"
-                  aria-label="Profile menu"
+                  aria-label={t("nav.profileMenu")}
                   className="absolute right-0 top-[calc(100%+8px)] z-50 w-64 overflow-hidden rounded-xl border border-line bg-white p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
                 >
                   <NavLink
@@ -170,7 +173,7 @@ export function TopNavbar() {
                         {user.name}
                       </strong>
                       <span className="block truncate text-xs text-muted">
-                        {user.email || user.phoneNumber || "Signed-in account"}
+                        {user.email || user.phoneNumber || t("nav.signedInAccount")}
                       </span>
                     </div>
                   </NavLink>
@@ -182,7 +185,7 @@ export function TopNavbar() {
                     className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                   >
                     <Icon name="settings" size={17} />
-                    Settings
+                    {t("nav.settings")}
                   </NavLink>
                   <button
                     type="button"
@@ -191,7 +194,7 @@ export function TopNavbar() {
                     className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                   >
                     <Icon name="globe" size={17} />
-                    Display &amp; Appearance
+                    {t("nav.appearance")}
                   </button>
                   <div className="my-1 border-t border-line" />
                   <button
@@ -205,11 +208,11 @@ export function TopNavbar() {
                     className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-risk-high transition hover:bg-[#fff0f1]"
                   >
                     <Icon name="logout" size={17} />
-                    {loggingOut ? "Logging out…" : "Log Out"}
+                    {loggingOut ? t("nav.loggingOut") : t("nav.logOut")}
                   </button>
                 </div>
               ) : null}
-            </div> : <Link to="/login" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700 sm:px-4"><Icon name="user" size={17} /><span className="hidden sm:inline">Sign in</span></Link>}
+            </div> : <Link to="/login" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700 sm:px-4"><Icon name="user" size={17} /><span className="hidden sm:inline">{t("nav.signIn")}</span></Link>}
           </div>
         </div>
       </header>

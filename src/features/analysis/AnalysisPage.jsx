@@ -4,11 +4,12 @@ import { Badge, Card, Icon } from "../../components/ui";
 import { createImageScan, createScan } from "../../services/scans";
 import { createReportFromScan } from "../../services/reports";
 import { useAuth } from "../../state/AuthStore";
+import { useTranslation } from "react-i18next";
 
-const modes = [
-  { id: "TEXT", label: "Text", detail: "Message or email", icon: "message" },
-  { id: "URL", label: "Link", detail: "Website address", icon: "link" },
-  { id: "IMAGE", label: "Image", detail: "Screenshot or photo", icon: "image" },
+const modes = (t) => [
+  { id: "TEXT", label: t("scan.text"), detail: t("scan.textDetail"), icon: "message" },
+  { id: "URL", label: t("scan.link"), detail: t("scan.linkDetail"), icon: "link" },
+  { id: "IMAGE", label: t("scan.image"), detail: t("scan.imageDetail"), icon: "image" },
 ];
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -95,19 +96,19 @@ const relatedScamMatches = (result) => {
   });
 };
 
-const errorMessage = (requestError) => {
+const errorMessage = (requestError, t) => {
   if (requestError.response?.status === 401)
-    return "Please log in before analyzing content.";
+    return t("scan.loginRequired");
   return (
     requestError.response?.data?.message ||
     requestError.response?.data?.error ||
-    "We could not complete the scan. Please try again."
+    t("scan.failed")
   );
 };
 
-function normalizeUrl(value) {
+function normalizeUrl(value, t) {
   const input = value.trim();
-  if (!input) return { error: "Paste a website URL before running the check." };
+  if (!input) return { error: t("scan.urlRequired") };
   const candidate = /^https?:\/\//i.test(input) ? input : `https://${input}`;
   try {
     const url = new URL(candidate);
@@ -115,15 +116,16 @@ function normalizeUrl(value) {
       throw new Error("Invalid URL");
     return { value: url.toString() };
   } catch {
-    return { error: "Enter a valid http or https website address." };
+    return { error: t("scan.invalidUrl") };
   }
 }
 
 function ProgressTracker({ hasResult }) {
-  const steps = ["Scan", "Review", "Report"];
+  const { t } = useTranslation();
+  const steps = [t("scan.stepScan"), t("scan.stepReview"), t("scan.stepReport")];
   const currentStep = hasResult ? 1 : 0;
   return (
-    <ol className="mb-6 flex w-full items-center" aria-label="Scan progress">
+    <ol className="mb-6 flex w-full items-center" aria-label={t("scan.progress")}>
       {steps.map((label, index) => (
         <li
           key={label}
@@ -181,6 +183,7 @@ function ScanModeCard({ mode, active, onSelect }) {
 }
 
 function ScanningOverlay() {
+  const { t } = useTranslation();
   return (
     <div
       className="absolute inset-0 z-10 grid place-items-center rounded-[var(--radius-card)] bg-white/90 p-6 backdrop-blur-sm"
@@ -196,10 +199,10 @@ function ScanningOverlay() {
           </span>
         </div>
         <h2 className="mb-1 mt-5 text-lg font-bold text-brand-900">
-          Scanning for warning signs
+          {t("scan.scanning")}
         </h2>
         <p className="m-0 max-w-xs text-sm leading-6 text-muted">
-          Checking patterns, similar scam cases, and evidence.
+          {t("scan.scanningDetail")}
         </p>
       </div>
     </div>
@@ -512,6 +515,8 @@ export function AnalysisPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
+  const scanModes = modes(t);
   const [inputType, setInputType] = useState("TEXT");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -548,12 +553,12 @@ export function AnalysisPage() {
     if (!file) return;
     if (!supportedImageTypes.has(file.type)) {
       clearImage();
-      setError("Choose a PNG, JPG, JPEG, or WEBP image.");
+      setError(t("scan.invalidImage"));
       return;
     }
     if (file.size > MAX_IMAGE_BYTES) {
       clearImage();
-      setError("Image must not exceed 10 MB.");
+      setError(t("scan.imageTooLarge"));
       return;
     }
     if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -567,13 +572,13 @@ export function AnalysisPage() {
     let value = content.trim();
     if (inputType === "IMAGE") {
       if (!image) {
-        setError("Choose an image before running the check.");
+        setError(t("scan.imageRequired"));
         return;
       }
       value = `Image selected: ${image.name}`;
     } else {
       if (inputType === "URL") {
-        const normalized = normalizeUrl(value);
+        const normalized = normalizeUrl(value, t);
         if (normalized.error) {
           setError(normalized.error);
           return;
@@ -581,7 +586,7 @@ export function AnalysisPage() {
         value = normalized.value;
         setContent(value);
       } else if (!value) {
-        setError("Paste suspicious text before running the check.");
+        setError(t("scan.textRequired"));
         return;
       }
     }
@@ -595,7 +600,7 @@ export function AnalysisPage() {
           : await createScan({ inputType, value });
       setResult(serializeResult(response.scan));
     } catch (requestError) {
-      setError(errorMessage(requestError));
+      setError(errorMessage(requestError, t));
     } finally {
       setIsSubmitting(false);
     }
@@ -632,22 +637,22 @@ export function AnalysisPage() {
           <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-line pb-5">
             <div>
               <h2 className="m-0 flex items-center gap-2 text-lg font-bold text-brand-900">
-                <Icon name="search" size={19} /> What would you like to check?
+                <Icon name="search" size={19} /> {t("scan.heading")}
               </h2>
               <p className="mb-0 mt-1 text-sm text-muted">
-                Select the format that best matches what you received.
+                {t("scan.intro")}
               </p>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f8fbff] px-2.5 py-1.5 text-xs font-semibold text-muted">
-              <Icon name="lock" size={13} /> Private by default
+              <Icon name="lock" size={13} /> {t("scan.private")}
             </span>
           </div>
           <div
             className="grid grid-cols-1 gap-3 sm:grid-cols-3"
             role="radiogroup"
-            aria-label="Scan type"
+            aria-label={t("scan.type")}
           >
-            {modes.map((mode) => (
+            {scanModes.map((mode) => (
               <ScanModeCard
                 key={mode.id}
                 mode={mode}
@@ -660,7 +665,7 @@ export function AnalysisPage() {
             {inputType === "TEXT" ? (
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">
-                  <Icon name="message" size={16} /> Suspicious message
+                  <Icon name="message" size={16} /> {t("scan.message")}
                 </span>
                 <textarea
                   value={content}
@@ -670,19 +675,18 @@ export function AnalysisPage() {
                   }}
                   rows="7"
                   className="w-full resize-y rounded-xl border border-line bg-white p-4 text-base text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
-                  placeholder="Paste the suspicious message here…"
+                  placeholder={t("scan.messagePlaceholder")}
                   aria-describedby={error ? "analysis-error" : "scan-help"}
                 />
                 <span id="scan-help" className="mt-2 block text-xs text-muted">
-                  Avoid including passwords, OTP codes, banking details, or
-                  other secrets.
+                  {t("scan.messageHelp")}
                 </span>
               </label>
             ) : null}
             {inputType === "URL" ? (
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">
-                  <Icon name="link" size={16} /> Website address
+                  <Icon name="link" size={16} /> {t("scan.website")}
                 </span>
                 <div className="relative">
                   <Icon
@@ -697,13 +701,13 @@ export function AnalysisPage() {
                       setError("");
                     }}
                     className="min-h-12 w-full rounded-xl border border-line bg-white py-3 pl-11 pr-4 text-base text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
-                    placeholder="https://suspicious-site.example"
+                    placeholder={t("scan.urlPlaceholder")}
                     inputMode="url"
                     aria-describedby={error ? "analysis-error" : "scan-help"}
                   />
                 </div>
                 <span id="scan-help" className="mt-2 block text-xs text-muted">
-                  We will check the address structure and known warning signals.
+                  {t("scan.urlHelp")}
                 </span>
               </label>
             ) : null}
@@ -721,7 +725,7 @@ export function AnalysisPage() {
                   <Icon name="upload" size={23} />
                 </span>
                 <span className="mt-3 text-sm font-bold text-brand-900">
-                  Upload a screenshot or image
+                  {t("scan.upload")}
                 </span>
                 <span className="mt-1 text-xs text-muted">
                   PNG, JPG, JPEG, or WEBP · up to 10 MB
@@ -730,7 +734,7 @@ export function AnalysisPage() {
                   <span className="mt-4 block overflow-hidden rounded-xl border border-line bg-white p-1 shadow-sm">
                     <img
                       src={previewUrl}
-                      alt="Selected image preview"
+                      alt={t("scan.imagePreview")}
                       className="max-h-52 max-w-full rounded-lg object-contain"
                     />
                   </span>
@@ -755,15 +759,14 @@ export function AnalysisPage() {
 
           <div className="mt-7 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="mb-0 flex items-center gap-2 text-xs leading-5 text-muted">
-              <Icon name="shield" size={15} /> This check offers safety signals,
-              not proof of a scam.
+              <Icon name="shield" size={15} /> {t("scan.safetyNote")}
             </p>
             <button
               disabled={isSubmitting}
               type="submit"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-800 px-6 text-sm font-bold text-white shadow-md shadow-brand-800/20 transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#d9ebfa] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <Icon name="shield" size={18} /> Analyze scam
+              <Icon name="shield" size={18} /> {t("scan.analyze")}
             </button>
           </div>
         </form>
@@ -777,10 +780,10 @@ export function AnalysisPage() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-brand-700">
-                    Scan result
+                    {t("scanExtra.result")}
                   </p>
                   <h2 className="mb-0 mt-1 text-2xl font-extrabold text-brand-900">
-                    {result.risk} risk
+                    {t("scanExtra.risk", { risk: result.risk })}
                   </h2>
                 </div>
                 <Badge tone={riskTone(result.risk)} className="px-3 py-1.5">
@@ -793,7 +796,7 @@ export function AnalysisPage() {
               <div className="mt-6 grid gap-4 lg:grid-cols-2">
                 <section className="rounded-xl border border-line bg-[#fbfcfe] p-4">
                   <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-ink">
-                    <Icon name="alert" size={16} /> Detected indicators
+                    <Icon name="alert" size={16} /> {t("scanExtra.indicators")}
                   </h3>
                   <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
                     {result.analysis.reasons.map((reason) => (
@@ -803,7 +806,7 @@ export function AnalysisPage() {
                 </section>
                 <section className="rounded-xl border border-brand-100 bg-brand-100/40 p-4">
                   <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
-                    <Icon name="shield" size={16} /> Recommended action
+                    <Icon name="shield" size={16} /> {t("scanExtra.recommendedAction")}
                   </h3>
                   <p className="mb-0 mt-3 text-sm leading-6 text-muted">
                     {result.analysis.recommendedActions[0] ||
@@ -828,7 +831,7 @@ export function AnalysisPage() {
                   onClick={startReport}
                   className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white transition hover:bg-brand-700"
                 >
-                  Submit report
+                  {t("scanExtra.submitReport")}
                 </button>
                 <button
                   type="button"
@@ -839,7 +842,7 @@ export function AnalysisPage() {
                   }}
                   className="min-h-11 rounded-lg border border-line bg-white px-5 text-sm font-bold text-brand-800 transition hover:border-brand-700 hover:bg-brand-100"
                 >
-                  Done
+                  {t("scanExtra.done")}
                 </button>
 
               </div>
@@ -872,17 +875,17 @@ export function AnalysisPage() {
                   <Icon name="check" size={22} />
                 </span>
                 <h2 className="mb-1 mt-4 text-xl font-bold text-brand-900">
-                  Report submitted
+                  {t("scanExtra.reportSubmitted")}
                 </h2>
                 <p className="m-0 text-sm leading-6 text-muted">
-                  Thank you. Your report has been saved for review.
+                  {t("scanExtra.reportSubmittedDetail")}
                 </p>
                 <button
                   className="mt-5 min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
                   onClick={() => setReportSubmitted(false)}
                   type="button"
                 >
-                  Done
+                  {t("scanExtra.done")}
                 </button>
               </div>
             </div>

@@ -2,22 +2,23 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "../../components/ui";
 import { useAuth } from "../../state/AuthStore";
+import { useTranslation } from "react-i18next";
 
-const benefits = [
+const benefits = (t) => [
   {
     icon: "shield",
-    title: "Analyze",
-    text: "Check suspicious messages and links before you respond.",
+    title: t("authExtra.benefitAnalyze"),
+    text: t("authExtra.benefitAnalyzeDetail"),
   },
   {
     icon: "book",
-    title: "Learn",
-    text: "Recognize patterns from community scam reports.",
+    title: t("authExtra.benefitLearn"),
+    text: t("authExtra.benefitLearnDetail"),
   },
   {
     icon: "users",
-    title: "Help Protect",
-    text: "Share encounters that can help keep others safe.",
+    title: t("authExtra.benefitProtect"),
+    text: t("authExtra.benefitProtectDetail"),
   },
 ];
 
@@ -28,6 +29,8 @@ export function AuthPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, signUp } = useAuth();
+  const { t } = useTranslation();
+  const authBenefits = benefits(t);
   const isSignUp = location.pathname === "/signup";
   const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
@@ -45,11 +48,11 @@ export function AuthPage() {
     event.preventDefault();
     const trimmedContact = contact.trim();
     if (!trimmedContact || !password) {
-      setError("Enter your email or phone number and password to continue.");
+      setError(t("auth.contactRequired"));
       return;
     }
     if (isSignUp && password.length < 8) {
-      setError("Your password must contain at least 8 characters.");
+      setError(t("auth.passwordLength"));
       return;
     }
     const payload = trimmedContact.includes("@")
@@ -64,7 +67,7 @@ export function AuthPage() {
         state: location.state?.returnState,
       });
     } catch (requestError) {
-      setError(requestError.response?.data?.message || requestError.response?.data?.error || "Unable to sign in. Please check your details and try again.");
+      setError(requestError.response?.data?.message || requestError.response?.data?.error || t("auth.failed"));
     } finally {
       setLoading(false);
     }
@@ -85,25 +88,24 @@ export function AuthPage() {
           <span>
             <strong className="block text-lg">BanteayDigital</strong>
             <small className="text-sm text-white/75">
-              Digital safety community
+              {t("authExtra.community")}
             </small>
           </span>
         </Link>
         <div className="my-auto max-w-md">
           <p className="m-0 text-sm font-bold uppercase tracking-[0.14em] text-[#cfe5ff]">
-            A safer digital community
+            {t("authExtra.saferCommunity")}
           </p>
           <h1 className="mb-4 mt-3 text-4xl font-bold leading-tight tracking-[-0.03em] xl:text-5xl">
-            Stay informed.
+            {t("authExtra.stayInformed")}
             <br />
-            Stay protected.
+            {t("authExtra.stayProtected")}
           </h1>
           <p className="m-0 text-base leading-7 text-[#deecff]">
-            Analyze suspicious content, learn from community scam reports, and
-            help protect the people around you.
+            {t("authExtra.heroDescription")}
           </p>
           <div className="mt-10 grid gap-5">
-            {benefits.map((benefit) => (
+            {authBenefits.map((benefit) => (
               <div key={benefit.title} className="flex items-start gap-3">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-white/15 text-white">
                   <Icon name={benefit.icon} size={19} />
@@ -119,7 +121,7 @@ export function AuthPage() {
           </div>
         </div>
         <p className="m-0 text-xs text-white/60">
-          Be cautious. Verify independently. Protect each other.
+          {t("authExtra.footerSafety")}
         </p>
       </section>
       <section className="flex min-h-screen items-center justify-center bg-surface px-10 py-10 sm:px-6 lg:px-10">
@@ -133,17 +135,17 @@ export function AuthPage() {
           </Link>
           <div className="mb-8 text-center">
             <h2 className="mb-2 mt-2 text-3xl text-start font-bold tracking-[-0.02em] text-brand-900">
-              {isSignUp ? "Create your account" : "Log in to BanteayDigital"}
+              {isSignUp ? t("auth.createTitle") : t("auth.loginTitle")}
             </h2>
             <p className="m-0 text-sm leading-6 text-muted text-start">
               {isSignUp
-                ? "Create an account to save reports and help protect others."
-                : "Continue your work to make the digital community safer."}
+                ? t("auth.createSubtitle")
+                : t("auth.loginSubtitle")}
             </p>
           </div>
           <form onSubmit={submit} noValidate className="grid gap-4">
             <label className="grid gap-1.5 text-sm font-bold text-ink">
-              Email or phone number
+              {t("auth.contact")}
               <input
                 disabled={loading}
                 value={contact}
@@ -152,14 +154,14 @@ export function AuthPage() {
                   setError("");
                 }}
                 className={inputClass}
-                placeholder="you@example.com or +855…"
+                placeholder={t("auth.contactPlaceholder")}
                 autoComplete="username"
                 inputMode="email"
                 aria-describedby={error ? "auth-error" : undefined}
               />
             </label>
             <label className="grid gap-1.5 text-sm font-bold text-ink">
-              Password
+              {t("auth.password")}
               <span className="relative">
                 <input
                   disabled={loading}
@@ -173,7 +175,7 @@ export function AuthPage() {
                   }}
                   className={`${inputClass} pr-12`}
                   placeholder={
-                    isSignUp ? "At least 8 characters" : "Enter your password"
+                    isSignUp ? t("auth.passwordNewPlaceholder") : t("auth.passwordPlaceholder")
                   }
                   autoComplete={isSignUp ? "new-password" : "current-password"}
                 />
@@ -182,7 +184,7 @@ export function AuthPage() {
                   type="button"
                   onClick={() => setShowPassword((visible) => !visible)}
                   className="absolute inset-y-0 right-0 grid w-12 place-items-center text-muted hover:text-brand-800"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? t("authExtra.hidePassword") : t("authExtra.showPassword")}
                 >
                   <Icon name={showPassword ? "eyeOff" : "eye"} size={19} />
                 </button>
@@ -190,8 +192,7 @@ export function AuthPage() {
             </label>
             {isSignUp ? (
               <p className="-mt-2 mb-0 text-xs leading-5 text-muted">
-                Use at least 8 characters. Your email or phone number is used to
-                sign in.
+                {t("auth.passwordHint")}
               </p>
             ) : (
               <div className="-mt-1 flex items-center justify-between gap-3">
@@ -202,18 +203,18 @@ export function AuthPage() {
                     type="checkbox"
                     className="h-4 w-4 accent-brand-800"
                   />
-                  Remember me
+                  {t("auth.remember")}
                 </label>
                 <button
                   type="button"
                   onClick={() =>
                     setRecoveryNotice(
-                      "Password recovery will be available when the authentication API is connected.",
+                      t("authExtra.recoveryNotice"),
                     )
                   }
                   className="text-sm font-semibold text-brand-800 hover:text-brand-700 hover:underline"
                 >
-                  Forgot password?
+                  {t("auth.forgot")}
                 </button>
               </div>
             )}
@@ -238,13 +239,13 @@ export function AuthPage() {
             >
               <Icon name={loading ? "clock" : "user"} size={18} />
               {loading
-                ? "Please wait…"
+                ? t("auth.pleaseWait")
                 : isSignUp
-                  ? "Create account"
-                  : "Log in"}
+                  ? t("auth.signUp")
+                  : t("auth.signIn")}
             </button>
             <div className="flex items-center gap-3 py-1 text-xs text-muted before:h-px before:flex-1 before:bg-line after:h-px after:flex-1">
-              or
+              {t("authExtra.or")}
             </div>
             <button
               disabled
@@ -255,22 +256,21 @@ export function AuthPage() {
               <span className="grid h-5 w-5 place-items-center rounded-full bg-[#f2f5f8] text-xs font-bold text-[#4285f4]">
                 G
               </span>
-              Continue with Google
+              {t("authExtra.google")}
             </button>
           </form>
           <p className="mb-0 mt-6 text-center text-sm text-muted">
-            {isSignUp ? "Already have an account?" : "New to BanteayDigital?"}{" "}
+            {isSignUp ? t("auth.existingAccount") : t("auth.newAccount")}{" "}
             <button
               type="button"
               onClick={() => changeMode(isSignUp ? "/login" : "/signup")}
               className="font-bold text-brand-800 hover:text-brand-700 hover:underline"
             >
-              {isSignUp ? "Log in" : "Sign up"}
+              {isSignUp ? t("auth.switchToSignIn") : t("auth.switchToSignUp")}
             </button>
           </p>
           <p className="mb-0 mt-5 text-center text-xs leading-5 text-muted">
-            By continuing, you agree to keep reports truthful and protect
-            private information.
+            {t("authExtra.terms")}
           </p>
         </div>
       </section>

@@ -1,0 +1,34 @@
+export default {
+  translation: {
+    rightSidebar: {
+      beforeCheck: 'Before you check', beforeCheckOne: 'Remove passwords, OTP codes, and banking details.', beforeCheckTwo: 'Include the complete message or link for better context.', beforeCheckThree: 'Verify urgent requests through an official contact channel.',
+      reportIncludes: 'A useful report includes', reportOne: 'What happened and what the sender requested.', reportTwo: 'The suspicious account, phone number, or website.', reportThree: 'Evidence with names and private details removed.',
+      whenAlert: 'When you receive an alert', checkMessage: 'Check a suspicious message', alertOne: 'Pause and avoid links, payments, or urgent requests.', alertTwo: "Verify the message through the organisation's official channel.", alertThree: 'Warn people who may have received the same message.',
+      usefulResources: 'Useful resources', quickCheck: 'Run a quick safety check', verifiedAlerts: 'Verified safety alerts', reviewWarnings: 'Review current warnings', analyzeBeforeReport: 'Analyze before reporting', checkFirst: 'Check suspicious content first',
+      needHelp: 'Need help?', helpDetail: 'Start with a quick safety check before deciding whether to report.', analyzeContent: 'Analyze suspicious content',
+      riskLevels: 'Understanding risk levels', high: 'High', highDetail: 'Act now and stop contact', medium: 'Medium', mediumDetail: 'Use caution and verify', low: 'Low', lowDetail: 'Stay aware and monitor',
+    },
+    scanExtra: {
+      result: 'Scan result', risk: '{{risk}} risk', indicators: 'Detected indicators',
+      recommendedAction: 'Recommended action', submitReport: 'Submit report', done: 'Done',
+      reportSubmitted: 'Report submitted', reportSubmittedDetail: 'Thank you. Your report has been saved for review.',
+    },
+    nav: { home: 'Home', analyze: 'Analyze scam', alerts: 'Alerts', safety: 'Community safety', language: 'Language', signIn: 'Sign in', settings: 'Settings', appearance: 'Display & appearance', logOut: 'Log out', loggingOut: 'Logging out…', profileMenu: 'Profile menu', signedInAccount: 'Signed-in account' },
+    sidebar: { saved: 'Saved', history: 'History', about: 'About', reports: '{{count}} reports', reportsUnavailable: 'Reports unavailable', loadingReports: 'Loading reports…', joined: 'Joined {{date}}', beforeRespond: 'Before you respond', tipSender: 'Check the sender and link carefully.', tipOtp: 'Never share an OTP or password.', tipReport: 'Report suspicious requests quickly.' },
+    auth: { createTitle: 'Create your account', loginTitle: 'Log in to BanteayDigital', createSubtitle: 'Create an account to save reports and help protect others.', loginSubtitle: 'Continue your work to make the digital community safer.', contact: 'Email or phone number', contactPlaceholder: 'you@example.com or +855…', password: 'Password', passwordNewPlaceholder: 'At least 8 characters', passwordPlaceholder: 'Enter your password', passwordHint: 'Use at least 8 characters. Your email or phone number is used to sign in.', remember: 'Remember me', forgot: 'Forgot password?', signUp: 'Create account', signIn: 'Sign in', pleaseWait: 'Please wait…', newAccount: 'New to BanteayDigital?', existingAccount: 'Already have an account?', switchToSignUp: 'Sign up', switchToSignIn: 'Log in', contactRequired: 'Enter your email or phone number and password to continue.', passwordLength: 'Your password must contain at least 8 characters.', failed: 'Unable to sign in. Please check your details and try again.' },
+    scan: { progress: 'Scan progress', stepScan: 'Scan', stepReview: 'Review', stepReport: 'Report', text: 'Text', textDetail: 'Message or email', link: 'Link', linkDetail: 'Website address', image: 'Image', imageDetail: 'Screenshot or photo', heading: 'What would you like to check?', intro: 'Select the format that best matches what you received.', private: 'Private by default', type: 'Scan type', message: 'Suspicious message', messagePlaceholder: 'Paste the suspicious message here…', messageHelp: 'Avoid including passwords, OTP codes, banking details, or other secrets.', website: 'Website address', urlPlaceholder: 'https://suspicious-site.example', urlHelp: 'We will check the address structure and known warning signals.', upload: 'Upload a screenshot or image', uploadHelp: 'PNG, JPG, JPEG, or WEBP · up to 10 MB', imagePreview: 'Selected image preview', safetyNote: 'This check offers safety signals, not proof of a scam.', analyze: 'Analyze scam', scanning: 'Scanning for warning signs', scanningDetail: 'Checking patterns, similar scam cases, and evidence.', invalidImage: 'Choose a PNG, JPG, JPEG, or WEBP image.', imageTooLarge: 'Image must not exceed 10 MB.', imageRequired: 'Choose an image before running the check.', textRequired: 'Paste suspicious text before running the check.', urlRequired: 'Paste a website URL before running the check.', invalidUrl: 'Enter a valid http or https website address.', loginRequired: 'Please log in before analyzing content.', failed: 'We could not complete the scan. Please try again.' },
+    authExtra: {
+      community: 'Digital safety community', saferCommunity: 'A safer digital community',
+      stayInformed: 'Stay informed.', stayProtected: 'Stay protected.',
+      heroDescription: 'Analyze suspicious content, learn from community scam reports, and help protect the people around you.',
+      benefitAnalyze: 'Analyze', benefitAnalyzeDetail: 'Check suspicious messages and links before you respond.',
+      benefitLearn: 'Learn', benefitLearnDetail: 'Recognize patterns from community scam reports.',
+      benefitProtect: 'Help protect', benefitProtectDetail: 'Share encounters that can help keep others safe.',
+      footerSafety: 'Be cautious. Verify independently. Protect each other.',
+      hidePassword: 'Hide password', showPassword: 'Show password',
+      recoveryNotice: 'Password recovery will be available when the authentication API is connected.',
+      or: 'or', google: 'Continue with Google', terms: 'By continuing, you agree to keep reports truthful and protect private information.',
+    },
+    common: { cancel: 'Cancel', close: 'Close' },
+  },
+}

@@ -32,7 +32,9 @@
 }
 * { box-sizing: border-box; }
 html { min-width: 320px; font-family: var(--font-sans); background: var(--color-canvas); color: var(--color-ink); scroll-behavior: smooth; }
+html[lang="km"] { font-family: "Kantumruy Pro", "DM Sans", system-ui, sans-serif; line-height: 1.7; }
 body { margin: 0; min-width: 320px; overflow-x: clip; background: var(--color-canvas); line-height: 1.55; }
+html[lang="km"] body { line-height: 1.7; }
 button, input, select { font: inherit; }
 button:not(:disabled) { cursor: pointer; }
 button, a, select { -webkit-tap-highlight-color: transparent; }

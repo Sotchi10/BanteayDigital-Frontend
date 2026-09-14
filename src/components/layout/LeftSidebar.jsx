@@ -3,13 +3,10 @@ import { NavLink } from "react-router-dom";
 import { listReports } from "../../services/reports";
 import { useAuth } from "../../state/AuthStore";
 import { Avatar, Card, Icon } from "../ui";
-
-const joinedLabel = (date) =>
-  date
-    ? `Joined ${new Intl.DateTimeFormat(undefined, { month: "short", year: "numeric" }).format(new Date(date))}`
-    : "";
+import { useTranslation } from "react-i18next";
 
 export function LeftSidebar() {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [reportCount, setReportCount] = useState(null);
   const [reportError, setReportError] = useState(false);
@@ -51,38 +48,38 @@ export function LeftSidebar() {
           <div className="mt-4 flex items-center justify-between border-t border-line pt-3 text-xs text-muted">
             <span>
               {reportError
-                ? "Reports unavailable"
+                ? t("sidebar.reportsUnavailable")
                 : reportCount === null
-                  ? "Loading reports…"
-                  : `${reportCount} reports`}
+                  ? t("sidebar.loadingReports")
+                  : t("sidebar.reports", { count: reportCount })}
             </span>
-            <span>{joinedLabel(user.createdAt)}</span>
+            <span>{user.createdAt ? t("sidebar.joined", { date: new Intl.DateTimeFormat(i18n.language, { month: "short", year: "numeric" }).format(new Date(user.createdAt)) }) : ""}</span>
           </div>
         </Card>
       ) : null}
       <nav className="grid gap-1" aria-label="Safety shortcuts">
         <NavLink to="/saved" className={shortcutClass}>
           <Icon name="bookmark" size={18} />
-          Saved
+          {t("sidebar.saved")}
         </NavLink>
         <NavLink to="/history" className={shortcutClass}>
           <Icon name="clock" size={18} />
-          History
+          {t("sidebar.history")}
         </NavLink>
         <NavLink to="/about" className={shortcutClass}>
           <Icon name="book" size={18} />
-          About
+          {t("sidebar.about")}
         </NavLink>
       </nav>
       <Card className="p-4">
         <div className="mb-2 flex items-center gap-2">
           <Icon name="shield" size={19} className="text-brand-800" />
-          <strong className="text-sm text-ink">Before you respond</strong>
+          <strong className="text-sm text-ink">{t("sidebar.beforeRespond")}</strong>
         </div>
         <ul className="m-0 grid gap-2 pl-5 text-xs leading-relaxed text-[#40546b]">
-          <li>Check the sender and link carefully.</li>
-          <li>Never share an OTP or password.</li>
-          <li>Report suspicious requests quickly.</li>
+          <li>{t("sidebar.tipSender")}</li>
+          <li>{t("sidebar.tipOtp")}</li>
+          <li>{t("sidebar.tipReport")}</li>
         </ul>
       </Card>
     </aside>

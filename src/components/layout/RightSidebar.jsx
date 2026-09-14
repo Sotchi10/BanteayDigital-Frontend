@@ -1,37 +1,38 @@
 import { Badge, Card, Icon, SectionHeader } from "../ui";
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-const guidanceByRoute = {
+const guidanceByRoute = (t) => ({
   "/analysis": {
-    title: "Before you check",
+    title: t("rightSidebar.beforeCheck"),
     icon: "shield",
     items: [
-      "Remove passwords, OTP codes, and banking details.",
-      "Include the complete message or link for better context.",
-      "Verify urgent requests through an official contact channel.",
+      t("rightSidebar.beforeCheckOne"),
+      t("rightSidebar.beforeCheckTwo"),
+      t("rightSidebar.beforeCheckThree"),
     ],
   },
   "/report": {
-    title: "A useful report includes",
+    title: t("rightSidebar.reportIncludes"),
     icon: "edit",
     items: [
-      "What happened and what the sender requested.",
-      "The suspicious account, phone number, or website.",
-      "Evidence with names and private details removed.",
+      t("rightSidebar.reportOne"),
+      t("rightSidebar.reportTwo"),
+      t("rightSidebar.reportThree"),
     ],
   },
-};
+});
 
-const alertGuidance = {
-  title: "When you receive an alert",
+const alertGuidance = (t) => ({
+  title: t("rightSidebar.whenAlert"),
   icon: "alert",
-  action: { label: "Check a suspicious message", to: "/analysis" },
+  action: { label: t("rightSidebar.checkMessage"), to: "/analysis" },
   items: [
-    "Pause and avoid links, payments, or urgent requests.",
-    "Verify the message through the organisation's official channel.",
-    "Warn people who may have received the same message.",
+    t("rightSidebar.alertOne"),
+    t("rightSidebar.alertTwo"),
+    t("rightSidebar.alertThree"),
   ],
-};
+});
 
 function GuidanceCard({ guidance }) {
   return (
@@ -70,22 +71,23 @@ function GuidanceCard({ guidance }) {
 }
 
 export function UsefulResourcesCard() {
+  const { t } = useTranslation();
   const resources = [
     {
-      label: "Check a suspicious message",
-      detail: "Run a quick safety check",
+      label: t("rightSidebar.checkMessage"),
+      detail: t("rightSidebar.quickCheck"),
       to: "/analysis",
       icon: "shield",
     },
     {
-      label: "Verified safety alerts",
-      detail: "Review current warnings",
+      label: t("rightSidebar.verifiedAlerts"),
+      detail: t("rightSidebar.reviewWarnings"),
       to: "/alerts",
       icon: "alert",
     },
     {
-      label: "Analyze before reporting",
-      detail: "Check suspicious content first",
+      label: t("rightSidebar.analyzeBeforeReport"),
+      detail: t("rightSidebar.checkFirst"),
       to: "/analysis",
       icon: "shield",
     },
@@ -93,7 +95,7 @@ export function UsefulResourcesCard() {
 
   return (
     <Card className="w-full shrink-0 p-4">
-      <SectionHeader title="Useful Resources" action={null} />
+      <SectionHeader title={t("rightSidebar.usefulResources")} action={null} />
       <div className="grid divide-y divide-line">
         {resources.map((resource) => (
           <Link
@@ -125,40 +127,42 @@ export function UsefulResourcesCard() {
 }
 
 function NeedHelpCard() {
+  const { t } = useTranslation();
   return (
     <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4">
-      <h2 className="m-0 text-base font-bold text-ink">Need help?</h2>
+      <h2 className="m-0 text-base font-bold text-ink">{t("rightSidebar.needHelp")}</h2>
       <p className="mb-3 mt-1 text-sm leading-relaxed text-[#40546b]">
-        Start with a quick safety check before deciding whether to report.
+        {t("rightSidebar.helpDetail")}
       </p>
       <Link
         to="/analysis"
         className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700"
       >
         <Icon name="shield" size={17} />
-        Analyze suspicious content
+        {t("rightSidebar.analyzeContent")}
       </Link>
     </Card>
   );
 }
 
 function RiskLevelCard() {
+  const { t } = useTranslation();
   const levels = [
-    { risk: "High", detail: "Act now and stop contact" },
-    { risk: "Medium", detail: "Use caution and verify" },
-    { risk: "Low", detail: "Stay aware and monitor" },
+    { risk: t("rightSidebar.high"), tone: "high", detail: t("rightSidebar.highDetail") },
+    { risk: t("rightSidebar.medium"), tone: "medium", detail: t("rightSidebar.mediumDetail") },
+    { risk: t("rightSidebar.low"), tone: "low", detail: t("rightSidebar.lowDetail") },
   ];
 
   return (
     <Card className="w-full shrink-0 p-4">
-      <SectionHeader title="Understanding risk levels" action={null} />
+      <SectionHeader title={t("rightSidebar.riskLevels")} action={null} />
       <ul className="m-0 grid list-none gap-2.5 p-0">
         {levels.map((level) => (
           <li
             key={level.risk}
             className="flex items-center justify-between gap-3"
           >
-            <Badge tone={level.risk.toLowerCase()}>{level.risk}</Badge>
+            <Badge tone={level.tone}>{level.risk}</Badge>
             <span className="text-right text-xs text-muted">
               {level.detail}
             </span>
@@ -171,7 +175,8 @@ function RiskLevelCard() {
 
 export function RightSidebar() {
   const { pathname } = useLocation();
-  const guidance = guidanceByRoute[pathname];
+  const { t } = useTranslation();
+  const guidance = guidanceByRoute(t)[pathname];
   const isCommunity = pathname === "/" || pathname.startsWith("/community");
   const isAlerts = pathname.startsWith("/alerts");
 
@@ -182,7 +187,7 @@ export function RightSidebar() {
     </>
   ) : isAlerts ? (
     <>
-      <GuidanceCard guidance={alertGuidance} />
+      <GuidanceCard guidance={alertGuidance(t)} />
       {/*<TrendingScamsCard />*/}
     </>
   ) : isCommunity ? (
