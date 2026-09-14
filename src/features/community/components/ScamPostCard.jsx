@@ -294,11 +294,6 @@ export function ScamPostCard({
           <h2 className="m-0 text-[17px] font-bold leading-6 text-ink">
             {post.title}
           </h2>
-          {post.summary ? (
-            <p className="mb-1 mt-1 text-[13px] font-medium leading-5 text-[#56657b]">
-              {post.summary}
-            </p>
-          ) : null}
           <ExpandableDescription>{post.content}</ExpandableDescription>
           <ImageEvidence alt={post.title} src={post.imageUrl || post.image} />
         </section>

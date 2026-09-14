@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
 import { createImageScan, createScan } from "../../services/scans";
 import { createReportFromScan } from "../../services/reports";
+import { useAuth } from "../../state/AuthStore";
 
 const modes = [
   { id: "TEXT", label: "Text", detail: "Message or email", icon: "message" },
@@ -489,13 +491,34 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
   );
 }
 
+function AccountRequiredDialog({ onClose, onCreateAccount, onSignIn }) {
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end bg-[#071a33]/55 p-4 sm:items-center sm:justify-center" role="presentation">
+      <section aria-labelledby="account-required-title" aria-modal="true" className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl sm:p-6" role="dialog">
+        <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-100 text-brand-800"><Icon name="users" size={21} /></span>
+        <h2 id="account-required-title" className="mb-1 mt-4 text-xl font-bold text-brand-900">Create an account to submit a report</h2>
+        <p className="m-0 text-sm leading-6 text-muted">Reports are shared with the community, so an account is required. Your scan result will be ready when you return.</p>
+        <div className="mt-5 grid gap-2 sm:grid-cols-2">
+          <button className="min-h-11 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100" onClick={onSignIn} type="button">Sign In</button>
+          <button className="min-h-11 rounded-lg bg-brand-800 px-4 text-sm font-bold text-white hover:bg-brand-700" onClick={onCreateAccount} type="button">Create Account</button>
+        </div>
+        <button className="mt-4 w-full text-sm font-semibold text-muted hover:text-brand-800" onClick={onClose} type="button">Not now</button>
+      </section>
+    </div>
+  );
+}
+
 export function AnalysisPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [inputType, setInputType] = useState("TEXT");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [result, setResult] = useState(null);
-  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [result, setResult] = useState(() => location.state?.reportResult || null);
+  const [showReportDialog, setShowReportDialog] = useState(() => Boolean(location.state?.reportResult && isAuthenticated));
+  const [showAccountRequired, setShowAccountRequired] = useState(false);
   const [reportSubmitted, setReportSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -576,6 +599,23 @@ export function AnalysisPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const startReport = () => {
+    if (isAuthenticated) {
+      setShowReportDialog(true);
+      return;
+    }
+    setShowAccountRequired(true);
+  };
+
+  const continueWithAccount = (path) => {
+    navigate(path, {
+      state: {
+        from: "/analysis",
+        returnState: { reportResult: result },
+      },
+    });
   };
 
   return (
@@ -785,10 +825,10 @@ export function AnalysisPage() {
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button
                   type="button"
-                  onClick={() => setShowReportDialog(true)}
+                  onClick={startReport}
                   className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white transition hover:bg-brand-700"
                 >
-                  Report this scam
+                  Submit report
                 </button>
                 <button
                   type="button"
@@ -813,6 +853,13 @@ export function AnalysisPage() {
                 setShowReportDialog(false);
                 setReportSubmitted(true);
               }}
+            />
+          ) : null}
+          {showAccountRequired ? (
+            <AccountRequiredDialog
+              onClose={() => setShowAccountRequired(false)}
+              onSignIn={() => continueWithAccount("/login")}
+              onCreateAccount={() => continueWithAccount("/signup")}
             />
           ) : null}
           {reportSubmitted ? (

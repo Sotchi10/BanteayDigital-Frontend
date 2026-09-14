@@ -25,7 +25,7 @@ export function Card({ className = "", children }) {
     </section>
   );
 }
-export function Avatar({ name, size = "md", tone = "blue" }) {
+export function Avatar({ name, imageUrl, size = "md", tone = "blue" }) {
   const displayName = typeof name === "string" && name.trim() ? name.trim() : "User";
   const initials = displayName
     .split(" ")
@@ -37,7 +37,7 @@ export function Avatar({ name, size = "md", tone = "blue" }) {
       className={`inline-grid shrink-0 place-items-center rounded-full font-bold text-white ${avatarSizes[size]} ${avatarTones[tone]}`}
       aria-label={`${displayName}'s profile`}
     >
-      {initials}
+      {imageUrl ? <img src={imageUrl} alt="" className="h-full w-full rounded-full object-cover" /> : initials}
     </span>
   );
 }

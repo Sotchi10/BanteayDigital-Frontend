@@ -39,7 +39,7 @@ export function AuthPage() {
   const changeMode = (nextPath) => {
     setError("");
     setRecoveryNotice("");
-    navigate(nextPath, { replace: true });
+    navigate(nextPath, { replace: true, state: location.state });
   };
   const submit = async (event) => {
     event.preventDefault();
@@ -59,7 +59,10 @@ export function AuthPage() {
     try {
       if (isSignUp) await signUp(payload);
       else await signIn(payload);
-      navigate(location.state?.from || "/", { replace: true });
+      navigate(location.state?.from || "/", {
+        replace: true,
+        state: location.state?.returnState,
+      });
     } catch (requestError) {
       setError(requestError.response?.data?.message || requestError.response?.data?.error || "Unable to sign in. Please check your details and try again.");
     } finally {

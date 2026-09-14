@@ -14,6 +14,7 @@ import { SettingsPage } from "../features/settings/SettingsPage";
 import { SafetyKnowledgePage } from "../features/safety/SafetyKnowledgePage";
 import { SafetyKnowledgeDetailPage } from "../features/safety/SafetyKnowledgeDetailPage";
 import { AuthPage } from "../features/auth/AuthPage";
+import { PublicProfilePage } from "../features/profile/PublicProfilePage";
 import { useAuth } from "../state/AuthStore";
 
 function ProtectedRoute({ children }) {
@@ -42,6 +43,7 @@ export function AppRoutes() {
         <Route path="history/:scanId" element={<ProtectedRoute><ScanDetailPage /></ProtectedRoute>} />
         <Route path="reports/history" element={<ProtectedRoute><ReportHistoryPage /></ProtectedRoute>} />
         <Route path="about" element={<FeaturePlaceholder icon="book" eyebrow="Learn more" title="About BanteayDigital" description="Learn how BanteayDigital helps the community recognise, report, and prevent digital scams." />} />
+        <Route path=":username" element={<PublicProfilePage />} />
       </Route>
       <Route path="login" element={<AuthPage />} />
       <Route path="signup" element={<AuthPage />} />

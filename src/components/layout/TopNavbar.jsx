@@ -158,7 +158,12 @@ export function TopNavbar() {
                   aria-label="Profile menu"
                   className="absolute right-0 top-[calc(100%+8px)] z-50 w-64 overflow-hidden rounded-xl border border-line bg-white p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
                 >
-                  <div className="flex items-center gap-3 px-3 py-3">
+                  <NavLink
+                    to={user.username ? `/${encodeURIComponent(user.username)}` : "/settings"}
+                    onClick={() => setProfileMenuOpen(false)}
+                    role="menuitem"
+                    className="flex items-center gap-3 rounded-lg px-3 py-3 transition hover:bg-brand-100"
+                  >
                     <Avatar name={user.name} size="md" />
                     <div className="min-w-0">
                       <strong className="block truncate text-sm text-ink">
@@ -168,7 +173,7 @@ export function TopNavbar() {
                         {user.email || user.phoneNumber || "Signed-in account"}
                       </span>
                     </div>
-                  </div>
+                  </NavLink>
                   <div className="my-1 border-t border-line" />
                   <NavLink
                     to="/settings"
