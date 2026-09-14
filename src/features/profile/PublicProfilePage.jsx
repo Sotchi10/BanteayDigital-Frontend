@@ -71,7 +71,7 @@ export function PublicProfilePage() {
   return (
     <main className="min-w-0 px-10" id="main-content">
       <Card className="overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-brand-900 via-brand-800 to-[#2670c9] sm:h-40" />
+        <div className="h-24 bg-linear-to-r from-brand-900 via-brand-800 to-[#2670c9] sm:h-40" />
         <div className="mt-15 px-5 pb-6 sm:px-7">
           <div className="-mt-9 flex items-end gap-4">
             <Avatar name={displayName} imageUrl={profile.avatarUrl} size="xl" />
@@ -94,7 +94,7 @@ export function PublicProfilePage() {
       <section className="mt-7">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">
+            <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
               Community contributions
             </p>
             <h2 className="mb-0 mt-1 text-xl font-bold text-brand-900">

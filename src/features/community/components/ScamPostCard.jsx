@@ -61,7 +61,7 @@ function ExpandableDescription({ children }) {
     <div>
       <p
         ref={descriptionRef}
-        className={`mb-1 whitespace-pre-wrap break-words text-[15px] leading-relaxed text-[#44536a] ${expanded ? "" : "line-clamp-3"}`}
+        className={`mb-1 whitespace-pre-wrap wrap-break-word text-[15px] leading-relaxed text-[#44536a] ${expanded ? "" : "line-clamp-3"}`}
       >
         {children}
       </p>
@@ -189,7 +189,7 @@ function PostActions({
 
   return (
     <>
-      <div className="grid min-h-10 grid-cols-3 border-t border-[#e5eaf1]">
+      <div className="grid min-h-10 grid-cols-3 border-t border-line">
         <button
           aria-pressed={post.interaction.likedByMe}
           className={`flex min-w-0 items-center justify-center gap-1.5 border-0 bg-transparent px-2 text-xs font-semibold ${post.interaction.likedByMe ? "text-red-600 [&_svg]:fill-current" : "text-[#61718a]"}`}
@@ -201,7 +201,7 @@ function PostActions({
           <span className="text-xs">{post.interaction.likeCount} </span>
         </button>
         <button
-          className="flex min-w-0 items-center justify-center gap-1.5 border-x border-[#e5eaf1] bg-transparent px-2 text-xs font-semibold text-[#61718a] hover:text-brand-700"
+          className="flex min-w-0 items-center justify-center gap-1.5 border-x border-line bg-transparent px-2 text-xs font-semibold text-[#61718a] hover:text-brand-700"
           onClick={onOpenComments}
           type="button"
         >

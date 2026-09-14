@@ -46,7 +46,7 @@ export function PostDiscussionModal({
   const imageSource = post.imageUrl || post.image;
   return (
     <div
-      className="fixed inset-0 z-[60] grid place-items-center overscroll-contain bg-[#071a33]/55 p-3 sm:p-5"
+      className="fixed inset-0 z-60 grid place-items-center overscroll-contain bg-[#071a33]/55 p-3 sm:p-5"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -87,7 +87,7 @@ export function PostDiscussionModal({
             </button>
           </header>
           <div className="space-y-3 p-4 sm:p-5">
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">
+            <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
               Verified safety alert
             </p>
             <div className="flex flex-wrap gap-2">
@@ -97,14 +97,14 @@ export function PostDiscussionModal({
             <h1 id="discussion-title" className="m-0 text-lg font-bold leading-7 text-brand-900 sm:text-xl">
               {post.title}
             </h1>
-            <p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-[#40546b]">
+            <p className="m-0 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-[#40546b]">
               {post.content}
             </p>
             {showImage && imageSource ? (
               <figure className="m-0 overflow-hidden rounded-xl border border-line bg-[#f5f8fc]">
                 <img
                   alt={post.title}
-                  className="aspect-[16/9] max-h-64 w-full object-cover"
+                  className="aspect-video max-h-64 w-full object-cover"
                   decoding="async"
                   loading="lazy"
                   onError={({ currentTarget }) => {
@@ -129,7 +129,7 @@ export function PostDiscussionModal({
         >
           <div className="flex items-center justify-between border-b border-line bg-white px-5 py-4">
             <div>
-              <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">
+              <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
                 Discussion
               </p>
               <h2 className="m-0 mt-0.5 text-base font-bold text-brand-900">

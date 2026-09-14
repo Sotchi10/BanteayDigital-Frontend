@@ -119,7 +119,7 @@ export function CommentSection({
 
   return (
     <section
-      className={`border-t border-[#e5eaf1] bg-[#fbfcfe] px-1 py-4 ${className}`}
+      className={`border-t border-line bg-[#fbfcfe] px-1 py-4 ${className}`}
       aria-label="Comments"
     >
       {pinnedComposer ? (
