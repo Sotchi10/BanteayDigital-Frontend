@@ -71,7 +71,13 @@ const asPercent = (score) => {
   return Math.round(numericScore <= 1 ? numericScore * 100 : numericScore);
 };
 
-const relatedScamMatches = (result) => {
+const localizedValue = (value, khmerValue, language) => (
+  language === "km" && typeof khmerValue === "string" && khmerValue.trim()
+    ? khmerValue
+    : value
+);
+
+const relatedScamMatches = (result, language, t) => {
   const aiMatches = Array.isArray(result?.aiMatches) ? result.aiMatches : [];
   const retrievedMatches = Array.isArray(result?.aiRetrieval?.matches)
     ? result.aiRetrieval.matches
@@ -85,8 +91,16 @@ const relatedScamMatches = (result) => {
     const payload = match.payload || {};
     return {
       id: payload.caseId ?? match.caseId ?? match.id ?? index,
-      title: payload.title ?? match.title ?? "Related scam case",
-      scamType: payload.scamType ?? match.scamType,
+      title: localizedValue(
+        payload.title ?? match.title ?? t("scanExtra.relatedCase"),
+        payload.titleKm ?? payload.title_km ?? payload.khmerTitle ?? payload.translations?.km?.title ?? match.titleKm ?? match.title_km ?? match.khmerTitle ?? match.translations?.km?.title,
+        language,
+      ),
+      scamType: localizedValue(
+        payload.scamType ?? match.scamType,
+        payload.scamTypeKm ?? payload.scam_type_km ?? payload.khmerScamType ?? payload.translations?.km?.scamType ?? match.scamTypeKm ?? match.scam_type_km ?? match.khmerScamType ?? match.translations?.km?.scamType,
+        language,
+      ),
       riskLevel: payload.riskLevel ?? match.riskLevel,
       confidence: asPercent(match.score ?? match.similarity),
       description: match.matchReason ?? match.description ?? payload.description,
@@ -210,17 +224,18 @@ function ScanningOverlay() {
 }
 
 function RelatedScamResults({ result }) {
-  const matches = relatedScamMatches(result);
+  const { t, i18n } = useTranslation();
+  const matches = relatedScamMatches(result, i18n.resolvedLanguage, t);
   const retrievalStatus = result?.aiRetrieval?.status;
 
   if (retrievalStatus === "UNAVAILABLE") {
     return (
       <section className="rounded-xl border border-line bg-[#fbfcfe] p-4" aria-live="polite">
         <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
-          <Icon name="search" size={16} /> Related scam results
+          <Icon name="search" size={16} /> {t("scanExtra.relatedResults")}
         </h3>
         <p className="mb-0 mt-2 text-sm leading-6 text-muted">
-          Related scam matches are temporarily unavailable. The scan result above is still available.
+          {t("scanExtra.relatedUnavailable")}
         </p>
       </section>
     );
@@ -230,10 +245,10 @@ function RelatedScamResults({ result }) {
     return (
       <section className="rounded-xl border border-line bg-[#fbfcfe] p-4" aria-live="polite">
         <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
-          <Icon name="search" size={16} /> Related scam results
+          <Icon name="search" size={16} /> {t("scanExtra.relatedResults")}
         </h3>
         <p className="mb-0 mt-2 text-sm leading-6 text-muted">
-          No closely related scam cases were found for this scan.
+          {t("scanExtra.relatedNone")}
         </p>
       </section>
     );
@@ -244,7 +259,7 @@ function RelatedScamResults({ result }) {
       <div className="mt-3 flex items-center gap-2">
         <Icon name="search" size={17} className="text-brand-800" />
         <h3 id="related-scam-results-title" className="m-0 text-lg font-bold text-brand-900">
-          Related scam results
+          {t("scanExtra.relatedResults")}
         </h3>
       </div>
       <div className="mt-3 grid gap-3">
@@ -256,15 +271,15 @@ function RelatedScamResults({ result }) {
                 {item.scamType ? <span className="mt-1 block text-xs font-semibold text-muted">{item.scamType}</span> : null}
               </div>
               {item.confidence !== null ? (
-                <Badge tone={caseTone(item.riskLevel)}>{item.confidence}% match</Badge>
+                <Badge tone={caseTone(item.riskLevel)}>{t("scanExtra.match", { percent: item.confidence })}</Badge>
               ) : null}
             </div>
             {item.description ? <p className="mb-0 mt-2 text-sm leading-6 text-muted">{item.description}</p> : null}
             <div className="mt-3 flex flex-wrap items-center gap-3 text-xs font-semibold">
-              {item.relation ? <span className="text-muted">{item.relation.replaceAll("_", " ")}</span> : null}
+              {item.relation ? <span className="text-muted">{t(`scanExtra.relation.${item.relation}`, { defaultValue: item.relation.replaceAll("_", " ") })}</span> : null}
               {typeof item.source === "string" && /^https?:\/\//i.test(item.source) ? (
                 <a className="text-brand-800 hover:underline" href={item.source} target="_blank" rel="noreferrer">
-                  View source
+                  {t("scanExtra.viewSource")}
                 </a>
               ) : null}
             </div>
@@ -276,6 +291,8 @@ function RelatedScamResults({ result }) {
 }
 
 export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
+  const { t } = useTranslation();
+  const riskLabel = t(`scanExtra.riskLabels.${result.risk}`);
   return (
     <div
       className="fixed inset-0 z-50 grid place-items-center bg-[#071a33]/55 p-4"
@@ -291,17 +308,17 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-brand-700">
-                Scan result
+                {t("scanExtra.result")}
               </p>
               <h2
                 id="scan-result-title"
                 className="mb-0 mt-1 text-2xl font-extrabold text-brand-900"
               >
-                {result.risk} risk
+                {t("scanExtra.riskLevel", { risk: riskLabel })}
               </h2>
             </div>
             <button
-              aria-label="Close scan result"
+              aria-label={t("scanExtra.close")}
               className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-brand-100 hover:text-brand-800"
               onClick={onClose}
               type="button"
@@ -310,7 +327,7 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
             </button>
           </div>
           <Badge tone={riskTone(result.risk)} className="mt-4 px-3 py-1.5">
-            {result.assessment.replaceAll("_", " ")}
+            {t(`scanExtra.assessment.${result.assessment}`, { defaultValue: result.assessment.replaceAll("_", " ") })}
           </Badge>
           <p className="mb-0 mt-4 text-base leading-7 text-[#40546b]">
             {result.analysis.summary}
@@ -320,7 +337,7 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
           <section className="rounded-xl border border-line bg-[#fbfcfe] p-4">
             <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-ink">
               <Icon name="alert" size={16} />
-              Detected indicators
+              {t("scanExtra.indicators")}
             </h3>
             <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
               {result.analysis.reasons.map((reason) => (
@@ -331,11 +348,11 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
           <section className="rounded-xl border border-brand-100 bg-brand-100/40 p-4">
             <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
               <Icon name="shield" size={16} />
-              Recommended action
+              {t("scanExtra.recommendedAction")}
             </h3>
             <p className="mb-0 mt-3 text-sm leading-6 text-muted">
               {result.analysis.recommendedActions[0] ||
-                "Verify the sender through an official contact method."}
+                t("scanExtra.defaultRecommendation")}
             </p>
           </section>
         </div>
@@ -348,7 +365,7 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
             onClick={onNewScan}
             type="button"
           >
-            New scan
+            {t("scanExtra.newScan")}
           </button>
           <button
             className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
@@ -783,11 +800,11 @@ export function AnalysisPage() {
                     {t("scanExtra.result")}
                   </p>
                   <h2 className="mb-0 mt-1 text-2xl font-extrabold text-brand-900">
-                    {t("scanExtra.risk", { risk: result.risk })}
+                    {t("scanExtra.riskLevel", { risk: t(`scanExtra.riskLabels.${result.risk}`) })}
                   </h2>
                 </div>
                 <Badge tone={riskTone(result.risk)} className="px-3 py-1.5">
-                  {result.assessment.replaceAll("_", " ")}
+                  {t(`scanExtra.assessment.${result.assessment}`, { defaultValue: result.assessment.replaceAll("_", " ") })}
                 </Badge>
               </div>
               <p className="mb-0 mt-4 max-w-3xl text-base leading-7 text-[#40546b]">
