@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
 import { createImageScan, createScan } from "../../services/scans";
 import { createReportFromScan } from "../../services/reports";
@@ -62,6 +61,37 @@ const serializeResult = (scan) => ({
   ...scan,
   risk: riskFromAssessment(scan.assessment),
 });
+
+const asPercent = (score) => {
+  const numericScore = Number(score);
+  if (!Number.isFinite(numericScore)) return null;
+  return Math.round(numericScore <= 1 ? numericScore * 100 : numericScore);
+};
+
+const relatedScamMatches = (result) => {
+  const aiMatches = Array.isArray(result?.aiMatches) ? result.aiMatches : [];
+  const retrievedMatches = Array.isArray(result?.aiRetrieval?.matches)
+    ? result.aiRetrieval.matches
+    : [];
+  const storedMatches = Array.isArray(result?.matchedScamCases)
+    ? result.matchedScamCases
+    : [];
+  const matches = aiMatches.length ? aiMatches : retrievedMatches.length ? retrievedMatches : storedMatches;
+
+  return matches.map((match, index) => {
+    const payload = match.payload || {};
+    return {
+      id: payload.caseId ?? match.caseId ?? match.id ?? index,
+      title: payload.title ?? match.title ?? "Related scam case",
+      scamType: payload.scamType ?? match.scamType,
+      riskLevel: payload.riskLevel ?? match.riskLevel,
+      confidence: asPercent(match.score ?? match.similarity),
+      description: match.matchReason ?? match.description ?? payload.description,
+      source: payload.source ?? match.source,
+      relation: match.relation,
+    };
+  });
+};
 
 const errorMessage = (requestError) => {
   if (requestError.response?.status === 401)
@@ -174,7 +204,73 @@ function ScanningOverlay() {
   );
 }
 
-function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
+function RelatedScamResults({ result }) {
+  const matches = relatedScamMatches(result);
+  const retrievalStatus = result?.aiRetrieval?.status;
+
+  if (retrievalStatus === "UNAVAILABLE") {
+    return (
+      <section className="rounded-xl border border-line bg-[#fbfcfe] p-4" aria-live="polite">
+        <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
+          <Icon name="search" size={16} /> Related scam results
+        </h3>
+        <p className="mb-0 mt-2 text-sm leading-6 text-muted">
+          Related scam matches are temporarily unavailable. The scan result above is still available.
+        </p>
+      </section>
+    );
+  }
+
+  if (!matches.length) {
+    return (
+      <section className="rounded-xl border border-line bg-[#fbfcfe] p-4" aria-live="polite">
+        <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
+          <Icon name="search" size={16} /> Related scam results
+        </h3>
+        <p className="mb-0 mt-2 text-sm leading-6 text-muted">
+          No closely related scam cases were found for this scan.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section aria-labelledby="related-scam-results-title">
+      <div className="mt-3 flex items-center gap-2">
+        <Icon name="search" size={17} className="text-brand-800" />
+        <h3 id="related-scam-results-title" className="m-0 text-lg font-bold text-brand-900">
+          Related scam results
+        </h3>
+      </div>
+      <div className="mt-3 grid gap-3">
+        {matches.map((item) => (
+          <article key={item.id} className="rounded-xl border border-line bg-white p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <strong className="block text-sm text-brand-900">{item.title}</strong>
+                {item.scamType ? <span className="mt-1 block text-xs font-semibold text-muted">{item.scamType}</span> : null}
+              </div>
+              {item.confidence !== null ? (
+                <Badge tone={caseTone(item.riskLevel)}>{item.confidence}% match</Badge>
+              ) : null}
+            </div>
+            {item.description ? <p className="mb-0 mt-2 text-sm leading-6 text-muted">{item.description}</p> : null}
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs font-semibold">
+              {item.relation ? <span className="text-muted">{item.relation.replaceAll("_", " ")}</span> : null}
+              {typeof item.source === "string" && /^https?:\/\//i.test(item.source) ? (
+                <a className="text-brand-800 hover:underline" href={item.source} target="_blank" rel="noreferrer">
+                  View source
+                </a>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
   return (
     <div
       className="fixed inset-0 z-50 grid place-items-center bg-[#071a33]/55 p-4"
@@ -237,6 +333,9 @@ function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
                 "Verify the sender through an official contact method."}
             </p>
           </section>
+        </div>
+        <div className="border-t border-line p-5 sm:p-6">
+          <RelatedScamResults result={result} />
         </div>
         <div className="flex flex-col gap-2 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:justify-end sm:p-6">
           <button
@@ -396,7 +495,6 @@ export function AnalysisPage() {
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [result, setResult] = useState(null);
-  const [showResultDialog, setShowResultDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [reportSubmitted, setReportSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -473,7 +571,6 @@ export function AnalysisPage() {
           ? await createImageScan(image)
           : await createScan({ inputType, value });
       setResult(serializeResult(response.scan));
-      setShowResultDialog(true);
     } catch (requestError) {
       setError(errorMessage(requestError));
     } finally {
@@ -637,7 +734,7 @@ export function AnalysisPage() {
             className={`mt-6 overflow-hidden border-l-4 shadow-lg ${result.risk === "High" ? "border-l-risk-high" : result.risk === "Medium" ? "border-l-risk-medium" : "border-l-risk-low"}`}
           >
             <div className="mx-auto max-w-4xl p-5 sm:p-7">
-              <div className="hidden flex-wrap items-start justify-between gap-4">
+              <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-brand-700">
                     Scan result
@@ -650,10 +747,10 @@ export function AnalysisPage() {
                   {result.assessment.replaceAll("_", " ")}
                 </Badge>
               </div>
-              <p className="hidden mb-0 mt-4 max-w-3xl text-base leading-7 text-[#40546b]">
+              <p className="mb-0 mt-4 max-w-3xl text-base leading-7 text-[#40546b]">
                 {result.analysis.summary}
               </p>
-              <div className="hidden mt-6 grid gap-4 lg:grid-cols-2">
+              <div className="mt-6 grid gap-4 lg:grid-cols-2">
                 <section className="rounded-xl border border-line bg-[#fbfcfe] p-4">
                   <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-ink">
                     <Icon name="alert" size={16} /> Detected indicators
@@ -674,42 +771,9 @@ export function AnalysisPage() {
                   </p>
                 </section>
               </div>
-              {result.matchedScamCases.length ? (
-                <section>
-                  <div className="flex items-center gap-2">
-                    <Icon name="search" size={17} className="text-brand-800" />
-                    <h3 className="m-0 text-lg font-bold text-brand-900">
-                      Similar scam cases
-                    </h3>
-                  </div>
-                  <div className="mt-3 grid gap-3">
-                    {result.matchedScamCases.map((item) => (
-                      <article
-                        key={item.id}
-                        className="rounded-xl border border-line bg-white p-4 transition hover:border-brand-700 hover:shadow-sm"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <strong className="text-sm text-brand-900">
-                            {item.title}
-                          </strong>
-                          <Badge tone={caseTone(item.riskLevel)}>
-                            {item.similarity}% similar
-                          </Badge>
-                        </div>
-                        <p className="mb-0 mt-2 text-sm leading-6 text-muted">
-                          {item.matchReason}
-                        </p>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              ) : (
-                <p className="m-0 text-sm text-muted">
-                  No closely related scam cases were found for this scan.
-                </p>
-              )}
+              <RelatedScamResults result={result} />
             </div>
-            <section className="hidden flex-col gap-3 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+            <section className="flex flex-col gap-3 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
               <div>
                 <p className="m-0 text-sm font-bold text-brand-900">
                   Did you encounter this scam?
@@ -735,33 +799,12 @@ export function AnalysisPage() {
                   }}
                   className="min-h-11 rounded-lg border border-line bg-white px-5 text-sm font-bold text-brand-800 transition hover:border-brand-700 hover:bg-brand-100"
                 >
-                  New scan
+                  Done
                 </button>
-                <Link
-                  to="/alerts"
-                  className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-brand-800 hover:underline"
-                >
-                  View alerts
-                </Link>
+
               </div>
             </section>
           </Card>
-          {showResultDialog ? (
-            <ScanResultDialog
-              result={result}
-              onClose={() => setShowResultDialog(false)}
-              onNewScan={() => {
-                setShowResultDialog(false);
-                setResult(null);
-                setContent("");
-                clearImage();
-              }}
-              onReport={() => {
-                setShowResultDialog(false);
-                setShowReportDialog(true);
-              }}
-            />
-          ) : null}
           {showReportDialog ? (
             <ReportDialog
               scanId={result.id}
