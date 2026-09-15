@@ -201,7 +201,7 @@ function PostActions({
 
   return (
     <>
-      <div className="grid min-h-10 grid-cols-3 border-t border-line">
+      <div className="grid min-h-11 grid-cols-3 border-t border-line">
         <button
           aria-label={`${t("community.like")}: ${post.interaction.likeCount}`}
           aria-pressed={post.interaction.likedByMe}
@@ -237,7 +237,7 @@ function PostActions({
             <Icon name="share" size={15} />
           </button>
           {shareOpen ? (
-            <div className="absolute bottom-full right-2 z-10 mb-2 min-w-40 rounded-lg border border-line bg-white p-1.5 shadow-lg">
+            <div className="absolute bottom-full right-0 sm:right-2 z-10 mb-2 min-w-40 rounded-lg border border-line bg-white p-1.5 shadow-lg">
               <button
                 className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-[12px] font-semibold text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
                 onClick={shareToTelegram}
@@ -281,7 +281,7 @@ export function ScamPostCard({
 
   return (
     <Card className="flex w-full flex-col overflow-hidden p-0">
-      <article className="flex flex-col p-4 sm:p-5">
+      <article className="flex flex-col p-3.5 sm:p-5">
         <header className="flex min-h-11 items-start gap-3">
           <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" />
           <div className="min-w-0 flex-1">

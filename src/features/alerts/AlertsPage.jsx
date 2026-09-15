@@ -50,7 +50,7 @@ export function AlertsPage() {
         </div>
         <Link
           to="/analysis"
-          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100"
+          className="inline-flex min-h-11 w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100"
         >
           <Icon name="shield" size={17} />{tr("Analyze a similar message")}</Link>
       </div>
@@ -69,7 +69,7 @@ export function AlertsPage() {
             return (
               <Card
                 key={alert.id}
-                className={`p-5 transition ${isRead ? "opacity-70" : "border-l-4 border-l-brand-700"}`}
+                className={`p-4 sm:p-5 transition ${isRead ? "opacity-70" : "border-l-4 border-l-brand-700"}`}
               >
                 <article>
                   <div className="flex flex-wrap items-center justify-between gap-3">

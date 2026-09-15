@@ -59,6 +59,12 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid rgb(22 119 210 / 0.3); outline-offset: 2px; }
 ::selection { background: #cfe5fa; color: #102a43; }
 
+.about-hero { background: radial-gradient(ellipse at 95% 20%, #195baf 0, transparent 60%), linear-gradient(125deg, #071d3f, #0c3975); }
+.about-primary-action { background: #fff; color: #082f6b; }
+.about-primary-action:hover { background: #eaf2ff; }
+.about-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.14; background-image: linear-gradient(#a5caff 1px, transparent 1px), linear-gradient(90deg, #a5caff 1px, transparent 1px); background-size: 44px 44px; mask-image: linear-gradient(90deg, transparent, #000); }
+html[lang="km"] .about-page h1 { line-height: 1.4; }
+
 /* Settings use shared surfaces; preview swatches keep their own theme. */
 .settings-input { background: var(--color-canvas); }
 .settings-input:hover { border-color: var(--color-muted); }
@@ -174,3 +180,30 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 [data-theme="dark"] .settings-danger-button:hover,
 [data-theme="dark"] .hover\:bg-\[\#fff0f1\]:hover,
 [data-theme="dark"] .hover\:bg-\[\#fff6f7\]:hover { background-color: #40232c; }
+
+/* Mobile Utilities & Cyber Accents */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.safe-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+}
+
+.cyber-scanner-btn {
+  background: linear-gradient(135deg, #0c4698 0%, #1764c0 60%, #1d72dc 100%);
+  box-shadow: 0 4px 14px rgb(12 70 152 / 0.35), 0 0 1px 1px rgb(255 255 255 / 0.2) inset;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cyber-scanner-btn:hover {
+  background: linear-gradient(135deg, #082f6b 0%, #0c4698 60%, #1764c0 100%);
+  box-shadow: 0 6px 18px rgb(12 70 152 / 0.45);
+  transform: translateY(-2px);
+}
+.cyber-scanner-btn:active {
+  transform: translateY(0);
+}
+
+[data-theme="dark"] .cyber-scanner-btn {
+  background: linear-gradient(135deg, #1859a8 0%, #2268bc 60%, #3b82f6 100%);
+  box-shadow: 0 4px 16px rgb(34 104 188 / 0.45), 0 0 1px 1px rgb(143 198 255 / 0.3) inset;
+}

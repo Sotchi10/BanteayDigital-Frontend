@@ -1,0 +1,64 @@
+{
+  "label": "About Us",
+  "hero": {
+    "title": "People Safer together",
+    "name": "Banteay Digital / Digital Fortress",
+    "description": "Banteay Digital is an AI-powered platform focused on scam detection, digital safety, and community-driven fraud awareness. We bring analysis and shared knowledge together to help people make more informed decisions online.",
+    "action": "Check suspicious content"
+  },
+  "problem": {
+    "label": "The Problem",
+    "title": "Digital threats can look familiar.",
+    "description": "Scams, misleading content, suspicious links, and manipulated images are spreading across everyday digital life. A message can look genuine, a website can seem trustworthy, and an image can hide a different story.",
+    "challenge": "Everyday users need a quick way to assess unfamiliar content, understand the warning signs, and decide what to do next."
+  },
+  "solution": {
+    "label": "Our Solution",
+    "title": "A digital fortress, built together.",
+    "analysis": { "title": "AI-assisted analysis", "description": "Examine text, links, screenshots, images, and decoded QR links for suspicious signals." },
+    "guidance": { "title": "Risk assessment and recommendations", "description": "Receive an immediate assessment with practical guidance to help you respond carefully." },
+    "community": { "title": "Community knowledge, reviewed", "description": "Report your encounter to help others. Administrators review community reports before publication." }
+  },
+  "objectives": {
+    "label": "Our Objectives",
+    "title": "More awareness. Safer decisions.",
+    "description": "Our goal is to help people understand digital information and turn that understanding into safer everyday habits.",
+    "literacy": "Improve digital, media, and information literacy.",
+    "recognize": "Help users recognize suspicious content and warning signs.",
+    "report": "Encourage responsible community reporting.",
+    "prevent": "Provide practical scam-prevention guidance.",
+    "resource": "Build a searchable resource for fraud awareness and shared learning."
+  },
+  "workflow": {
+    "label": "How It Works",
+    "title": "From uncertainty to a next step.",
+    "submit": { "title": "Submit content", "description": "Share the suspicious content you want to check, with private information removed." },
+    "analyze": { "title": "AI analyzes", "description": "AI examines the content and identifies potential warning signs." },
+    "guidance": { "title": "Receive guidance", "description": "Review the risk assessment and recommendations before taking action." },
+    "report": { "title": "Report to community", "description": "Add your experience and submit a report for admin review." }
+  },
+  "team": {
+    "label": "Meet the Team",
+    "title": "The people behind the fortress.",
+    "description": "Seven members bringing software engineering, cybersecurity, and digital business together for a safer digital community.",
+    "photo": "Photo placeholder for {{name}}",
+    "github": "{{name}} on GitHub (link coming soon)",
+    "portfolio": "{{name}}'s portfolio (link coming soon)",
+    "linkPlaceholder": "Link coming soon",
+    "specializations": { "software": "Software Engineering", "cyber": "Cybersecurity", "business": "Digital Business" },
+    "roles": {
+      "lead": "Project Lead",
+      "backend": "Backend Developer",
+      "ai": "AI Integration",
+      "design": "UX/UI Designer",
+      "frontend": "Frontend Developer",
+      "rag": "Data Research for RAG",
+      "placeholder": "Role to be added"
+    }
+  },
+  "context": {
+    "label": "Project Context",
+    "title": "Learning with a purpose.",
+    "description": "Banteay Digital was developed for the Next-Gen Engagement Program under the DMIL (Digital, Media, and Information Literacy) theme. The project connects what we learn with practical tools that help people navigate digital information more safely."
+  }
+}

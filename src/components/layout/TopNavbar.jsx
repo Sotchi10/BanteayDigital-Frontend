@@ -16,10 +16,19 @@ const desktopNavClass = ({ isActive }) =>
 const mobileNavClass = ({ isActive }) =>
   `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${isActive ? "text-brand-800" : "text-[#607089]"}`;
 
-const mobileMenuItems = [
+const mobileMainLinks = [
+  { label: "Home", icon: "home", to: "/" },
+  { label: "Analyze Scam", icon: "shield", to: "/analysis" },
+  { label: "Alerts", icon: "bell", to: "/alerts" },
+  { label: "Community Safety", icon: "book", to: "/safety" },
+  { label: "Leaderboard", icon: "trophy", to: "/leaderboard" },
+];
+
+const mobileUserLinks = [
+  { label: "Report a scam", icon: "edit", to: "/report", protected: true },
   { label: "Saved", icon: "bookmark", to: "/saved", protected: true },
   { label: "History", icon: "clock", to: "/history", protected: true },
-  { label: "About", icon: "book", to: "/about" },
+  { label: "My reports", icon: "edit", to: "/reports/history", protected: true },
 ];
 
 export function TopNavbar() {
@@ -147,15 +156,20 @@ export function TopNavbar() {
                   i18n.resolvedLanguage === "km" ? "en" : "km",
                 )
               }
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-white px-3 text-sm font-semibold text-[#40546b] hover:border-[#b8c8d9] hover:bg-[#f8fafc]"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 text-xs font-semibold text-[#40546b] hover:border-[#b8c8d9] hover:bg-[#f8fafc] sm:px-3 sm:text-sm"
               aria-label={t("nav.language")}
             >
               <Icon name="globe" size={16} />
-              <span lang={i18n.resolvedLanguage === "km" ? "en" : "km"}>
+              <span className="inline font-bold sm:hidden">
                 {i18n.resolvedLanguage === "km" ? "EN" : "ខ្មែរ"}
               </span>
-              <span className="text-[#9aa7b5]">|</span>
-              <span>{i18n.resolvedLanguage === "km" ? "ខ្មែរ" : "EN"}</span>
+              <span className="hidden sm:inline">
+                <span lang={i18n.resolvedLanguage === "km" ? "en" : "km"}>
+                  {i18n.resolvedLanguage === "km" ? "EN" : "ខ្មែរ"}
+                </span>
+                <span className="mx-1 text-[#9aa7b5]">|</span>
+                <span>{i18n.resolvedLanguage === "km" ? "ខ្មែរ" : "EN"}</span>
+              </span>
             </button>
             <NavLink
               to="/alerts"
@@ -351,7 +365,28 @@ export function TopNavbar() {
               className="mt-4 grid gap-1"
               aria-label={tr("Main mobile navigation")}
             >
-              {mobileMenuItems
+              <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-muted">
+                {tr("Explore")}
+              </div>
+              {mobileMainLinks.map((item) => (
+                <NavLink
+                  key={item.label}
+                  to={item.to}
+                  end={item.to === "/"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                  }
+                >
+                  <Icon name={item.icon} size={18} />
+                  <span>{tr(item.label)}</span>
+                </NavLink>
+              ))}
+
+              <div className="mt-3 px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-muted">
+                {tr("Your Safety")}
+              </div>
+              {mobileUserLinks
                 .filter((item) => !item.protected || isAuthenticated)
                 .map((item) => (
                   <NavLink
@@ -359,23 +394,33 @@ export function TopNavbar() {
                     to={item.to}
                     onClick={() => setMobileMenuOpen(false)}
                     className={({ isActive }) =>
-                      `flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-semibold ${isActive ? "bg-brand-100 text-brand-800" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                      `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
                     }
                   >
                     <Icon name={item.icon} size={18} />
-                    {tr(item.label)}
+                    <span>{tr(item.label)}</span>
                   </NavLink>
                 ))}
+              <NavLink
+                to="/about"
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                }
+              >
+                <Icon name="book" size={18} />
+                <span>{tr("About Us")}</span>
+              </NavLink>
               {isAuthenticated ? (
                 <NavLink
                   to="/settings"
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-semibold ${isActive ? "bg-brand-100 text-brand-800" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
                   }
                 >
                   <Icon name="settings" size={18} />
-                  {t("nav.settings")}
+                  <span>{t("nav.settings")}</span>
                 </NavLink>
               ) : null}
             </nav>
@@ -407,24 +452,38 @@ export function TopNavbar() {
         </div>
       ) : null}
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 flex h-16 border-t border-line bg-white lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 flex h-[calc(4rem+env(safe-area-inset-bottom,0px))] items-center border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur lg:hidden"
         aria-label={tr("Mobile navigation")}
       >
-        {[
-          { label: "Home", icon: "home", to: "/" },
-          { label: "Analyze", icon: "shield", to: "/analysis" },
-          { label: "Safety", icon: "book", to: "/safety" },
-        ].map((item) => (
-          <NavLink
-            key={item.label}
-            to={item.to}
-            end={item.to === "/"}
-            className={mobileNavClass}
-          >
-            <Icon name={item.icon} size={20} />
-            <span>{tr(item.label)}</span>
-          </NavLink>
-        ))}
+        <NavLink to="/" end className={mobileNavClass}>
+          <Icon name="home" size={20} />
+          <span>{tr("Home")}</span>
+        </NavLink>
+        <NavLink to="/alerts" className={mobileNavClass}>
+          <div className="relative">
+            <Icon name="bell" size={20} />
+            <span className="absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-[#d92d3a] px-1 text-[9px] font-bold text-white">
+              3
+            </span>
+          </div>
+          <span>{tr("Alerts")}</span>
+        </NavLink>
+        <NavLink
+          to="/analysis"
+          className="flex flex-1 flex-col items-center justify-center -mt-3"
+          aria-label={tr("Analyze Scam")}
+        >
+          <span className="cyber-scanner-btn grid h-12 w-12 place-items-center rounded-full text-white shadow-lg">
+            <Icon name="shield" size={22} />
+          </span>
+          <span className="mt-1 text-[10px] font-bold text-brand-800">
+            {tr("Analyze")}
+          </span>
+        </NavLink>
+        <NavLink to="/safety" className={mobileNavClass}>
+          <Icon name="book" size={20} />
+          <span>{tr("Safety")}</span>
+        </NavLink>
         <NavLink
           to={
             isAuthenticated

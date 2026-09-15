@@ -8,7 +8,7 @@ import { TopNavbar } from "./TopNavbar";
 export function AppLayout() {
   const tr = useInterfaceTranslation();
   const { pathname } = useLocation();
-  const isSettings = pathname === "/settings" || pathname === "/profile";
+  const isFullWidth = pathname === "/settings" || pathname === "/profile" || pathname === "/about";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -24,10 +24,10 @@ export function AppLayout() {
         className="fixed left-4 top-3 z-50 -translate-y-20 rounded-lg bg-brand-800 px-4 py-2 text-sm font-bold text-white transition focus:translate-y-0"
       >{tr("Skip to main content")}</a>
       <TopNavbar />
-      <div className={`mx-auto grid w-full max-w-[1440px] grid-cols-1 items-start gap-4 px-4 py-5 pb-24 sm:px-6 lg:gap-5 lg:px-8 lg:pb-8 ${isSettings ? "lg:grid-cols-1" : "lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,760px)_minmax(240px,1fr)]"}`}>
-        {!isSettings ? <LeftSidebar /> : null}
+      <div className={`mx-auto grid w-full max-w-[1440px] grid-cols-1 items-start gap-4 px-3 py-4 pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-5 lg:gap-5 lg:px-8 lg:pb-8 ${isFullWidth ? "lg:grid-cols-1" : "lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,760px)_minmax(240px,1fr)]"}`}>
+        {!isFullWidth ? <LeftSidebar /> : null}
         <Outlet />
-        {!isSettings ? <RightSidebar /> : null}
+        {!isFullWidth ? <RightSidebar /> : null}
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ export function PostDiscussionModal({
   const imageSource = post.imageUrl || post.image;
   return (
     <div
-      className="fixed inset-0 z-60 grid place-items-center overscroll-contain bg-[#071a33]/55 p-3 sm:p-5"
+      className="fixed inset-0 z-60 grid place-items-center overscroll-contain bg-[#071a33]/55 p-0 sm:p-5"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -57,11 +57,11 @@ export function PostDiscussionModal({
       <section
         aria-labelledby="discussion-title"
         aria-modal="true"
-        className="flex h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-2xl sm:h-[min(760px,calc(100dvh-2.5rem))]"
+        className="flex h-[100dvh] w-full max-w-2xl flex-col overflow-hidden rounded-none border-0 bg-white shadow-2xl sm:h-[min(760px,calc(100dvh-2.5rem))] sm:rounded-2xl sm:border sm:border-line"
         role="dialog"
       >
         <article className="max-h-[46%] shrink-0 overflow-y-auto border-b border-line bg-white">
-          <header className="flex items-start justify-between gap-3 border-b border-line px-5 py-4 sm:px-6">
+          <header className="flex items-start justify-between gap-3 border-b border-line px-4 py-3 sm:px-6 sm:py-4">
             <div className="flex min-w-0 items-center gap-3">
               <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" />
               <div className="min-w-0">
@@ -81,7 +81,7 @@ export function PostDiscussionModal({
             </div>
             <button
               aria-label={t("community.closeDiscussion")}
-              className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-brand-100 hover:text-brand-800"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-muted hover:bg-brand-100 hover:text-brand-800 text-lg font-bold"
               onClick={onClose}
               type="button"
             >

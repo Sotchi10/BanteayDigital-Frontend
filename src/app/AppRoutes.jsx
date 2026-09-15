@@ -3,6 +3,7 @@ import { cloneElement } from "react";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { AppLayout } from "../components/layout/AppLayout";
 import { AlertsPage } from "../features/alerts/AlertsPage";
+import { AboutPage } from "../features/about/AboutPage";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { CommunityPage } from "../features/community/CommunityPage";
 import { HomePage } from "../features/home/HomePage";
@@ -51,7 +52,7 @@ export function AppRoutes() {
         <Route path="history" element={<ProtectedRoute><ScanHistoryPage /></ProtectedRoute>} />
         <Route path="history/:scanId" element={<ProtectedRoute><ScanDetailPage /></ProtectedRoute>} />
         <Route path="reports/history" element={<ProtectedRoute><ReportHistoryPage /></ProtectedRoute>} />
-        <Route path="about" element={<FeaturePlaceholder icon="book" eyebrow={tr("Learn more")} title={tr("About BanteayDigital")} description={tr("Learn how BanteayDigital helps the community recognise, report, and prevent digital scams.")} />} />
+        <Route path="about" element={<AboutPage />} />
         <Route path=":username" element={<PublicProfilePage />} />
       </Route>
       <Route path="login" element={<AuthPage />} />

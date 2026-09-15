@@ -140,31 +140,31 @@ function ProgressTracker({ hasResult }) {
   const steps = [t("scan.stepScan"), t("scan.stepReview"), t("scan.stepReport")];
   const currentStep = hasResult ? 1 : 0;
   return (
-    <ol className="mb-6 flex w-full items-center" aria-label={t("scan.progress")}>
+    <ol className="mb-5 flex w-full items-center" aria-label={t("scan.progress")}>
       {steps.map((label, index) => (
         <li
           key={label}
           className="flex min-w-0 flex-1 items-center last:flex-none"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <span
-              className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border text-xs font-extrabold transition-colors ${index < currentStep ? "border-brand-800 bg-brand-800 text-white" : index === currentStep ? "border-brand-800 bg-brand-100 text-brand-800" : "border-line bg-white text-muted"}`}
+              className={`grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-full border text-[11px] sm:text-xs font-extrabold transition-colors ${index < currentStep ? "border-brand-800 bg-brand-800 text-white" : index === currentStep ? "border-brand-800 bg-brand-100 text-brand-800 ring-2 ring-brand-700/20" : "border-line bg-white text-muted"}`}
             >
               {index < currentStep ? (
-                <Icon name="check" size={16} />
+                <Icon name="check" size={14} />
               ) : (
                 index + 1
               )}
             </span>
             <span
-              className={`hidden text-xs font-bold sm:inline ${index <= currentStep ? "text-brand-900" : "text-muted"}`}
+              className={`text-[11px] sm:text-xs font-bold truncate ${index <= currentStep ? "text-brand-900" : "text-muted"}`}
             >
               {label}
             </span>
           </div>
           {index < steps.length - 1 ? (
             <span
-              className={`mx-2 h-px min-w-3 flex-1 sm:mx-4 ${index < currentStep ? "bg-brand-800" : "bg-line"}`}
+              className={`mx-1.5 sm:mx-4 h-px min-w-2 sm:min-w-3 flex-1 ${index < currentStep ? "bg-brand-800" : "bg-line"}`}
             />
           ) : null}
         </li>
@@ -180,16 +180,16 @@ function ScanModeCard({ mode, active, onSelect }) {
       role="radio"
       aria-checked={active}
       onClick={onSelect}
-      className={`group flex min-h-24 flex-col items-start rounded-xl border p-3.5 text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:ring-offset-2 ${active ? "border-brand-800 bg-brand-800 text-white shadow-md shadow-brand-800/20" : "border-line bg-white text-ink hover:-translate-y-0.5 hover:border-brand-700 hover:bg-brand-100 hover:shadow-sm"}`}
+      className={`group flex min-h-20 sm:min-h-24 flex-col items-center sm:items-start rounded-xl border p-2.5 sm:p-3.5 text-center sm:text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:ring-offset-2 ${active ? "border-brand-800 bg-brand-800 text-white shadow-md shadow-brand-800/20" : "border-line bg-white text-ink hover:-translate-y-0.5 hover:border-brand-700 hover:bg-brand-100 hover:shadow-sm"}`}
     >
       <span
-        className={`mb-2 grid h-8 w-8 place-items-center rounded-lg transition-colors ${active ? "bg-white/15 text-white" : "bg-brand-100 text-brand-800 group-hover:bg-white"}`}
+        className={`mb-1.5 sm:mb-2 grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg transition-colors ${active ? "bg-white/15 text-white" : "bg-brand-100 text-brand-800 group-hover:bg-white"}`}
       >
-        <Icon name={mode.icon} size={17} />
+        <Icon name={mode.icon} size={16} />
       </span>
-      <span className="text-sm font-bold">{mode.label}</span>
+      <span className="text-xs sm:text-sm font-bold truncate w-full">{mode.label}</span>
       <span
-        className={`mt-0.5 text-[11px] font-medium ${active ? "text-white/75" : "text-muted"}`}
+        className={`mt-0.5 text-[10px] sm:text-[11px] font-medium truncate w-full ${active ? "text-white/75" : "text-muted"}`}
       >
         {mode.detail}
       </span>
@@ -649,7 +649,7 @@ export function AnalysisPage() {
             </span>
           </div>
           <div
-            className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+            className="grid grid-cols-3 gap-2 sm:gap-3"
             role="radiogroup"
             aria-label={t("scan.type")}
           >
@@ -763,7 +763,7 @@ export function AnalysisPage() {
             <button
               disabled={isSubmitting}
               type="submit"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-800 px-6 text-sm font-bold text-white shadow-md shadow-brand-800/20 transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#d9ebfa] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-brand-800 px-6 text-sm font-bold text-white shadow-md shadow-brand-800/20 transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#d9ebfa] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Icon name="shield" size={18} /> {t("scan.analyze")}
             </button>
