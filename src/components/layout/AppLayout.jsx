@@ -6,7 +6,7 @@ import { TopNavbar } from "./TopNavbar";
 
 export function AppLayout() {
   const { pathname } = useLocation();
-  const isSettings = pathname === "/settings";
+  const isSettings = pathname === "/settings" || pathname === "/profile";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -19,7 +19,7 @@ export function AppLayout() {
     <div className="min-h-screen bg-canvas text-ink">
       <a
         href="#main-content"
-        className="fixed left-4 top-3 z-50 -translate-y-20 rounded-lg bg-brand-900 px-4 py-2 text-sm font-bold text-white transition focus:translate-y-0"
+        className="fixed left-4 top-3 z-50 -translate-y-20 rounded-lg bg-brand-800 px-4 py-2 text-sm font-bold text-white transition focus:translate-y-0"
       >
         Skip to main content
       </a>
