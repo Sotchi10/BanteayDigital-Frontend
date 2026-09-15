@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "../../components/ui";
@@ -26,6 +27,7 @@ const inputClass =
   "min-h-12 w-full rounded-lg border border-[#cbd8e5] bg-white px-3.5 text-base text-ink outline-none placeholder:text-[#7c899b] transition hover:border-[#9eb9d5] focus:border-brand-700 focus:ring-2 focus:ring-[#d9ebfa] disabled:cursor-wait disabled:opacity-65";
 
 export function AuthPage() {
+  const tr = useInterfaceTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, signUp } = useAuth();
@@ -229,7 +231,7 @@ export function AuthPage() {
                 className="m-0 text-sm font-semibold text-risk-high"
                 role="alert"
               >
-                {error}
+                {tr(error)}
               </p>
             ) : null}
             <button
@@ -250,12 +252,10 @@ export function AuthPage() {
             <button
               disabled
               type="button"
-              title="Google sign-in requires backend provider integration"
+              title={tr("Google sign-in requires backend provider integration")}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-line bg-white px-5 text-sm font-bold text-[#40546b] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              <span className="grid h-5 w-5 place-items-center rounded-full bg-[#f2f5f8] text-xs font-bold text-[#4285f4]">
-                G
-              </span>
+              <span className="grid h-5 w-5 place-items-center rounded-full bg-[#f2f5f8] text-xs font-bold text-[#4285f4]">{tr("G")}</span>
               {t("authExtra.google")}
             </button>
           </form>

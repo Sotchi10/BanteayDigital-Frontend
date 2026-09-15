@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Badge, Card, Icon, IconButton } from "../../../components/ui";
@@ -108,6 +109,7 @@ function PostActions({
   onToggleLike,
   post,
 }) {
+  const tr = useInterfaceTranslation();
   const { t } = useTranslation();
   const [likePending, setLikePending] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -256,7 +258,7 @@ function PostActions({
       </div>
       {error ? (
         <p className="m-0 border-t border-red-100 bg-red-50 px-3 py-2 text-[11px] text-red-700">
-          {error}
+          {tr(error)}
         </p>
       ) : null}
       {notice ? (

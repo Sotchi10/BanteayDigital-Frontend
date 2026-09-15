@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
@@ -224,6 +225,7 @@ function ScanningOverlay() {
 }
 
 function RelatedScamResults({ result }) {
+  const tr = useInterfaceTranslation();
   const { t, i18n } = useTranslation();
   const matches = relatedScamMatches(result, i18n.resolvedLanguage, t);
   const retrievalStatus = result?.aiRetrieval?.status;
@@ -267,14 +269,14 @@ function RelatedScamResults({ result }) {
           <article key={item.id} className="rounded-xl border border-line bg-white p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0">
-                <strong className="block text-sm text-brand-900">{item.title}</strong>
+                <strong className="block text-sm text-brand-900">{tr(item.title)}</strong>
                 {item.scamType ? <span className="mt-1 block text-xs font-semibold text-muted">{item.scamType}</span> : null}
               </div>
               {item.confidence !== null ? (
                 <Badge tone={caseTone(item.riskLevel)}>{t("scanExtra.match", { percent: item.confidence })}</Badge>
               ) : null}
             </div>
-            {item.description ? <p className="mb-0 mt-2 text-sm leading-6 text-muted">{item.description}</p> : null}
+            {item.description ? <p className="mb-0 mt-2 text-sm leading-6 text-muted">{tr(item.description)}</p> : null}
             <div className="mt-3 flex flex-wrap items-center gap-3 text-xs font-semibold">
               {item.relation ? <span className="text-muted">{t(`scanExtra.relation.${item.relation}`, { defaultValue: item.relation.replaceAll("_", " ") })}</span> : null}
               {typeof item.source === "string" && /^https?:\/\//i.test(item.source) ? (
@@ -291,6 +293,7 @@ function RelatedScamResults({ result }) {
 }
 
 export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
+  const tr = useInterfaceTranslation();
   const { t } = useTranslation();
   const riskLabel = t(`scanExtra.riskLabels.${result.risk}`);
   return (
@@ -371,9 +374,7 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
             className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
             onClick={onReport}
             type="button"
-          >
-            Report this scam
-          </button>
+          >{tr("Report this scam")}</button>
         </div>
       </section>
     </div>
@@ -381,6 +382,7 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
 }
 
 function ReportDialog({ scanId, onClose, onSuccess }) {
+  const tr = useInterfaceTranslation();
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
   const [evidence, setEvidence] = useState("");
@@ -427,56 +429,38 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
             <h2
               id="report-title"
               className="m-0 text-xl font-bold text-brand-900"
-            >
-              Report this scam
-            </h2>
-            <p className="mb-0 mt-1 text-sm text-muted">
-              Your report is private and will be reviewed before anything is
-              shared.
-            </p>
+            >{tr("Report this scam")}</h2>
+            <p className="mb-0 mt-1 text-sm text-muted">{tr("Your report is private and will be reviewed before anything is shared.")}</p>
           </div>
           <div className="grid gap-4 p-5 sm:p-6">
-            <label className="grid gap-1.5 text-sm font-bold text-ink">
-              Report reason
-              <select
+            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Report reason")}<select
                 required
                 value={reason}
                 onChange={(event) => setReason(event.target.value)}
                 className="min-h-11 rounded-lg border border-line bg-white px-3 font-normal"
               >
-                <option value="">Select a reason</option>
-                <option value="Scam attempt">Scam attempt</option>
-                <option value="Phishing or impersonation">
-                  Phishing or impersonation
-                </option>
-                <option value="Payment fraud">Payment fraud</option>
-                <option value="Other suspicious activity">
-                  Other suspicious activity
-                </option>
+                <option value="">{tr("Select a reason")}</option>
+                <option value="Scam attempt">{tr("Scam attempt")}</option>
+                <option value="Phishing or impersonation">{tr("Phishing or impersonation")}</option>
+                <option value="Payment fraud">{tr("Payment fraud")}</option>
+                <option value="Other suspicious activity">{tr("Other suspicious activity")}</option>
               </select>
             </label>
-            <label className="grid gap-1.5 text-sm font-bold text-ink">
-              Description and details
-              <textarea
+            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Description and details")}<textarea
                 required
                 rows="4"
                 value={details}
                 onChange={(event) => setDetails(event.target.value)}
                 className="resize-y rounded-lg border border-line p-3 font-normal"
-                placeholder="Describe what happened without passwords, OTPs, or banking details."
+                placeholder={tr("Describe what happened without passwords, OTPs, or banking details.")}
               />
             </label>
-            <label className="grid gap-1.5 text-sm font-bold text-ink">
-              Optional evidence
-              <label className="text-xs font-normal text-muted">
-                Add a safe reference or link (do not include sensitive
-                information).
-              </label>
+            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Optional evidence")}<label className="text-xs font-normal text-muted">{tr("Add a safe reference or link (do not include sensitive information).")}</label>
               <input
                 value={evidence}
                 onChange={(event) => setEvidence(event.target.value)}
                 className="min-h-11 rounded-lg border border-line px-3 font-normal"
-                placeholder="https://example.com or reference details"
+                placeholder={tr("https://example.com or reference details")}
               />
             </label>
             {error ? (
@@ -484,7 +468,7 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
                 className="m-0 text-sm font-semibold text-risk-high"
                 role="alert"
               >
-                {error}
+                {tr(error)}
               </p>
             ) : null}
           </div>
@@ -494,15 +478,13 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
               className="min-h-11 px-4 text-sm font-bold text-muted"
               onClick={onClose}
               type="button"
-            >
-              Cancel
-            </button>
+            >{tr("Cancel")}</button>
             <button
               disabled={submitting}
               className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white disabled:opacity-60"
               type="submit"
             >
-              {submitting ? "Submitting…" : "Submit report"}
+              {submitting ? tr("Submitting…") : tr("Submit report")}
             </button>
           </div>
         </form>
@@ -512,23 +494,25 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
 }
 
 function AccountRequiredDialog({ onClose, onCreateAccount, onSignIn }) {
+  const tr = useInterfaceTranslation();
   return (
     <div className="fixed inset-0 z-[60] flex items-end bg-[#071a33]/55 p-4 sm:items-center sm:justify-center" role="presentation">
       <section aria-labelledby="account-required-title" aria-modal="true" className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl sm:p-6" role="dialog">
         <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-100 text-brand-800"><Icon name="users" size={21} /></span>
-        <h2 id="account-required-title" className="mb-1 mt-4 text-xl font-bold text-brand-900">Create an account to submit a report</h2>
-        <p className="m-0 text-sm leading-6 text-muted">Reports are shared with the community, so an account is required. Your scan result will be ready when you return.</p>
+        <h2 id="account-required-title" className="mb-1 mt-4 text-xl font-bold text-brand-900">{tr("Create an account to submit a report")}</h2>
+        <p className="m-0 text-sm leading-6 text-muted">{tr("Reports are shared with the community, so an account is required. Your scan result will be ready when you return.")}</p>
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          <button className="min-h-11 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100" onClick={onSignIn} type="button">Sign In</button>
-          <button className="min-h-11 rounded-lg bg-brand-800 px-4 text-sm font-bold text-white hover:bg-brand-700" onClick={onCreateAccount} type="button">Create Account</button>
+          <button className="min-h-11 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100" onClick={onSignIn} type="button">{tr("Sign In")}</button>
+          <button className="min-h-11 rounded-lg bg-brand-800 px-4 text-sm font-bold text-white hover:bg-brand-700" onClick={onCreateAccount} type="button">{tr("Create Account")}</button>
         </div>
-        <button className="mt-4 w-full text-sm font-semibold text-muted hover:text-brand-800" onClick={onClose} type="button">Not now</button>
+        <button className="mt-4 w-full text-sm font-semibold text-muted hover:text-brand-800" onClick={onClose} type="button">{tr("Not now")}</button>
       </section>
     </div>
   );
 }
 
 export function AnalysisPage() {
+  const tr = useInterfaceTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -744,9 +728,7 @@ export function AnalysisPage() {
                 <span className="mt-3 text-sm font-bold text-brand-900">
                   {t("scan.upload")}
                 </span>
-                <span className="mt-1 text-xs text-muted">
-                  PNG, JPG, JPEG, or WEBP · up to 10 MB
-                </span>
+                <span className="mt-1 text-xs text-muted">{tr("PNG, JPG, JPEG, or WEBP · up to 10 MB")}</span>
                 {previewUrl ? (
                   <span className="mt-4 block overflow-hidden rounded-xl border border-line bg-white p-1 shadow-sm">
                     <img
@@ -770,7 +752,7 @@ export function AnalysisPage() {
               className="mt-4 flex items-start gap-2 rounded-xl border border-[#f3c9cf] bg-[#fff6f7] p-3 text-sm font-semibold text-risk-high"
             >
               <Icon name="alert" size={17} className="mt-0.5 shrink-0" />
-              {error}
+              {tr(error)}
             </p>
           ) : null}
 
@@ -826,8 +808,7 @@ export function AnalysisPage() {
                     <Icon name="shield" size={16} /> {t("scanExtra.recommendedAction")}
                   </h3>
                   <p className="mb-0 mt-3 text-sm leading-6 text-muted">
-                    {result.analysis.recommendedActions[0] ||
-                      "Verify the sender through an official contact method."}
+                    {result.analysis.recommendedActions[0] || tr("Verify the sender through an official contact method.")}
                   </p>
                 </section>
               </div>
@@ -835,12 +816,8 @@ export function AnalysisPage() {
             </div>
             <section className="flex flex-col gap-3 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
               <div>
-                <p className="m-0 text-sm font-bold text-brand-900">
-                  Did you encounter this scam?
-                </p>
-                <p className="mb-0 mt-1 text-xs text-muted">
-                  Your report can help protect the community.
-                </p>
+                <p className="m-0 text-sm font-bold text-brand-900">{tr("Did you encounter this scam?")}</p>
+                <p className="mb-0 mt-1 text-xs text-muted">{tr("Your report can help protect the community.")}</p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button

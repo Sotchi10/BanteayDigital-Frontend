@@ -1,3 +1,5 @@
+import appI18n from "../../i18n";
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -21,12 +23,13 @@ const toneFor = (risk) =>
 const typeLabel = (type) =>
   type === "URL" ? "Website link" : type === "IMAGE" ? "Image" : "Text message";
 const dateLabel = (date) =>
-  new Intl.DateTimeFormat(undefined, {
+  new Intl.DateTimeFormat(appI18n.resolvedLanguage, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(date));
 
 export function ScanHistoryPage() {
+  const tr = useInterfaceTranslation();
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,28 +65,20 @@ export function ScanHistoryPage() {
     <main className="min-w-0 lg:px-10" id="main-content">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">
-            Your activity
-          </p>
-          <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">
-            Scan history
-          </h1>
-          <p className="m-0 text-sm text-muted">
-            Review your previous scam analyses.
-          </p>
+          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">{tr("Your activity")}</p>
+          <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">{tr("Scan history")}</h1>
+          <p className="m-0 text-sm text-muted">{tr("Review your previous scam analyses.")}</p>
         </div>
         <Link
           to="/reports/history"
           className="inline-flex min-h-10 items-center rounded-lg border border-line bg-white px-3 text-sm font-bold text-brand-800 hover:bg-brand-100"
-        >
-          View reports
-        </Link>
+        >{tr("View reports")}</Link>
       </div>
-      {loading ? <LoadingState message="Loading your scan history…" /> : null}
+      {loading ? <LoadingState message={tr("Loading your scan history…")} /> : null}
       {!loading && error ? (
         <ErrorState
-          title="Could not load scan history"
-          message={error.message}
+          title={tr("Could not load scan history")}
+          message={tr(error.message)}
           status={error.status}
           onRetry={() => window.location.reload()}
         />
@@ -91,9 +86,9 @@ export function ScanHistoryPage() {
       {!loading && !error && scans.length === 0 ? (
         <EmptyState
           icon="clock"
-          title="No scans yet"
-          message="When you analyze a suspicious message, link, or image, it will appear here."
-          actionLabel="Analyze something"
+          title={tr("No scans yet")}
+          message={tr("When you analyze a suspicious message, link, or image, it will appear here.")}
+          actionLabel={tr("Analyze something")}
           actionTo="/analysis"
         />
       ) : null}
@@ -122,11 +117,11 @@ export function ScanHistoryPage() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <strong className="text-sm text-brand-900">
-                        {typeLabel(scan.inputType)}
+                        {tr(typeLabel(scan.inputType))}
                       </strong>
-                      <Badge tone={toneFor(risk)}>{risk} risk</Badge>
+                      <Badge tone={toneFor(risk)}>{tr("{{level}} risk", { level: tr(risk) })}</Badge>
                       {scan.reportStatus === "REPORTED" ? (
-                        <Badge tone="neutral">Reported</Badge>
+                        <Badge tone="neutral">{tr("Reported")}</Badge>
                       ) : null}
                     </div>
                     <p className="mb-0 mt-1 truncate text-sm text-muted">
@@ -139,9 +134,7 @@ export function ScanHistoryPage() {
                   <Link
                     to={`/history/${scan.id}`}
                     className="inline-flex min-h-10 items-center justify-center rounded-lg border border-line bg-white px-3 text-sm font-bold text-brand-800 hover:bg-brand-100"
-                  >
-                    View detail
-                  </Link>
+                  >{tr("View detail")}</Link>
                 </li>
               );
             })}

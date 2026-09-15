@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../locales/useInterfaceTranslation";
 import { cloneElement } from "react";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { AppLayout } from "../components/layout/AppLayout";
@@ -30,6 +31,7 @@ function LegacyCommunityPostRedirect() {
 }
 
 export function AppRoutes() {
+  const tr = useInterfaceTranslation();
   return (
     <Routes>
         <Route element={<AppLayout />}>
@@ -45,11 +47,11 @@ export function AppRoutes() {
         <Route path="safety/:slug" element={<SafetyKnowledgeDetailPage />} />
         <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="profile" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-        <Route path="saved" element={<ProtectedRoute><FeaturePlaceholder icon="bookmark" eyebrow="Your saved items" title="Saved" description="Keep useful scam alerts, community posts, and safety resources here for quick reference." /></ProtectedRoute>} />
+        <Route path="saved" element={<ProtectedRoute><FeaturePlaceholder icon="bookmark" eyebrow={tr("Your saved items")} title={tr("Saved")} description={tr("Keep useful scam alerts, community posts, and safety resources here for quick reference.")} /></ProtectedRoute>} />
         <Route path="history" element={<ProtectedRoute><ScanHistoryPage /></ProtectedRoute>} />
         <Route path="history/:scanId" element={<ProtectedRoute><ScanDetailPage /></ProtectedRoute>} />
         <Route path="reports/history" element={<ProtectedRoute><ReportHistoryPage /></ProtectedRoute>} />
-        <Route path="about" element={<FeaturePlaceholder icon="book" eyebrow="Learn more" title="About BanteayDigital" description="Learn how BanteayDigital helps the community recognise, report, and prevent digital scams." />} />
+        <Route path="about" element={<FeaturePlaceholder icon="book" eyebrow={tr("Learn more")} title={tr("About BanteayDigital")} description={tr("Learn how BanteayDigital helps the community recognise, report, and prevent digital scams.")} />} />
         <Route path=":username" element={<PublicProfilePage />} />
       </Route>
       <Route path="login" element={<AuthPage />} />

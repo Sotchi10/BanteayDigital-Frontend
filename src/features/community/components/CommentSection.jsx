@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -17,6 +18,7 @@ export function CommentSection({
   pinnedComposer = false,
   postId,
 }) {
+  const tr = useInterfaceTranslation();
   const { t } = useTranslation();
   const [comments, setComments] = useState([]);
   const [meta, setMeta] = useState({ hasMore: false, nextCursor: null });
@@ -81,7 +83,7 @@ export function CommentSection({
           {t("community.loadingComments")}
         </p>
       ) : null}
-      {error ? <p className="py-2 text-[12px] text-red-600">{error}</p> : null}
+      {error ? <p className="py-2 text-[12px] text-red-600">{tr(error)}</p> : null}
       {!loading && comments.length === 0 ? (
         <p className="py-4 text-center text-[12px] text-muted">
           {t("community.noComments")}

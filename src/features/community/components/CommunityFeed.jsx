@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
@@ -15,6 +16,7 @@ import { ScamPostCard } from './ScamPostCard'
 import { PostDiscussionModal } from './PostDiscussionModal'
 
 export function CommunityFeed() {
+  const tr = useInterfaceTranslation();
   const { t } = useTranslation()
   const { postId } = useParams()
   const [posts, setPosts] = useState([])
@@ -135,7 +137,7 @@ export function CommunityFeed() {
       </div>
 
       {loading ? <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">{t('community.loadingAlerts')}</div> : null}
-      {error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-[13px] text-red-700">{error}</div> : null}
+      {error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-[13px] text-red-700">{tr(error)}</div> : null}
       {!loading && !error && visiblePosts.length === 0 ? (
         <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">
           {query ? t('community.noMatchingAlerts') : t('community.noAlerts')}

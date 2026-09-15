@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, Icon } from "../ui";
@@ -22,6 +23,7 @@ const mobileMenuItems = [
 ];
 
 export function TopNavbar() {
+  const tr = useInterfaceTranslation();
   const { isAuthenticated, user, logout } = useAuth();
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
@@ -88,7 +90,7 @@ export function TopNavbar() {
             type="button"
             onClick={() => setMobileMenuOpen(true)}
             className="inline-grid h-11 w-11 shrink-0 place-items-center rounded-lg text-[#40546b] hover:bg-brand-100 hover:text-brand-800 lg:hidden"
-            aria-label="Open navigation menu"
+            aria-label={tr("Open navigation menu")}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation-drawer"
           >
@@ -97,25 +99,23 @@ export function TopNavbar() {
           <NavLink
             className="flex min-w-0 items-center gap-2.5 xl:col-start-1"
             to="/"
-            aria-label="BanteayDigital home"
+            aria-label={tr("BanteayDigital home")}
           >
             <img
               className="h-9 w-9"
               src="/BanteayDigitalLogo.svg"
-              alt="BanteayDigital logo"
+              alt={tr("BanteayDigital logo")}
             />
             <span className="hidden leading-tight sm:grid">
               <strong className="text-[15px] text-brand-900">
                 BanteayDigital
               </strong>
-              <small className="text-[11px] text-muted">
-                Digital safety community
-              </small>
+              <small className="text-[11px] text-muted">{tr("Digital safety community")}</small>
             </span>
           </NavLink>
           <nav
-            className="ml-6 hidden items-center gap-1 lg:flex xl:col-start-2 xl:ml-0 xl:justify-self-center"
-            aria-label="Main navigation"
+            className="app-main-navigation ml-6 hidden items-center gap-1 lg:flex xl:col-start-2 xl:ml-0 xl:justify-self-center"
+            aria-label={tr("Main navigation")}
           >
             {navigation.slice(0, 2).map((item) => (
               <NavLink
@@ -125,7 +125,7 @@ export function TopNavbar() {
                 className={desktopNavClass}
               >
                 <Icon name={item.icon} size={17} />
-                <span>{item.label}</span>
+                <span>{tr(item.label)}</span>
               </NavLink>
             ))}
             {navigation.slice(2).map((item) => (
@@ -135,7 +135,7 @@ export function TopNavbar() {
                 className={desktopNavClass}
               >
                 <Icon name={item.icon} size={17} />
-                <span>{item.label}</span>
+                <span>{tr(item.label)}</span>
               </NavLink>
             ))}
           </nav>
@@ -160,7 +160,7 @@ export function TopNavbar() {
             <NavLink
               to="/alerts"
               className="relative inline-grid h-11 w-11 place-items-center rounded-full text-[#52647a] hover:bg-brand-100 hover:text-brand-800"
-              aria-label="Open alerts, 3 new"
+              aria-label={tr("Open alerts, 3 new")}
             >
               <Icon name="bell" />
               <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-[10px] font-bold text-white">
@@ -173,7 +173,7 @@ export function TopNavbar() {
                   type="button"
                   onClick={() => setProfileMenuOpen((isOpen) => !isOpen)}
                   className="flex min-h-11 items-center gap-2 rounded-lg px-1.5 text-left hover:bg-[#f2f5f8]"
-                  aria-label={`Open profile menu for ${user.name}`}
+                  aria-label={tr("Open profile menu for {{value1}}", { value1: user.name })}
                   aria-expanded={profileMenuOpen}
                   aria-controls="profile-menu"
                 >
@@ -192,7 +192,7 @@ export function TopNavbar() {
                     id="profile-menu"
                     role="menu"
                     aria-label={t("nav.profileMenu")}
-                    className="absolute right-0 top-[calc(100%+8px)] z-50 w-64 overflow-hidden rounded-xl border border-line bg-white p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
+                    className="absolute right-0 top-[calc(100%+8px)] z-50 w-80 overflow-hidden rounded-xl border border-line bg-white p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
                   >
                     <NavLink
                       to={
@@ -206,17 +206,15 @@ export function TopNavbar() {
                     >
                       <Avatar name={user.name} size="md" />
                       <div className="min-w-0">
-                        <strong className="block truncate text-sm text-ink">
+                        <strong className="block truncate text-base text-ink">
                           {user.name}
                         </strong>
-                        <span className="block truncate text-xs text-muted">
+                        <span className="block truncate text-sm text-muted">
                           {user.email ||
                             user.phoneNumber ||
                             t("nav.signedInAccount")}
                         </span>
-                        <span className="mt-1 block text-xs font-semibold text-brand-800">
-                          View profile
-                        </span>
+                        <span className="mt-1 block text-sm font-semibold text-brand-800">{tr("View profile")}</span>
                       </div>
                     </NavLink>
                     <div className="my-1 border-t border-line" />
@@ -224,47 +222,43 @@ export function TopNavbar() {
                       to={user.username ? `/${encodeURIComponent(user.username)}` : "/reports/history"}
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
-                      <Icon name="edit" size={17} />
-                      My approved reports
-                    </NavLink>
+                      <Icon name="edit" size={18} />{tr("My approved reports")}</NavLink>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => i18n.changeLanguage(i18n.resolvedLanguage === "km" ? "en" : "km")}
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                    >
+                      <Icon name="globe" size={18} />
+                      {t("nav.language")}
+                    </button>
                     <NavLink
                       to="/settings"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
-                      <Icon name="settings" size={17} />
+                      <Icon name="settings" size={18} />
                       {t("nav.settings")}
                     </NavLink>
                     <NavLink
                       to="/settings?section=appearance"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
-                      <Icon name="settings" size={17} />
+                      <Icon name="lightbulb" size={18} />
                       {t("nav.appearance")}
                     </NavLink>
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => i18n.changeLanguage(i18n.resolvedLanguage === "km" ? "en" : "km")}
-                      className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
-                    >
-                      <Icon name="globe" size={17} />
-                      {t("nav.language")}
-                    </button>
                     <NavLink
                       to="/settings?section=support"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
-                      <Icon name="help" size={17} />
-                      Help &amp; support
-                    </NavLink>
+                      <Icon name="help" size={18} />{tr("Help & support")}</NavLink>
                     <div className="my-1 border-t border-line" />
                     <button
                       type="button"
@@ -274,9 +268,9 @@ export function TopNavbar() {
                         setProfileMenuOpen(false);
                         setLogoutConfirmOpen(true);
                       }}
-                      className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-semibold text-risk-high transition hover:bg-[#fff0f1]"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-risk-high transition hover:bg-[#fff0f1]"
                     >
-                      <Icon name="logout" size={17} />
+                      <Icon name="logout" size={18} />
                       {loggingOut ? t("nav.loggingOut") : t("nav.logOut")}
                     </button>
                   </div>
@@ -299,13 +293,13 @@ export function TopNavbar() {
           <button
             type="button"
             className="mobile-menu-backdrop absolute inset-0 h-full w-full bg-[#071a33]/55"
-            aria-label="Close navigation menu"
+            aria-label={tr("Close navigation menu")}
             onClick={() => setMobileMenuOpen(false)}
           />
           <aside
             id="mobile-navigation-drawer"
             className="mobile-navigation-drawer relative flex h-full w-[min(21rem,calc(100vw-2.5rem))] flex-col overflow-y-auto bg-surface p-4 shadow-2xl"
-            aria-label="Mobile navigation"
+            aria-label={tr("Mobile navigation")}
           >
             <div className="flex items-center justify-between border-b border-line pb-3">
               <Link
@@ -320,7 +314,7 @@ export function TopNavbar() {
                 type="button"
                 className="inline-grid h-11 w-11 place-items-center rounded-lg text-[#40546b] hover:bg-brand-100"
                 onClick={() => setMobileMenuOpen(false)}
-                aria-label="Close navigation menu"
+                aria-label={tr("Close navigation menu")}
               >
                 <Icon name="close" size={22} />
               </button>
@@ -340,9 +334,7 @@ export function TopNavbar() {
                   <strong className="block truncate text-sm text-ink">
                     {user.name}
                   </strong>
-                  <small className="block truncate text-xs text-muted">
-                    Profile &amp; reports
-                  </small>
+                  <small className="block truncate text-xs text-muted">{tr("Profile & reports")}</small>
                 </span>
               </NavLink>
             ) : (
@@ -357,7 +349,7 @@ export function TopNavbar() {
             )}
             <nav
               className="mt-4 grid gap-1"
-              aria-label="Main mobile navigation"
+              aria-label={tr("Main mobile navigation")}
             >
               {mobileMenuItems
                 .filter((item) => !item.protected || isAuthenticated)
@@ -371,7 +363,7 @@ export function TopNavbar() {
                     }
                   >
                     <Icon name={item.icon} size={18} />
-                    {item.label}
+                    {tr(item.label)}
                   </NavLink>
                 ))}
               {isAuthenticated ? (
@@ -388,13 +380,13 @@ export function TopNavbar() {
               ) : null}
             </nav>
             <div className="mt-5 border-t border-line pt-4">
-              <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-muted">More</p>
+              <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-muted">{tr("More")}</p>
               <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs font-medium">
-                <Link to="/settings?section=support" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">Help &amp; support</Link>
-                <Link to="/" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">Guidelines</Link>
-                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">Privacy</Link>
-                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">Terms</Link>
-                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">Accessibility</Link>
+                <Link to="/settings?section=support" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Help & support")}</Link>
+                <Link to="/" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Guidelines")}</Link>
+                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Privacy")}</Link>
+                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Terms")}</Link>
+                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Accessibility")}</Link>
               </div>
             </div>
             {isAuthenticated ? (
@@ -416,7 +408,7 @@ export function TopNavbar() {
       ) : null}
       <nav
         className="fixed inset-x-0 bottom-0 z-30 flex h-16 border-t border-line bg-white lg:hidden"
-        aria-label="Mobile navigation"
+        aria-label={tr("Mobile navigation")}
       >
         {[
           { label: "Home", icon: "home", to: "/" },
@@ -430,7 +422,7 @@ export function TopNavbar() {
             className={mobileNavClass}
           >
             <Icon name={item.icon} size={20} />
-            <span>{item.label}</span>
+            <span>{tr(item.label)}</span>
           </NavLink>
         ))}
         <NavLink
@@ -443,7 +435,7 @@ export function TopNavbar() {
           }
           className={mobileNavClass}
           aria-label={
-            isAuthenticated ? "Open profile" : "Sign in or create an account"
+            isAuthenticated ? tr("Open profile") : tr("Sign in or create an account")
           }
         >
           {isAuthenticated ? (
@@ -451,7 +443,7 @@ export function TopNavbar() {
           ) : (
             <Icon name="user" size={20} />
           )}
-          <span>{isAuthenticated ? "Profile" : "Sign in"}</span>
+          <span>{isAuthenticated ? tr("Profile") : tr("Sign in")}</span>
         </NavLink>
       </nav>
       {logoutConfirmOpen ? (
@@ -474,12 +466,8 @@ export function TopNavbar() {
                 <h2
                   className="m-0 text-lg font-bold text-ink"
                   id="logout-confirmation-title"
-                >
-                  Log out?
-                </h2>
-                <p className="mb-0 mt-1 text-sm leading-6 text-muted">
-                  You will need to sign in again to access your account.
-                </p>
+                >{tr("Log out?")}</h2>
+                <p className="mb-0 mt-1 text-sm leading-6 text-muted">{tr("You will need to sign in again to access your account.")}</p>
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-3">
@@ -489,16 +477,14 @@ export function TopNavbar() {
                 onClick={() => setLogoutConfirmOpen(false)}
                 ref={cancelLogoutRef}
                 type="button"
-              >
-                Cancel
-              </button>
+              >{tr("Cancel")}</button>
               <button
                 className="min-h-10 rounded-lg bg-risk-high px-4 text-sm font-bold text-white hover:opacity-90 disabled:opacity-60"
                 disabled={loggingOut}
                 onClick={handleLogout}
                 type="button"
               >
-                {loggingOut ? "Logging out…" : "Log out"}
+                {loggingOut ? tr("Logging out…") : tr("Log out")}
               </button>
             </div>
           </section>

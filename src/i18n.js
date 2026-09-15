@@ -3,12 +3,14 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 import en from './locales/en'
 import km from './locales/km'
+import interfaceEn from './locales/interface.en.json'
+import interfaceKm from './locales/interface.km.json'
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources: { en, km },
+    resources: { en: { ...en, interface: interfaceEn }, km: { ...km, interface: interfaceKm } },
     fallbackLng: 'en',
     supportedLngs: ['en', 'km'],
     interpolation: { escapeValue: false },

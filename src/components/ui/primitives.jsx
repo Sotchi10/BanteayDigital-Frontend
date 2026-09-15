@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { Icon } from "./icons";
 
 const avatarSizes = {
@@ -26,7 +27,8 @@ export function Card({ className = "", children }) {
   );
 }
 export function Avatar({ name, imageUrl, size = "md", tone = "blue" }) {
-  const displayName = typeof name === "string" && name.trim() ? name.trim() : "User";
+  const tr = useInterfaceTranslation();
+  const displayName = typeof name === "string" && name.trim() ? name.trim() : tr("User");
   const initials = displayName
     .split(" ")
     .map((part) => part[0])
@@ -35,7 +37,7 @@ export function Avatar({ name, imageUrl, size = "md", tone = "blue" }) {
   return (
     <span
       className={`inline-grid shrink-0 place-items-center rounded-full font-bold text-white ${avatarSizes[size]} ${avatarTones[tone]}`}
-      aria-label={`${displayName}'s profile`}
+      aria-label={tr("{{value1}}'s profile", { value1: displayName })}
     >
       {imageUrl ? <img src={imageUrl} alt="" className="h-full w-full rounded-full object-cover" /> : initials}
     </span>
@@ -51,11 +53,12 @@ export function Badge({ children, tone = "neutral", className = "" }) {
   );
 }
 export function IconButton({ label, icon, badge, className = "" }) {
+  const tr = useInterfaceTranslation();
   return (
     <button
       className={`relative inline-grid h-11 w-11 shrink-0 place-items-center rounded-full border-0 bg-transparent text-[#52647a] transition hover:bg-brand-100 hover:text-brand-800 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       type="button"
-      aria-label={label}
+      aria-label={tr(label)}
     >
       <Icon name={icon} />
       {badge ? (
@@ -67,15 +70,16 @@ export function IconButton({ label, icon, badge, className = "" }) {
   );
 }
 export function SectionHeader({ title, action = "See all" }) {
+  const tr = useInterfaceTranslation();
   return (
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 className="m-0 text-sm font-bold tracking-tight text-ink">{title}</h2>
+      <h2 className="m-0 text-sm font-bold tracking-tight text-ink">{tr(title)}</h2>
       {action ? (
         <button
           type="button"
           className="min-h-11 border-0 bg-transparent p-0 text-xs font-semibold text-brand-800 hover:text-brand-700"
         >
-          {action}
+          {tr(action)}
         </button>
       ) : null}
     </div>

@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -11,6 +12,7 @@ import {
 import { listSafetyKnowledge } from "../../services/safetyKnowledge";
 
 export function SafetyKnowledgePage() {
+  const tr = useInterfaceTranslation();
   const [knowledge, setKnowledge] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,22 +43,15 @@ export function SafetyKnowledgePage() {
   return (
     <main className="min-w-0 lg:px-10" id="main-content">
       <div className="mb-6">
-        <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
-          Stay informed
-        </p>
-        <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">
-          Community Safety
-        </h1>
-        <p className="m-0 max-w-2xl text-sm text-muted">
-          Practical guidance to help you recognise common online scams and
-          protect your information.
-        </p>
+        <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">{tr("Stay informed")}</p>
+        <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">{tr("Community Safety")}</h1>
+        <p className="m-0 max-w-2xl text-sm text-muted">{tr("Practical guidance to help you recognise common online scams and protect your information.")}</p>
       </div>
-      {loading ? <LoadingState message="Loading safety guidance…" /> : null}
+      {loading ? <LoadingState message={tr("Loading safety guidance…")} /> : null}
       {!loading && error ? (
         <ErrorState
-          title="Could not load guidance"
-          message={error.message}
+          title={tr("Could not load guidance")}
+          message={tr(error.message)}
           status={error.status}
           onRetry={() => window.location.reload()}
         />
@@ -64,8 +59,8 @@ export function SafetyKnowledgePage() {
       {!loading && !error && knowledge.length === 0 ? (
         <EmptyState
           icon="book"
-          title="No safety guidance published yet"
-          message="Please check back soon."
+          title={tr("No safety guidance published yet")}
+          message={tr("Please check back soon.")}
         />
       ) : null}
       {!loading && !error && knowledge.length ? (
@@ -87,8 +82,7 @@ export function SafetyKnowledgePage() {
               <Link
                 to={`/safety/${topic.slug}`}
                 className="mt-auto inline-flex min-h-10 items-center gap-2 pt-5 text-sm font-bold text-brand-800 hover:text-brand-700"
-              >
-                Learn More <Icon name="chevron" size={17} />
+              >{tr("Learn More")}{" "}<Icon name="chevron" size={17} />
               </Link>
             </Card>
           ))}

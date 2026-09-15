@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { listReports } from "../../services/reports";
@@ -6,6 +7,7 @@ import { Avatar, Card, Icon } from "../ui";
 import { useTranslation } from "react-i18next";
 
 export function LeftSidebar() {
+  const tr = useInterfaceTranslation();
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [reportCount, setReportCount] = useState(null);
@@ -34,13 +36,13 @@ export function LeftSidebar() {
   return (
     <aside
       className="desktop-left-sidebar hidden self-start lg:sticky lg:top-[84px] lg:min-h-[calc(100vh-100px)] lg:flex lg:flex-col lg:gap-3"
-      aria-label="Profile and safety shortcuts"
+      aria-label={tr("Profile and safety shortcuts")}
     >
       {user ? (
         <Card className="p-4 shadow-none">
-          <Avatar name={user.name || "User"} size="xl" />
+          <Avatar name={user.name || tr("User")} size="xl" />
           <h2 className="mb-0 mt-2 text-base font-bold">
-            {user.name || "User"}
+            {user.name || tr("User")}
           </h2>
           {user.username ? (
             <p className="mb-2 mt-0 text-xs text-muted">@{user.username}</p>
@@ -57,7 +59,7 @@ export function LeftSidebar() {
           </div>
         </Card>
       ) : null}
-      <nav className="grid gap-1" aria-label="Safety shortcuts">
+      <nav className="grid gap-1" aria-label={tr("Safety shortcuts")}>
         <NavLink to="/saved" className={shortcutClass}>
           <Icon name="bookmark" size={18} />
           {t("sidebar.saved")}
@@ -67,11 +69,9 @@ export function LeftSidebar() {
           {t("sidebar.history")}
         </NavLink>
         <NavLink to="/reports/history" className={shortcutClass}>
-          <Icon name="edit" size={18} />
-          My reports
-        </NavLink>
+          <Icon name="edit" size={18} />{tr("My reports")}</NavLink>
       </nav>
-      <p className="mb-0 mt-auto border-t border-line pt-4 text-xs text-muted">© BanteayDigital</p>
+      <p className="mb-0 mt-auto border-t border-line pt-4 text-xs text-muted">{tr("© BanteayDigital")}</p>
     </aside>
   );
 }

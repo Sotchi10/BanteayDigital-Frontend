@@ -1,6 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Kantumruy+Pro:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Match Khmer's visible letter height to DM Sans without scaling Latin glyphs. */
+@font-face {
+    font-family: "Khmer UI";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("https://fonts.gstatic.com/s/kantumruypro/v12/1q2AY5aECkp34vEBSPFOmJxwlEjBe72g.woff2") format("woff2");
+    unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+    size-adjust: 110%;
+}
+
 @theme {
     --color-brand-900: #082f6b;
     --color-brand-800: #0c4698;
@@ -14,7 +25,7 @@
     --color-risk-high: #dc4455;
     --color-risk-medium: #c98311;
     --color-risk-low: #25845a;
-    --font-sans: "DM Sans", "Kantumruy Pro", system-ui, sans-serif;
+    --font-sans: "DM Sans", "Khmer UI", "Kantumruy Pro", system-ui, sans-serif;
 }
 
 :root { color-scheme: light; --radius-card: 0.875rem; --shadow-card: 0 1px 2px rgb(16 42 67 / 0.04); }
@@ -35,6 +46,12 @@
 }
 * { box-sizing: border-box; }
 html { min-width: 320px; font-family: var(--font-sans); background: var(--color-canvas); color: var(--color-ink); scroll-behavior: smooth; }
+/* Leave room for Khmer's stacked marks while retaining the shared type scale. */
+html[lang="km"] body { line-height: 1.65; }
+html[lang="km"] :is(p, label, button, a, li, small, input, textarea, select) { line-height: 1.65; }
+html[lang="km"] :is(h1, h2, h3) { line-height: 1.4; }
+html[lang="km"] .app-navbar > div { height: auto; min-height: 68px; padding-block: 0.5rem; }
+html[lang="km"] .app-main-navigation { min-width: 0; flex-wrap: wrap; }
 body { margin: 0; min-width: 320px; overflow-x: clip; background: var(--color-canvas); line-height: 1.55; }
 button, input, select, textarea { font-family: inherit; }
 button:not(:disabled) { cursor: pointer; }

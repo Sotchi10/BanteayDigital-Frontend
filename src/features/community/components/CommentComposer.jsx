@@ -1,9 +1,11 @@
+import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '../../../components/ui'
 import { apiErrorMessage } from '../api/communityApi'
 
 export function CommentComposer({ currentUser, onSubmit, compact = false, autoFocus = false, minimal = false, onCancel }) {
+  const tr = useInterfaceTranslation();
   const { t } = useTranslation()
   const [content, setContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -42,7 +44,7 @@ export function CommentComposer({ currentUser, onSubmit, compact = false, autoFo
         value={content}
       />
       {content.trim() ? <button aria-label={t('community.postComment')} className="absolute right-1 top-1 grid h-8 w-8 place-items-center rounded-full bg-brand-800 text-white hover:bg-brand-700 disabled:opacity-60" disabled={submitting} type="submit"><Icon name="send" size={15} /></button> : null}
-      {error ? <p className="mb-0 mt-1 text-[11px] text-red-600">{error}</p> : null}
+      {error ? <p className="mb-0 mt-1 text-[11px] text-red-600">{tr(error)}</p> : null}
     </form>
   }
 
@@ -58,7 +60,7 @@ export function CommentComposer({ currentUser, onSubmit, compact = false, autoFo
       />
       <div className="flex items-center justify-between gap-3">
         <span className={`text-[11px] ${error ? 'text-red-600' : 'text-[#8a96a8]'}`}>
-          {error || `${content.length}/1000`}
+          {tr(error) || `${content.length}/1000`}
         </span>
         <div className="flex gap-2">
           {onCancel ? (

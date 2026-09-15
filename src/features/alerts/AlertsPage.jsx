@@ -1,3 +1,5 @@
+import appI18n from "../../i18n";
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
@@ -7,11 +9,12 @@ import {
 } from "../community/api/communityApi";
 
 const dateLabel = (date) =>
-  new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
+  new Intl.DateTimeFormat(appI18n.resolvedLanguage, { dateStyle: "medium" }).format(
     new Date(date),
   );
 
 export function AlertsPage() {
+  const tr = useInterfaceTranslation();
   const [alerts, setAlerts] = useState([]);
   const [readAlerts, setReadAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,33 +44,22 @@ export function AlertsPage() {
     <main className="min-w-0 lg:px-10" id="main-content">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">
-            Safety updates
-          </p>
-          <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">
-            Verified alerts
-          </h1>
-          <p className="m-0 max-w-xl text-sm text-muted">
-            Review recent threats confirmed by moderators and act before sharing
-            information or money.
-          </p>
+          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">{tr("Safety updates")}</p>
+          <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">{tr("Verified alerts")}</h1>
+          <p className="m-0 max-w-xl text-sm text-muted">{tr("Review recent threats confirmed by moderators and act before sharing information or money.")}</p>
         </div>
         <Link
           to="/analysis"
           className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100"
         >
-          <Icon name="shield" size={17} />
-          Analyze a similar message
-        </Link>
+          <Icon name="shield" size={17} />{tr("Analyze a similar message")}</Link>
       </div>
       {loading ? (
-        <Card className="p-8 text-center text-sm text-muted" role="status">
-          Loading verified alerts…
-        </Card>
+        <Card className="p-8 text-center text-sm text-muted" role="status">{tr("Loading verified alerts…")}</Card>
       ) : null}
       {!loading && error ? (
         <Card className="p-5 text-sm text-risk-high" role="alert">
-          {error}
+          {tr(error)}
         </Card>
       ) : null}
       {!loading && !error ? (
@@ -82,9 +74,7 @@ export function AlertsPage() {
                 <article>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <Badge tone="blue">
-                      <Icon name="shield" size={13} />
-                      Verified alert
-                    </Badge>
+                      <Icon name="shield" size={13} />{tr("Verified alert")}</Badge>
                     <span className="text-sm text-muted">
                       {dateLabel(alert.publishedAt)}
                     </span>
@@ -100,9 +90,7 @@ export function AlertsPage() {
                       to={`/posts/${alert.id}`}
                       className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-brand-100 px-3 text-sm font-bold text-brand-800"
                     >
-                      <Icon name="eye" size={16} />
-                      View alert
-                    </Link>
+                      <Icon name="eye" size={16} />{tr("View alert")}</Link>
                     <button
                       type="button"
                       onClick={() =>
@@ -114,7 +102,7 @@ export function AlertsPage() {
                       }
                       className="min-h-10 rounded-lg border-0 bg-transparent px-3 text-sm font-semibold text-muted hover:bg-[#f2f5f8] hover:text-brand-800"
                     >
-                      {isRead ? "Mark as unread" : "Mark as read"}
+                      {isRead ? tr("Mark as unread") : tr("Mark as read")}
                     </button>
                   </div>
                 </article>
@@ -126,10 +114,8 @@ export function AlertsPage() {
       {!loading && !error && alerts.length === 0 ? (
         <Card className="p-8 text-center">
           <Icon name="check" size={28} className="mx-auto text-risk-low" />
-          <h2 className="mb-1 mt-3 text-lg">No verified alerts yet</h2>
-          <p className="m-0 text-sm text-muted">
-            Check back when moderators publish a new safety alert.
-          </p>
+          <h2 className="mb-1 mt-3 text-lg">{tr("No verified alerts yet")}</h2>
+          <p className="m-0 text-sm text-muted">{tr("Check back when moderators publish a new safety alert.")}</p>
         </Card>
       ) : null}
     </main>

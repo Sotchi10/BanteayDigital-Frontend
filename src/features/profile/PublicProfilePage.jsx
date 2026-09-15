@@ -1,3 +1,5 @@
+import appI18n from "../../i18n";
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -19,12 +21,13 @@ const assessmentTone = (assessment) =>
       : "low";
 
 const formatDate = (value) =>
-  new Intl.DateTimeFormat(undefined, {
+  new Intl.DateTimeFormat(appI18n.resolvedLanguage, {
     month: "short",
     year: "numeric",
   }).format(new Date(value));
 
 export function PublicProfilePage() {
+  const tr = useInterfaceTranslation();
   const { username } = useParams();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,13 +60,13 @@ export function PublicProfilePage() {
   if (loading)
     return (
       <main className="min-w-0" id="main-content">
-        <LoadingState message="Loading profile…" />
+        <LoadingState message={tr("Loading profile…")} />
       </main>
     );
   if (error)
     return (
       <main className="min-w-0" id="main-content">
-        <ErrorState title="Profile unavailable" message={error} />
+        <ErrorState title={tr("Profile unavailable")} message={tr(error)} />
       </main>
     );
 
@@ -85,7 +88,7 @@ export function PublicProfilePage() {
             </div>
           </div>
           <p className="mb-0 mt-5 flex items-center gap-2 text-sm text-muted">
-            <Icon name="user" size={16} /> Community member since{" "}
+            <Icon name="user" size={16} />{" "}{tr("Community member since")}{" "}
             {formatDate(profile.createdAt)}
           </p>
         </div>
@@ -94,19 +97,15 @@ export function PublicProfilePage() {
       <section className="mt-7">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
-              Community contributions
-            </p>
-            <h2 className="mb-0 mt-1 text-xl font-bold text-brand-900">
-              Reported Scams
-            </h2>
+            <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">{tr("Community contributions")}</p>
+            <h2 className="mb-0 mt-1 text-xl font-bold text-brand-900">{tr("Reported Scams")}</h2>
           </div>
         </div>
         {profile.reports.length === 0 ? (
           <EmptyState
             icon="shield"
-            title="No published reports yet"
-            message="Approved community scam reports from this member will appear here."
+            title={tr("No published reports yet")}
+            message={tr("Approved community scam reports from this member will appear here.")}
           />
         ) : (
           <div className="grid gap-4">
@@ -117,13 +116,12 @@ export function PublicProfilePage() {
                     <h3 className="m-0 text-lg font-bold text-brand-900">
                       {report.communityPost.title}
                     </h3>
-                    <p className="mb-0 mt-1 text-xs text-muted">
-                      Published {formatDate(report.communityPost.publishedAt)}
+                    <p className="mb-0 mt-1 text-xs text-muted">{tr("Published")}{" "}{formatDate(report.communityPost.publishedAt)}
                     </p>
                   </div>
                   {report.scan?.assessment ? (
                     <Badge tone={assessmentTone(report.scan.assessment)}>
-                      {report.scan.assessment.replaceAll("_", " ")}
+                      {tr(report.scan.assessment.replaceAll("_", " "))}
                     </Badge>
                   ) : null}
                 </div>

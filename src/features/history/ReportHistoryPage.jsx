@@ -1,3 +1,5 @@
+import appI18n from "../../i18n";
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -21,12 +23,13 @@ const scanType = (scan) =>
       ? "Image scan"
       : "Text scan";
 const dateLabel = (date) =>
-  new Intl.DateTimeFormat(undefined, {
+  new Intl.DateTimeFormat(appI18n.resolvedLanguage, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(date));
 
 export function ReportHistoryPage() {
+  const tr = useInterfaceTranslation();
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,30 +65,22 @@ export function ReportHistoryPage() {
     <main className="min-w-0 lg:px-10" id="main-content">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">
-            Your activity
-          </p>
-          <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">
-            Report history
-          </h1>
-          <p className="m-0 text-sm text-muted">
-            Track reports you have submitted for review.
-          </p>
+          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">{tr("Your activity")}</p>
+          <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">{tr("Report history")}</h1>
+          <p className="m-0 text-sm text-muted">{tr("Track reports you have submitted for review.")}</p>
         </div>
         <Link
           to="/history"
           className="inline-flex min-h-10 items-center rounded-lg border border-line bg-white px-3 text-sm font-bold text-brand-800 hover:bg-brand-100"
-        >
-          View scans
-        </Link>
+        >{tr("View scans")}</Link>
       </div>
       {loading ? (
-        <LoadingState message="Loading your submitted reports…" />
+        <LoadingState message={tr("Loading your submitted reports…")} />
       ) : null}
       {!loading && error ? (
         <ErrorState
-          title="Could not load report history"
-          message={error.message}
+          title={tr("Could not load report history")}
+          message={tr(error.message)}
           status={error.status}
           onRetry={() => window.location.reload()}
         />
@@ -93,9 +88,9 @@ export function ReportHistoryPage() {
       {!loading && !error && reports.length === 0 ? (
         <EmptyState
           icon="edit"
-          title="No submitted reports yet"
-          message="Reports you submit after an analysis will appear here for you to track."
-          actionLabel="Analyze something"
+          title={tr("No submitted reports yet")}
+          message={tr("Reports you submit after an analysis will appear here for you to track.")}
+          actionLabel={tr("Analyze something")}
           actionTo="/analysis"
         />
       ) : null}
@@ -113,24 +108,22 @@ export function ReportHistoryPage() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <strong className="text-sm text-brand-900">
-                      {report.reason || report.title || "Scam report"}
+                      {report.reason || report.title || tr("Scam report")}
                     </strong>
                     <Badge tone={statusTone(report.status)}>
-                      {statusLabel(report.status)}
+                      {tr(statusLabel(report.status))}
                     </Badge>
                   </div>
-                  <p className="mb-0 mt-1 truncate text-sm text-muted">
-                    Related scan: {scanType(report.scan)}
+                  <p className="mb-0 mt-1 truncate text-sm text-muted">{tr("Related scan:")}{" "}{tr(scanType(report.scan))}
                     {report.scan?.normalizedInput
                       ? ` — ${report.scan.normalizedInput}`
                       : ""}
                   </p>
-                  <p className="mb-0 mt-1 text-xs text-muted">
-                    Submitted {dateLabel(report.createdAt)}
+                  <p className="mb-0 mt-1 text-xs text-muted">{tr("Submitted")}{" "}{dateLabel(report.createdAt)}
                   </p>
                 </div>
                 <span className="text-xs font-semibold text-muted">
-                  {report.scan ? "Linked to scan" : "Scan unavailable"}
+                  {report.scan ? tr("Linked to scan") : tr("Scan unavailable")}
                 </span>
               </li>
             ))}

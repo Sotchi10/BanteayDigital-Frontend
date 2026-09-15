@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useState } from "react";
 import { useAuth } from "../../state/AuthStore";
 
@@ -14,6 +15,7 @@ export function ProfileCompletionModal() {
 }
 
 function ProfileCompletionForm({ needsName, needsUsername, updateProfile, user }) {
+  const tr = useInterfaceTranslation();
   const [name, setName] = useState(user.name || "");
   const [username, setUsername] = useState(user.username || "");
   const [error, setError] = useState("");
@@ -65,24 +67,15 @@ function ProfileCompletionForm({ needsName, needsUsername, updateProfile, user }
         className="w-full max-w-md rounded-2xl border border-line bg-white p-5 shadow-2xl sm:p-6"
         role="dialog"
       >
-        <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
-          One quick step
-        </p>
+        <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">{tr("One quick step")}</p>
         <h2
           id="profile-completion-title"
           className="mb-1 mt-2 text-xl font-bold text-brand-900"
-        >
-          Complete your profile
-        </h2>
-        <p className="mb-5 mt-0 text-sm leading-6 text-muted">
-          Add the missing details so people can recognize your community
-          reports.
-        </p>
+        >{tr("Complete your profile")}</h2>
+        <p className="mb-5 mt-0 text-sm leading-6 text-muted">{tr("Add the missing details so people can recognize your community reports.")}</p>
         <form className="grid gap-4" noValidate onSubmit={submit}>
           {needsName ? (
-            <label className="grid gap-1.5 text-sm font-bold text-ink">
-              Full name
-              <input
+            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Full name")}<input
                 autoComplete="name"
                 autoFocus
                 className="min-h-11 rounded-lg border border-[#cbd8e5] px-3 text-sm outline-none focus:border-brand-700 focus:ring-2 focus:ring-[#d9ebfa]"
@@ -96,9 +89,7 @@ function ProfileCompletionForm({ needsName, needsUsername, updateProfile, user }
             </label>
           ) : null}
           {needsUsername ? (
-            <label className="grid gap-1.5 text-sm font-bold text-ink">
-              Username
-              <input
+            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Username")}<input
                 autoComplete="username"
                 autoFocus={!needsName}
                 className="min-h-11 rounded-lg border border-[#cbd8e5] px-3 text-sm outline-none focus:border-brand-700 focus:ring-2 focus:ring-[#d9ebfa]"
@@ -107,12 +98,10 @@ function ProfileCompletionForm({ needsName, needsUsername, updateProfile, user }
                   setUsername(event.target.value);
                   setError("");
                 }}
-                placeholder="e.g. banteay_member"
+                placeholder={tr("e.g. banteay_member")}
                 value={username}
               />
-              <span className="text-xs font-normal text-muted">
-                Letters, numbers, and underscores only.
-              </span>
+              <span className="text-xs font-normal text-muted">{tr("Letters, numbers, and underscores only.")}</span>
             </label>
           ) : null}
           {error ? (
@@ -120,7 +109,7 @@ function ProfileCompletionForm({ needsName, needsUsername, updateProfile, user }
               className="m-0 text-sm font-semibold text-risk-high"
               role="alert"
             >
-              {error}
+              {tr(error)}
             </p>
           ) : null}
           <button
@@ -128,7 +117,7 @@ function ProfileCompletionForm({ needsName, needsUsername, updateProfile, user }
             disabled={saving}
             type="submit"
           >
-            {saving ? "Saving…" : "Save and continue"}
+            {saving ? tr("Saving…") : tr("Save and continue")}
           </button>
         </form>
       </section>

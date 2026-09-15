@@ -38,6 +38,7 @@ import {
   FiUploadCloud,
   FiX,
 } from 'react-icons/fi'
+import { LuLightbulb } from 'react-icons/lu'
 
 const icons = {
   alert: FiAlertTriangle,
@@ -60,6 +61,7 @@ const icons = {
   gift: FiGift,
   image: FiImage,
   link: FiLink,
+  lightbulb: LuLightbulb,
   lock: FiLock,
   logout: FiLogOut,
   menu: FiMenu,

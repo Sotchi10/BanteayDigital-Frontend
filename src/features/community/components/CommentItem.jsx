@@ -1,3 +1,4 @@
+import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar } from "../../../components/ui";
@@ -29,6 +30,7 @@ export function CommentItem({
   postId,
   onCountChange,
 }) {
+  const tr = useInterfaceTranslation();
   const { i18n, t } = useTranslation();
   const [comment, setComment] = useState(initialComment);
   const [replies, setReplies] = useState(initialComment.replies || []);
@@ -316,7 +318,7 @@ export function CommentItem({
             </div>
           ) : null}
           {error ? (
-            <p className="my-1 text-[11px] text-red-600">{error}</p>
+            <p className="my-1 text-[11px] text-red-600">{tr(error)}</p>
           ) : null}
           {notice ? (
             <p className="my-1 text-[11px] text-green-700">{notice}</p>
