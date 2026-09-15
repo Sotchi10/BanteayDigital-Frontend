@@ -69,7 +69,7 @@ export function PublicProfilePage() {
 
   const displayName = profile.name || profile.username;
   return (
-    <main className="min-w-0 px-10" id="main-content">
+    <main className="min-w-0 lg:px-10" id="main-content">
       <Card className="overflow-hidden">
         <div className="h-24 bg-linear-to-r from-brand-900 via-brand-800 to-[#2670c9] sm:h-40" />
         <div className="mt-15 px-5 pb-6 sm:px-7">

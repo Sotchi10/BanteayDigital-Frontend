@@ -1,17 +1,25 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Avatar, Badge, Card, Icon, IconButton } from "../../../components/ui";
 import { apiErrorMessage } from "../api/communityApi";
 
-export const RiskBadge = ({ level }) =>
-  level ? <Badge tone={level.toLowerCase()}>{level} risk</Badge> : null;
-export const CategoryBadge = ({ category }) =>
-  category ? <Badge tone="category">{category}</Badge> : null;
+export function RiskBadge({ level }) {
+  const { t } = useTranslation();
+  if (!level) return null;
+  const normalizedLevel = `${level}`.charAt(0).toUpperCase() + `${level}`.slice(1).toLowerCase();
+  return <Badge tone={normalizedLevel === "Critical" ? "high" : normalizedLevel.toLowerCase()}>{t("community.risk", { level: t(`community.riskLevels.${normalizedLevel}`, { defaultValue: normalizedLevel }) })}</Badge>;
+}
+export function CategoryBadge({ category }) {
+  const { t } = useTranslation();
+  const categoryKey = `${category || ""}`.trim().toUpperCase().replaceAll(" ", "_");
+  return category ? <Badge tone="category">{t(`community.categories.${categoryKey}`, { defaultValue: category })}</Badge> : null;
+}
 
-function postTimestamp(value) {
+function postTimestamp(value, locale) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   const seconds = Math.round((date.getTime() - Date.now()) / 1000);
-  const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+  const formatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   if (Math.abs(seconds) < 60) return formatter.format(seconds, "second");
   const minutes = Math.round(seconds / 60);
   if (Math.abs(minutes) < 60) return formatter.format(minutes, "minute");
@@ -42,6 +50,7 @@ function ImageEvidence({ src, alt }) {
 }
 
 function ExpandableDescription({ children }) {
+  const { t } = useTranslation();
   const descriptionRef = useRef(null);
   const [expanded, setExpanded] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
@@ -71,7 +80,7 @@ function ExpandableDescription({ children }) {
           onClick={() => setExpanded((value) => !value)}
           type="button"
         >
-          {expanded ? "See less" : "See more"}
+          {expanded ? t("community.seeLess") : t("community.seeMore")}
         </button>
       ) : null}
     </div>
@@ -99,6 +108,7 @@ function PostActions({
   onToggleLike,
   post,
 }) {
+  const { t } = useTranslation();
   const [likePending, setLikePending] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [sharePending, setSharePending] = useState(false);
@@ -112,13 +122,13 @@ function PostActions({
     try {
       await onToggleLike();
     } catch (requestError) {
-      setError(apiErrorMessage(requestError, "Could not update Helpful."));
+      setError(apiErrorMessage(requestError, t("community.like")));
     } finally {
       setLikePending(false);
     }
   };
 
-  const shareUrl = `${window.location.origin}/community/posts/${encodeURIComponent(post.id)}`;
+  const shareUrl = `${window.location.origin}/posts/${encodeURIComponent(post.id)}`;
 
   const shareNative = async () => {
     setSharePending(true);
@@ -127,14 +137,14 @@ function PostActions({
     try {
       await navigator.share({
         title: post.title,
-        text: "Verified scam warning from BanteayDigital",
+        text: t("community.verifiedSafetyAlert"),
         url: shareUrl,
       });
       await onShare("NATIVE");
     } catch (requestError) {
       if (requestError.name !== "AbortError") {
         setError(
-          apiErrorMessage(requestError, "Could not open the share options."),
+          apiErrorMessage(requestError, t("community.share")),
         );
       }
     } finally {
@@ -155,7 +165,7 @@ function PostActions({
     setSharePending(true);
     setError("");
     setNotice("");
-    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent("Verified scam warning from BanteayDigital")}`;
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(t("community.verifiedSafetyAlert"))}`;
     window.open(telegramUrl, "_blank", "noopener,noreferrer");
     try {
       await onShare("TELEGRAM");
@@ -163,7 +173,7 @@ function PostActions({
       setError(
         apiErrorMessage(
           requestError,
-          "The Telegram window opened, but the share count could not be updated.",
+          t("community.share"),
         ),
       );
     } finally {
@@ -179,9 +189,9 @@ function PostActions({
     try {
       await copyText(shareUrl);
       await onShare("COPY_LINK");
-      setNotice("Post link copied.");
+      setNotice(t("community.postLinkCopied"));
     } catch (requestError) {
-      setError(apiErrorMessage(requestError, "Could not copy the post link."));
+      setError(apiErrorMessage(requestError, t("community.copyPostLink")));
     } finally {
       setSharePending(false);
     }
@@ -191,29 +201,35 @@ function PostActions({
     <>
       <div className="grid min-h-10 grid-cols-3 border-t border-line">
         <button
+          aria-label={`${t("community.like")}: ${post.interaction.likeCount}`}
           aria-pressed={post.interaction.likedByMe}
+          title={t("community.like")}
           className={`flex min-w-0 items-center justify-center gap-1.5 border-0 bg-transparent px-2 text-xs font-semibold ${post.interaction.likedByMe ? "text-red-600 [&_svg]:fill-current" : "text-[#61718a]"}`}
           disabled={likePending}
           onClick={toggleLike}
           type="button"
         >
           <Icon name="heart" size={15} />
-          <span className="text-xs">{post.interaction.likeCount} </span>
+          <span className="text-xs">{post.interaction.likeCount}</span>
         </button>
         <button
+          aria-label={`${t("community.comment")}: ${post.interaction.commentCount}`}
+          title={t("community.comment")}
           className="flex min-w-0 items-center justify-center gap-1.5 border-x border-line bg-transparent px-2 text-xs font-semibold text-[#61718a] hover:text-brand-700"
           onClick={onOpenComments}
           type="button"
         >
           <Icon name="message" size={15} />
-          <span className="text-xs">{post.interaction.commentCount} </span>
+          <span className="text-xs">{post.interaction.commentCount}</span>
         </button>
         <div className="relative flex min-w-0">
           <button
+            aria-label={t("community.share")}
             aria-expanded={shareOpen}
             className="flex w-full items-center justify-center gap-1.5 border-0 bg-transparent px-2 text-xs font-semibold text-[#61718a] hover:text-brand-700"
             disabled={sharePending}
             onClick={openShareOptions}
+            title={t("community.share")}
             type="button"
           >
             <Icon name="share" size={15} />
@@ -225,14 +241,14 @@ function PostActions({
                 onClick={shareToTelegram}
                 type="button"
               >
-                Share to Telegram
+                {t("community.shareToTelegram")}
               </button>
               <button
                 className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-[12px] font-semibold text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
                 onClick={copyLink}
                 type="button"
               >
-                Copy post link
+                {t("community.copyPostLink")}
               </button>
             </div>
           ) : null}
@@ -258,11 +274,12 @@ export function ScamPostCard({
   onToggleLike,
   post,
 }) {
-  const authorName = post.author?.username || post.author?.name || "BanteayDigital Safety Team";
+  const { i18n, t } = useTranslation();
+  const authorName = post.author?.username || post.author?.name || t("community.safetyTeam");
 
   return (
     <Card className="flex w-full flex-col overflow-hidden p-0">
-      <article className="flex flex-col p-5">
+      <article className="flex flex-col p-4 sm:p-5">
         <header className="flex min-h-11 items-start gap-3">
           <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" />
           <div className="min-w-0 flex-1">
@@ -272,16 +289,16 @@ export function ScamPostCard({
               </strong>
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2670c9]">
                 <Icon name="shield" size={12} />
-                Verified by BanteayDigital
+                {t("community.verifiedBy")}
               </span>
             </div>
             <p className="m-0 text-[12px] text-[#8490a2]">
-              {postTimestamp(post.publishedAt)} · Public
+              {postTimestamp(post.publishedAt, i18n.language)} · {t("community.public")}
             </p>
           </div>
-          <IconButton label="More options" icon="more" />
+          <IconButton label={t("community.moreOptions")} icon="more" />
         </header>
-        <div className="flex items-center gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <RiskBadge level={post.risk} />
           <CategoryBadge category={post.category} />
         </div>

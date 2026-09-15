@@ -11,7 +11,7 @@ export function LeftSidebar() {
   const [reportCount, setReportCount] = useState(null);
   const [reportError, setReportError] = useState(false);
   const shortcutClass = ({ isActive }) =>
-    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-white text-brand-800 shadow-[var(--shadow-card)]" : "text-[#40546b] hover:bg-white hover:text-brand-800"}`;
+    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#52647a] hover:bg-white hover:text-brand-800"}`;
 
   useEffect(() => {
     if (!user) return undefined;
@@ -33,11 +33,11 @@ export function LeftSidebar() {
 
   return (
     <aside
-      className="hidden self-start lg:sticky lg:top-[84px] lg:flex lg:flex-col lg:gap-4"
+      className="desktop-left-sidebar hidden self-start lg:sticky lg:top-[84px] lg:min-h-[calc(100vh-100px)] lg:flex lg:flex-col lg:gap-3"
       aria-label="Profile and safety shortcuts"
     >
       {user ? (
-        <Card className="p-5">
+        <Card className="p-4 shadow-none">
           <Avatar name={user.name || "User"} size="xl" />
           <h2 className="mb-0 mt-2 text-base font-bold">
             {user.name || "User"}
@@ -66,22 +66,12 @@ export function LeftSidebar() {
           <Icon name="clock" size={18} />
           {t("sidebar.history")}
         </NavLink>
-        <NavLink to="/about" className={shortcutClass}>
-          <Icon name="book" size={18} />
-          {t("sidebar.about")}
+        <NavLink to="/reports/history" className={shortcutClass}>
+          <Icon name="edit" size={18} />
+          My reports
         </NavLink>
       </nav>
-      <Card className="p-4">
-        <div className="mb-2 flex items-center gap-2">
-          <Icon name="shield" size={19} className="text-brand-800" />
-          <strong className="text-sm text-ink">{t("sidebar.beforeRespond")}</strong>
-        </div>
-        <ul className="m-0 grid gap-2 pl-5 text-xs leading-relaxed text-[#40546b]">
-          <li>{t("sidebar.tipSender")}</li>
-          <li>{t("sidebar.tipOtp")}</li>
-          <li>{t("sidebar.tipReport")}</li>
-        </ul>
-      </Card>
+      <p className="mb-0 mt-auto border-t border-line pt-4 text-xs text-muted">© BanteayDigital</p>
     </aside>
   );
 }

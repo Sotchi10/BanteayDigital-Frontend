@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Avatar, Badge, Icon } from "../../../components/ui";
 import { CommentSection } from "./CommentSection";
 import { CategoryBadge, RiskBadge } from "./ScamPostCard";
 
-const publishedDate = (value) => {
+const publishedDate = (value, locale) => {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? ""
-    : new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date);
+    : new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
 };
 
 export function PostDiscussionModal({
@@ -16,6 +17,7 @@ export function PostDiscussionModal({
   onCommentCountChange,
   post,
 }) {
+  const { i18n, t } = useTranslation();
   const [showImage, setShowImage] = useState(false);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function PostDiscussionModal({
     };
   }, []);
 
-  const authorName = post.author?.username || post.author?.name || "BanteayDigital Safety Team";
+  const authorName = post.author?.username || post.author?.name || t("community.safetyTeam");
   const imageSource = post.imageUrl || post.image;
   return (
     <div
@@ -69,16 +71,16 @@ export function PostDiscussionModal({
                   </strong>
                   <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2670c9]">
                     <Icon name="shield" size={12} />
-                    Verified
+                    {t("community.verified")}
                   </span>
                 </div>
                 <p className="mb-0 mt-0.5 text-[11px] text-muted">
-                  Published {publishedDate(post.publishedAt)}
+                  {t("community.published", { date: publishedDate(post.publishedAt, i18n.language) })}
                 </p>
               </div>
             </div>
             <button
-              aria-label="Close discussion"
+              aria-label={t("community.closeDiscussion")}
               className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted hover:bg-brand-100 hover:text-brand-800"
               onClick={onClose}
               type="button"
@@ -88,7 +90,7 @@ export function PostDiscussionModal({
           </header>
           <div className="space-y-3 p-4 sm:p-5">
             <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
-              Verified safety alert
+              {t("community.verifiedSafetyAlert")}
             </p>
             <div className="flex flex-wrap gap-2">
               <RiskBadge level={post.risk} />
@@ -114,26 +116,26 @@ export function PostDiscussionModal({
                   src={imageSource}
                 />
                 <figcaption className="border-t border-line bg-white px-3 py-2 text-xs font-medium text-muted">
-                  Attached evidence
+                  {t("community.attachedEvidence")}
                 </figcaption>
               </figure>
             ) : null}
             <div className="border-t border-line pt-3">
-              <Badge tone="blue">Community safety alert</Badge>
+              <Badge tone="blue">{t("community.communitySafetyAlert")}</Badge>
             </div>
           </div>
         </article>
         <aside
           className="flex min-h-0 flex-1 flex-col bg-[#fbfcfe]"
-          aria-label="Comments"
+          aria-label={t("community.comments")}
         >
           <div className="flex items-center justify-between border-b border-line bg-white px-5 py-4">
             <div>
               <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
-                Discussion
+                {t("community.discussion")}
               </p>
               <h2 className="m-0 mt-0.5 text-base font-bold text-brand-900">
-                Comments
+                {t("community.comments")}
               </h2>
             </div>
             <span className="rounded-full bg-brand-100 px-2.5 py-1 text-xs font-semibold text-brand-800">

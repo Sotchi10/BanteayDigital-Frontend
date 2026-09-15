@@ -1,5 +1,5 @@
 import { cloneElement } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { AppLayout } from "../components/layout/AppLayout";
 import { AlertsPage } from "../features/alerts/AlertsPage";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
@@ -24,13 +24,19 @@ function ProtectedRoute({ children }) {
   return isAuthenticated ? cloneElement(children, { key: user.id }) : <Navigate to="/login" replace state={{ from: location.pathname }} />;
 }
 
+function LegacyCommunityPostRedirect() {
+  const { postId } = useParams();
+  return <Navigate to={`/posts/${encodeURIComponent(postId)}`} replace />;
+}
+
 export function AppRoutes() {
   return (
     <Routes>
-      <Route element={<AppLayout />}>
+        <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="community" element={<CommunityPage />} />
-        <Route path="community/posts/:postId" element={<CommunityPage />} />
+        <Route path="posts/:postId" element={<CommunityPage />} />
+        <Route path="community" element={<Navigate to="/" replace />} />
+        <Route path="community/posts/:postId" element={<LegacyCommunityPostRedirect />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />
         <Route path="report" element={<ProtectedRoute><ReportPage /></ProtectedRoute>} />
         <Route path="analysis" element={<AnalysisPage />} />

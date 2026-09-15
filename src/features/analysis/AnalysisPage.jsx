@@ -641,7 +641,7 @@ export function AnalysisPage() {
   };
 
   return (
-    <main className="px-10" id="main-content">
+    <main className="lg:px-10" id="main-content">
       <ProgressTracker hasResult={Boolean(result)} />
       <Card className="relative overflow-hidden p-4 sm:p-6">
         {isSubmitting ? <ScanningOverlay /> : null}

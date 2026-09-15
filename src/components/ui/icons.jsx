@@ -22,6 +22,7 @@ import {
   FiLink,
   FiLock,
   FiLogOut,
+  FiMenu,
   FiMessageCircle,
   FiMoreHorizontal,
   FiPlus,
@@ -35,6 +36,7 @@ import {
   FiUsers,
   FiUser,
   FiUploadCloud,
+  FiX,
 } from 'react-icons/fi'
 
 const icons = {
@@ -60,6 +62,7 @@ const icons = {
   link: FiLink,
   lock: FiLock,
   logout: FiLogOut,
+  menu: FiMenu,
   message: FiMessageCircle,
   more: FiMoreHorizontal,
   plus: FiPlus,
@@ -74,6 +77,7 @@ const icons = {
   users: FiUsers,
   user: FiUser,
   upload: FiUploadCloud,
+  close: FiX,
 }
 
 export function Icon({ name, size = 18, className }) {

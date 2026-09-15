@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import {
   apiErrorMessage,
@@ -14,6 +15,7 @@ import { ScamPostCard } from './ScamPostCard'
 import { PostDiscussionModal } from './PostDiscussionModal'
 
 export function CommunityFeed() {
+  const { t } = useTranslation()
   const { postId } = useParams()
   const [posts, setPosts] = useState([])
   const [currentUser, setCurrentUser] = useState(null)
@@ -63,7 +65,7 @@ export function CommunityFeed() {
     if (!post) return
     if (!currentUser) {
       const errorResponse = new Error('Authentication is required')
-      errorResponse.response = { status: 401, data: { message: 'Sign in to mark posts as helpful.' } }
+      errorResponse.response = { status: 401, data: { message: t('community.signInToLike') } }
       throw errorResponse
     }
 
@@ -122,21 +124,21 @@ export function CommunityFeed() {
   }
 
   return (
-    <main className="flex min-w-0 flex-col gap-3 px-4 pb-3 sm:px-6 lg:px-10" id="main-content">
+    <main className="flex min-w-0 flex-col gap-4 lg:px-10" id="main-content">
       {!postId ? <PostComposer onChange={setQuery} value={query} /> : null}
-      <div className="flex items-end justify-between px-1 pt-2">
+      <div className="flex items-end justify-between gap-3 px-1 pt-1">
         <div>
-          <p className="m-0 text-[15px] font-bold uppercase tracking-wide text-black">{postId ? 'Community alert' : 'Community feed'}</p>
-          <p className="m-0 text-[11px] text-muted">Verified safety alerts and community discussion</p>
+          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">{postId ? t('community.alert') : t('community.feed')}</p>
+          <p className="m-0 mt-1 text-sm text-muted">{t('community.feedDetail')}</p>
         </div>
-        <span className="rounded-lg border border-[#dfe5ed] bg-white px-2.5 py-1.5 text-[12px] text-[#53627a]">Most recent</span>
+        <span className="shrink-0 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-xs font-medium text-muted">{t('community.mostRecent')}</span>
       </div>
 
-      {loading ? <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">Loading verified alerts…</div> : null}
+      {loading ? <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">{t('community.loadingAlerts')}</div> : null}
       {error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-[13px] text-red-700">{error}</div> : null}
       {!loading && !error && visiblePosts.length === 0 ? (
         <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">
-          {query ? 'No alerts match your search.' : 'No verified community alerts have been published yet.'}
+          {query ? t('community.noMatchingAlerts') : t('community.noAlerts')}
         </div>
       ) : null}
 
@@ -154,7 +156,7 @@ export function CommunityFeed() {
 
       {meta && meta.page < meta.totalPages && !query ? (
         <button className="mb-2 rounded-xl border border-line bg-white py-3 text-[13px] font-semibold text-brand-700" disabled={loadingMore} onClick={loadMore} type="button">
-          {loadingMore ? 'Loading…' : 'Load more alerts'}
+          {loadingMore ? t('community.loading') : t('community.loadMoreAlerts')}
         </button>
       ) : null}
     </main>

@@ -39,7 +39,7 @@ export function SafetyKnowledgePage() {
   }, []);
 
   return (
-    <main className="min-w-0 px-5 py-5 sm:px-8" id="main-content">
+    <main className="min-w-0 lg:px-10" id="main-content">
       <div className="mb-6">
         <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
           Stay informed

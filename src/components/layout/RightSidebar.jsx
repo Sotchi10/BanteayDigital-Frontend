@@ -36,7 +36,7 @@ const alertGuidance = (t) => ({
 
 function GuidanceCard({ guidance }) {
   return (
-    <Card className="w-full shrink-0 p-4">
+    <Card className="w-full shrink-0 p-4 shadow-none">
       <div className="mb-3 flex items-center gap-2.5">
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-100 text-brand-800">
           <Icon name={guidance.icon} size={18} />
@@ -94,7 +94,7 @@ export function UsefulResourcesCard() {
   ];
 
   return (
-    <Card className="w-full shrink-0 p-4">
+    <Card className="w-full shrink-0 p-4 shadow-none">
       <SectionHeader title={t("rightSidebar.usefulResources")} action={null} />
       <div className="grid divide-y divide-line">
         {resources.map((resource) => (
@@ -129,7 +129,7 @@ export function UsefulResourcesCard() {
 function NeedHelpCard() {
   const { t } = useTranslation();
   return (
-    <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4">
+    <Card className="w-full shrink-0 border-[#cbdcf0] bg-[#f7fbff] p-4 shadow-none">
       <h2 className="m-0 text-base font-bold text-ink">{t("rightSidebar.needHelp")}</h2>
       <p className="mb-3 mt-1 text-sm leading-relaxed text-[#40546b]">
         {t("rightSidebar.helpDetail")}
@@ -154,7 +154,7 @@ function RiskLevelCard() {
   ];
 
   return (
-    <Card className="w-full shrink-0 p-4">
+    <Card className="w-full shrink-0 p-4 shadow-none">
       <SectionHeader title={t("rightSidebar.riskLevels")} action={null} />
       <ul className="m-0 grid list-none gap-2.5 p-0">
         {levels.map((level) => (
@@ -177,7 +177,7 @@ export function RightSidebar() {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const guidance = guidanceByRoute(t)[pathname];
-  const isCommunity = pathname === "/" || pathname.startsWith("/community");
+  const isCommunity = pathname === "/" || pathname.startsWith("/posts/") || pathname.startsWith("/community");
   const isAlerts = pathname.startsWith("/alerts");
 
   const content = guidance ? (
@@ -201,7 +201,7 @@ export function RightSidebar() {
   );
 
   return (
-    <aside className="hidden self-start xl:sticky xl:top-[84px] xl:flex xl:flex-col xl:gap-3.5">
+    <aside className="hidden self-start xl:sticky xl:top-[84px] xl:min-h-[calc(100vh-100px)] xl:flex xl:flex-col xl:gap-3">
       {content}
     </aside>
   );

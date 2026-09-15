@@ -24,7 +24,7 @@ export function AppLayout() {
         Skip to main content
       </a>
       <TopNavbar />
-      <div className={`mx-auto grid w-full max-w-[1600px] grid-cols-1 items-start gap-5 px-4 py-5 pb-28 sm:px-6 lg:gap-6 lg:px-8 lg:pb-8 ${isSettings ? "lg:grid-cols-1" : "lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[240px_minmax(0,800px)_minmax(280px,1fr)]"}`}>
+      <div className={`mx-auto grid w-full max-w-[1440px] grid-cols-1 items-start gap-4 px-4 py-5 pb-24 sm:px-6 lg:gap-5 lg:px-8 lg:pb-8 ${isSettings ? "lg:grid-cols-1" : "lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,760px)_minmax(240px,1fr)]"}`}>
         {!isSettings ? <LeftSidebar /> : null}
         <Outlet />
         {!isSettings ? <RightSidebar /> : null}

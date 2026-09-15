@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Avatar } from "../../../components/ui";
 import {
   apiErrorMessage,
@@ -11,18 +12,12 @@ import {
 } from "../api/communityApi";
 import { CommentComposer } from "./CommentComposer";
 
-const reportReasons = [
-  ["SPAM", "Spam"],
-  ["HARASSMENT", "Harassment"],
-  ["DANGEROUS_LINK", "Dangerous link"],
-  ["MISINFORMATION", "Misinformation"],
-  ["OTHER", "Other"],
-];
+const reportReasons = ["SPAM", "HARASSMENT", "DANGEROUS_LINK", "MISINFORMATION", "OTHER"];
 
-function commentTimestamp(value) {
+function commentTimestamp(value, locale) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
@@ -34,6 +29,7 @@ export function CommentItem({
   postId,
   onCountChange,
 }) {
+  const { i18n, t } = useTranslation();
   const [comment, setComment] = useState(initialComment);
   const [replies, setReplies] = useState(initialComment.replies || []);
   const [repliesMeta, setRepliesMeta] = useState({
@@ -74,7 +70,7 @@ export function CommentItem({
     if (!trimmed) return;
     const response = await run(
       () => updateCommunityComment(comment.id, trimmed),
-      "Could not update this comment.",
+      t("community.comment"),
     );
     if (response) {
       setComment((value) => ({ ...value, ...response.comment }));
@@ -83,11 +79,11 @@ export function CommentItem({
   };
 
   const remove = async () => {
-    if (!window.confirm("Delete this comment? Replies will remain visible."))
+    if (!window.confirm(`${t("community.delete")} ${t("community.comments")}?`))
       return;
     const response = await run(
       () => deleteCommunityComment(comment.id),
-      "Could not delete this comment.",
+      t("community.delete"),
     );
     if (response) {
       setComment((value) => ({
@@ -104,18 +100,18 @@ export function CommentItem({
     const response = await run(
       () =>
         reportCommunityComment(comment.id, reportReason, reportDetails.trim()),
-      "Could not report this comment.",
+      t("community.report"),
     );
     if (response) {
       setReporting(false);
-      setNotice("Report submitted for review.");
+      setNotice(t("community.reportSubmitted"));
     }
   };
 
   const moderate = async (status) => {
     const response = await run(
       () => moderateCommunityComment(comment.id, status),
-      "Could not moderate this comment.",
+      t("community.comment"),
     );
     if (response) {
       const wasActive = comment.status === "ACTIVE";
@@ -146,7 +142,7 @@ export function CommentItem({
           cursor: repliesMeta.nextCursor,
           limit: 20,
         }),
-      "Could not load more replies.",
+      t("community.reply"),
     );
     if (response) {
       setReplies((value) => [
@@ -164,7 +160,7 @@ export function CommentItem({
       <div className="flex gap-2">
         {comment.author ? (
           <Avatar
-            name={comment.author.name || "Community member"}
+            name={comment.author.name || t("community.communityMember")}
             size="sm"
             tone="indigo"
           />
@@ -174,13 +170,13 @@ export function CommentItem({
             <>
               <div className="flex flex-wrap items-baseline gap-x-2">
                 <strong className="text-[13px]">
-                  {comment.author?.name || "Community member"}
+                  {comment.author?.name || t("community.communityMember")}
                 </strong>
                 <time
                   className="text-[10px] text-[#8a96a8]"
                   dateTime={comment.createdAt}
                 >
-                  {commentTimestamp(comment.createdAt)}
+                  {commentTimestamp(comment.createdAt, i18n.language)}
                 </time>
               </div>
               {editing ? (
@@ -198,14 +194,14 @@ export function CommentItem({
                       onClick={saveEdit}
                       type="button"
                     >
-                      Save
+                      {t("community.save")}
                     </button>
                     <button
                       className="rounded-md border border-line bg-white px-2.5 py-1 text-[11px]"
                       onClick={() => setEditing(false)}
                       type="button"
                     >
-                      Cancel
+                      {t("common.cancel")}
                     </button>
                   </div>
                 </div>
@@ -218,8 +214,8 @@ export function CommentItem({
           ) : (
             <p className="my-1 text-[12px] italic text-[#8a96a8]">
               {comment.status === "HIDDEN"
-                ? "Comment hidden by a moderator."
-                : "Comment deleted."}
+                ? t("community.commentHidden")
+                : t("community.commentDeleted")}
             </p>
           )}
 
@@ -230,7 +226,7 @@ export function CommentItem({
                 onClick={() => setReplying(true)}
                 type="button"
               >
-                Reply
+                {t("community.reply")}
               </button>
             ) : null}
             {isOwner && isActive ? (
@@ -239,7 +235,7 @@ export function CommentItem({
                 onClick={() => setEditing(true)}
                 type="button"
               >
-                Edit
+                {t("community.edit")}
               </button>
             ) : null}
             {isOwner && comment.status !== "DELETED" ? (
@@ -248,7 +244,7 @@ export function CommentItem({
                 onClick={remove}
                 type="button"
               >
-                Delete
+                {t("community.delete")}
               </button>
             ) : null}
             {currentUser && !isOwner && isActive ? (
@@ -257,7 +253,7 @@ export function CommentItem({
                 onClick={() => setReporting((value) => !value)}
                 type="button"
               >
-                Report
+                {t("community.report")}
               </button>
             ) : null}
             {isAdmin && comment.status !== "DELETED" ? (
@@ -266,7 +262,7 @@ export function CommentItem({
                 onClick={() => moderate(isActive ? "HIDDEN" : "ACTIVE")}
                 type="button"
               >
-                {isActive ? "Hide" : "Restore"}
+                {isActive ? t("community.hide") : t("community.restore")}
               </button>
             ) : null}
           </div>
@@ -278,9 +274,9 @@ export function CommentItem({
                 onChange={(event) => setReportReason(event.target.value)}
                 value={reportReason}
               >
-                {reportReasons.map(([value, label]) => (
+                {reportReasons.map((value) => (
                   <option key={value} value={value}>
-                    {label}
+                    {t(`community.reportReasons.${value}`)}
                   </option>
                 ))}
               </select>
@@ -288,7 +284,7 @@ export function CommentItem({
                 className="min-w-48 flex-1 rounded-md border border-line bg-white px-2 py-1 text-[11px]"
                 maxLength={500}
                 onChange={(event) => setReportDetails(event.target.value)}
-                placeholder="Optional details"
+                placeholder={t("community.optionalDetails")}
                 value={reportDetails}
               />
               <button
@@ -297,14 +293,14 @@ export function CommentItem({
                 onClick={submitReport}
                 type="button"
               >
-                Submit report
+                {t("community.submitReport")}
               </button>
               <button
                 className="text-[11px]"
                 onClick={() => setReporting(false)}
                 type="button"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
             </div>
           ) : null}
@@ -349,8 +345,8 @@ export function CommentItem({
           type="button"
         >
           {busy
-            ? "Loading…"
-            : `View more replies (${Math.max(0, (comment.replyCount || 0) - replies.length)})`}
+            ? t("community.loading")
+            : t("community.viewMoreReplies", { count: Math.max(0, (comment.replyCount || 0) - replies.length) })}
         </button>
       ) : null}
     </article>

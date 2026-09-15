@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   apiErrorMessage,
   createPostComment,
@@ -16,6 +17,7 @@ export function CommentSection({
   pinnedComposer = false,
   postId,
 }) {
+  const { t } = useTranslation();
   const [comments, setComments] = useState([]);
   const [meta, setMeta] = useState({ hasMore: false, nextCursor: null });
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,7 @@ export function CommentSection({
       })
       .catch((requestError) => {
         if (active)
-          setError(apiErrorMessage(requestError, "Could not load comments."));
+          setError(apiErrorMessage(requestError, t("community.comments")));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -40,7 +42,7 @@ export function CommentSection({
     return () => {
       active = false;
     };
-  }, [postId]);
+  }, [postId, t]);
 
   const addComment = async (content) => {
     const response = await createPostComment(postId, { content });
@@ -66,7 +68,7 @@ export function CommentSection({
       ]);
       setMeta(response.meta);
     } catch (requestError) {
-      setError(apiErrorMessage(requestError, "Could not load more comments."));
+      setError(apiErrorMessage(requestError, t("community.comments")));
     } finally {
       setLoadingMore(false);
     }
@@ -76,13 +78,13 @@ export function CommentSection({
     <>
       {loading ? (
         <p className="py-4 text-center text-[12px] text-muted">
-          Loading comments…
+          {t("community.loadingComments")}
         </p>
       ) : null}
       {error ? <p className="py-2 text-[12px] text-red-600">{error}</p> : null}
       {!loading && comments.length === 0 ? (
         <p className="py-4 text-center text-[12px] text-muted">
-          No comments yet. Start a helpful discussion.
+          {t("community.noComments")}
         </p>
       ) : null}
       <div className="space-y-4">
@@ -103,7 +105,7 @@ export function CommentSection({
           onClick={loadMore}
           type="button"
         >
-          {loadingMore ? "Loading…" : "Load more comments"}
+          {loadingMore ? t("community.loading") : t("community.loadMoreComments")}
         </button>
       ) : null}
     </>
@@ -120,7 +122,7 @@ export function CommentSection({
   return (
     <section
       className={`border-t border-line bg-[#fbfcfe] px-1 py-4 ${className}`}
-      aria-label="Comments"
+      aria-label={t("community.comments")}
     >
       {pinnedComposer ? (
         <>
