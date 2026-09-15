@@ -11,8 +11,6 @@ const riskFor = (assessment) =>
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
       : "Low";
-const toneFor = (risk) =>
-  risk === "High" ? "high" : risk === "Medium" ? "medium" : "low";
 const typeLabel = (type) =>
   type === "URL" ? "Website link" : type === "IMAGE" ? "Image" : "Text message";
 const dateLabel = (date) =>
@@ -57,7 +55,9 @@ export function ScanDetailPage() {
           aria-live="polite"
         >
           <span className="h-9 w-9 animate-spin rounded-full border-4 border-brand-100 border-t-brand-800" />
-          <p className="mb-0 mt-4 text-sm text-muted">{tr("Loading scan details…")}</p>
+          <p className="mb-0 mt-4 text-sm text-muted">
+            {tr("Loading scan details…")}
+          </p>
         </Card>
       </main>
     );
@@ -68,14 +68,18 @@ export function ScanDetailPage() {
           <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[#fff0f1] text-risk-high">
             <Icon name="alert" size={23} />
           </span>
-          <h1 className="mb-1 mt-4 text-xl font-bold text-brand-900">{tr("Could not load scan")}</h1>
+          <h1 className="mb-1 mt-4 text-xl font-bold text-brand-900">
+            {tr("Could not load scan")}
+          </h1>
           <p className="mb-0 text-sm text-muted" role="alert">
             {tr(error)}
           </p>
           <Link
             to="/history"
             className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
-          >{tr("Back to history")}</Link>
+          >
+            {tr("Back to history")}
+          </Link>
         </Card>
       </main>
     );
@@ -85,65 +89,125 @@ export function ScanDetailPage() {
   const reasons = scan.analysis?.reasons || [];
   const actions =
     scan.analysis?.recommendedActions || scan.recommendations || [];
+  const indicators = reasons.length
+    ? reasons
+    : findings.map((finding) => finding.message || finding.code);
+  const scanType = tr(typeLabel(scan.inputType));
+  const summary =
+    scan.analysis?.summary ||
+    scan.analysisSummary ||
+    tr("No additional analysis summary is available.");
   return (
-    <main className="min-w-0 lg:px-10" id="main-content">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">{tr("Your scan")}</p>
-          <h1 className="mb-1 mt-1 text-2xl font-bold text-brand-900">{tr("Scan details")}</h1>
-          <p className="m-0 text-sm text-muted">
-            {tr(typeLabel(scan.inputType))} · {dateLabel(scan.createdAt)}
-          </p>
-        </div>
+    <main className="mx-auto min-w-0 max-w-5xl lg:px-6" id="main-content">
+      <div className="mb-5">
         <Link
           to="/history"
-          className="inline-flex min-h-10 items-center rounded-lg border border-line bg-white px-3 text-sm font-bold text-brand-800 hover:bg-brand-100"
-        >{tr("Back to history")}</Link>
+          className="inline-flex min-h-10 items-center gap-2 rounded-lg px-1 text-sm font-bold text-brand-800 hover:text-brand-700"
+        >
+          <Icon name="chevron" size={16} className="rotate-180" />
+          {tr("Back to history")}
+        </Link>
+        
       </div>
-      <Card className="border-[#cbdcf0] bg-[#f8fbff] p-4 sm:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="m-0 text-base font-bold text-brand-900">{tr("Assessment")}</h2>
-          <Badge tone={toneFor(risk)}>{tr("{{level}} risk", { level: tr(risk) })}</Badge>
+      <Card className="overflow-hidden border-[#cbdcf0] bg-[#f8fbff]">
+        <div className="p-5 sm:p-6">
+          <div>
+            <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">
+              {tr("Assessment")}
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <span className={`grid h-11 w-11 place-items-center rounded-full ${risk === "High" ? "bg-[#fff0f1] text-risk-high" : risk === "Medium" ? "bg-[#fff7e6] text-risk-medium" : "bg-[#eaf8f3] text-risk-low"}`}>
+                <Icon name={risk === "Low" ? "shield" : "alert"} size={21} />
+              </span>
+              <div>
+                <h2 className="m-0 text-xl font-bold text-brand-900">
+                  {tr("{{level}} risk", { level: tr(risk) })}
+                </h2>
+                <p className="mb-0 mt-0.5 text-sm text-muted">
+                  {summary}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="mb-0 mt-3 break-words rounded-lg bg-white p-3 font-mono text-xs leading-5 text-[#40546b]">
-          {scan.normalizedInput || scan.rawInput}
-        </p>
-        <p className="mb-0 mt-3 text-sm leading-6 text-muted">
-          {scan.analysis?.summary ||
-            scan.analysisSummary || tr("No additional analysis summary is available.")}
-        </p>
       </Card>
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Card className="p-5">
+        <Card className="p-5 sm:p-6">
           <h2 className="m-0 flex items-center gap-2 text-base font-bold text-brand-900">
-            <Icon name="alert" size={18} />{tr("Detected indicators")}</h2>
-          {findings.length || reasons.length ? (
-            <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
-              {(reasons.length
-                ? reasons
-                : findings.map((finding) => finding.message || finding.code)
-              ).map((item, index) => (
-                <li key={`${item}-${index}`}>{item}</li>
+            <Icon name="alert" size={18} />
+            {tr("Detected indicators")}
+          </h2>
+          <p className="mb-0 mt-1 text-sm text-muted">
+            {tr("Signals found during this scan")}
+          </p>
+          {indicators.length ? (
+            <ol className="mb-0 mt-4 grid gap-3 p-0">
+              {indicators.map((item, index) => (
+                <li key={`${item}-${index}`} className="flex gap-3 text-sm leading-6 text-muted">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#fff0f1] text-xs font-bold text-risk-high">
+                    {index + 1}
+                  </span>
+                  <span>{item}</span>
+                </li>
               ))}
-            </ul>
+            </ol>
           ) : (
-            <p className="mb-0 mt-3 text-sm text-muted">{tr("No specific indicators were recorded.")}</p>
+            <p className="mb-0 mt-4 rounded-lg bg-surface p-3 text-sm leading-6 text-muted">
+              {tr("No specific indicators were recorded.")}
+            </p>
           )}
         </Card>
-        <Card className="p-5">
+        <Card className="p-5 sm:p-6">
           <h2 className="m-0 flex items-center gap-2 text-base font-bold text-brand-900">
-            <Icon name="shield" size={18} />{tr("Recommended actions")}</h2>
+            <Icon name="shield" size={18} />
+            {tr("Recommended actions")}
+          </h2>
+          <p className="mb-0 mt-1 text-sm text-muted">
+            {tr("Steps you can take now")}
+          </p>
           {actions.length ? (
-            <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
+            <ol className="mb-0 mt-4 grid gap-3 p-0">
               {actions.map((action, index) => (
-                <li key={`${action}-${index}`}>{action}</li>
+                <li key={`${action}-${index}`} className="flex gap-3 text-sm leading-6 text-muted">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-100 text-xs font-bold text-brand-800">
+                    {index + 1}
+                  </span>
+                  <span>{action}</span>
+                </li>
               ))}
-            </ul>
+            </ol>
           ) : (
-            <p className="mb-0 mt-3 text-sm text-muted">{tr("No additional recommendations were recorded.")}</p>
+            <p className="mb-0 mt-4 rounded-lg bg-surface p-3 text-sm leading-6 text-muted">
+              {tr("No additional recommendations were recorded.")}
+            </p>
           )}
         </Card>
       </div>
+      <Card className="mt-4 overflow-hidden">
+        <div className="border-b border-line bg-[#fbfcfe] px-5 py-4 sm:px-6">
+          <h2 className="m-0 text-base font-bold text-brand-900">
+            {tr("Scanned content")}
+          </h2>
+          <p className="mb-0 mt-1 text-sm text-muted">
+            {tr("The content that was analyzed")}
+          </p>
+        </div>
+        <p className="m-0 max-h-72 overflow-auto whitespace-pre-wrap break-words p-5 font-mono text-xs leading-6 text-[#40546b] sm:p-6">
+          {scan.normalizedInput || scan.rawInput}
+        </p>
+      </Card>
+      {scan.reportStatus !== "REPORTED" ? (
+        <div className="mt-5 flex justify-end">
+          <Link
+            to="/report"
+            state={{ scanId: scan.id }}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-800 px-4 text-sm font-bold text-white hover:bg-brand-700"
+          >
+            <Icon name="edit" size={17} />
+            {tr("Report this scan")}
+          </Link>
+        </div>
+      ) : null}
     </main>
   );
 }

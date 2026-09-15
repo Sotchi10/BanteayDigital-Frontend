@@ -15,6 +15,7 @@ export function CommentSection({
   currentUser,
   minimalComposer = false,
   onCountChange,
+  composerAfter = false,
   pinnedComposer = false,
   postId,
 }) {
@@ -79,13 +80,13 @@ export function CommentSection({
   const commentList = (
     <>
       {loading ? (
-        <p className="py-4 text-center text-[12px] text-muted">
+        <p className="py-4 text-center text-xs text-muted">
           {t("community.loadingComments")}
         </p>
       ) : null}
-      {error ? <p className="py-2 text-[12px] text-red-600">{tr(error)}</p> : null}
+      {error ? <p className="py-2 text-xs text-red-600">{tr(error)}</p> : null}
       {!loading && comments.length === 0 ? (
-        <p className="py-4 text-center text-[12px] text-muted">
+        <p className="py-4 text-center text-xs text-muted">
           {t("community.noComments")}
         </p>
       ) : null}
@@ -102,7 +103,7 @@ export function CommentSection({
       </div>
       {meta.hasMore ? (
         <button
-          className="mt-4 w-full rounded-lg border border-line bg-white py-2 text-[12px] font-semibold text-brand-700"
+          className="mt-4 w-full rounded-lg border border-line bg-white py-2 text-xs font-semibold text-brand-700"
           disabled={loadingMore}
           onClick={loadMore}
           type="button"
@@ -137,8 +138,17 @@ export function CommentSection({
         </>
       ) : (
         <>
-          {composer}
-          {commentList}
+          {composerAfter ? (
+            <>
+              {commentList}
+              <div className="mt-5 border-t border-line pt-4">{composer}</div>
+            </>
+          ) : (
+            <>
+              {composer}
+              {commentList}
+            </>
+          )}
         </>
       )}
     </section>

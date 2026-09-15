@@ -2,7 +2,7 @@ import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { Icon } from "./icons";
 
 const avatarSizes = {
-  sm: "h-8 w-8 text-[11px]",
+  sm: "h-8 w-8 text-xs",
   md: "h-10 w-10 text-xs",
   xl: "h-14 w-14 text-base",
 };
@@ -20,7 +20,7 @@ const badgeTones = {
 export function Card({ className = "", children }) {
   return (
     <section
-      className={`rounded-[var(--radius-card)] border border-line bg-surface shadow-[var(--shadow-card)] ${className}`}
+      className={`rounded-(--radius-card) border border-line bg-white shadow-[var(--shadow-card)] ${className}`}
     >
       {children}
     </section>
@@ -46,7 +46,7 @@ export function Avatar({ name, imageUrl, size = "md", tone = "blue" }) {
 export function Badge({ children, tone = "neutral", className = "" }) {
   return (
     <span
-      className={`inline-flex min-h-6 w-max items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold leading-tight ${badgeTones[tone]} ${className}`}
+      className={`type-badge inline-flex min-h-6 w-max items-center gap-1 rounded-full px-2.5 py-1 ${badgeTones[tone]} ${className}`}
     >
       {children}
     </span>
@@ -62,7 +62,7 @@ export function IconButton({ label, icon, badge, className = "" }) {
     >
       <Icon name={icon} />
       {badge ? (
-        <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-[10px] font-bold text-white">
+        <span className="type-badge absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-white">
           {badge}
         </span>
       ) : null}
@@ -73,11 +73,11 @@ export function SectionHeader({ title, action = "See all" }) {
   const tr = useInterfaceTranslation();
   return (
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 className="m-0 text-sm font-bold tracking-tight text-ink">{tr(title)}</h2>
+      <h2 className="type-section-title m-0 text-ink text-sm">{tr(title)}</h2>
       {action ? (
         <button
           type="button"
-          className="min-h-11 border-0 bg-transparent p-0 text-xs font-semibold text-brand-800 hover:text-brand-700"
+          className="type-button min-h-11 border-0 bg-transparent p-0 text-brand-800 hover:text-brand-700"
         >
           {tr(action)}
         </button>

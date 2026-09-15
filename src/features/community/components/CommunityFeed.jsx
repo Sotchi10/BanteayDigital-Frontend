@@ -1,10 +1,9 @@
 import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   apiErrorMessage,
-  getCommunityPost,
   getCurrentUser,
   likeCommunityPost,
   listCommunityPosts,
@@ -13,12 +12,11 @@ import {
 } from '../api/communityApi'
 import { PostComposer } from './PostComposer'
 import { ScamPostCard } from './ScamPostCard'
-import { PostDiscussionModal } from './PostDiscussionModal'
 
 export function CommunityFeed() {
   const tr = useInterfaceTranslation();
   const { t } = useTranslation()
-  const { postId } = useParams()
+  const navigate = useNavigate()
   const [posts, setPosts] = useState([])
   const [currentUser, setCurrentUser] = useState(null)
   const [meta, setMeta] = useState(null)
@@ -26,14 +24,10 @@ export function CommunityFeed() {
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
-  const [discussionPost, setDiscussionPost] = useState(null)
 
   useEffect(() => {
     let active = true
-    const postRequest = postId
-      ? getCommunityPost(postId).then(({ post }) => ({ posts: [post], meta: null }))
-      : listCommunityPosts()
-    Promise.all([postRequest, getCurrentUser()])
+    Promise.all([listCommunityPosts(), getCurrentUser()])
       .then(([postResponse, user]) => {
         if (!active) return
         setPosts(postResponse.posts)
@@ -47,7 +41,7 @@ export function CommunityFeed() {
         if (active) setLoading(false)
       })
     return () => { active = false }
-  }, [postId])
+  }, [])
 
   const visiblePosts = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase()
@@ -95,15 +89,6 @@ export function CommunityFeed() {
     }))
   }
 
-  const changeDiscussionCommentCount = (amount) => {
-    if (!discussionPost) return
-    changeCommentCount(discussionPost.id, amount)
-    setDiscussionPost((current) => current ? {
-      ...current,
-      interaction: { ...current.interaction, commentCount: Math.max(0, current.interaction.commentCount + amount) },
-    } : null)
-  }
-
   const recordShare = async (sharedPostId, channel) => {
     const result = await recordCommunityPostShare(sharedPostId, channel)
     updateInteraction(sharedPostId, (interaction) => ({ ...interaction, shareCount: result.shareCount }))
@@ -126,18 +111,16 @@ export function CommunityFeed() {
   }
 
   return (
-    <main className="flex min-w-0 flex-col gap-4 lg:px-10" id="main-content">
-      {!postId ? <PostComposer onChange={setQuery} value={query} /> : null}
-      <div className="flex items-end justify-between gap-3 px-1 pt-1">
-        <div>
-          <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-brand-700">{postId ? t('community.alert') : t('community.feed')}</p>
-          <p className="m-0 mt-1 text-sm text-muted">{t('community.feedDetail')}</p>
-        </div>
-        <span className="shrink-0 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-xs font-medium text-muted">{t('community.mostRecent')}</span>
+    <main className="flex min-w-0 flex-col gap-4 lg:px-6" id="main-content">
+      <PostComposer onChange={setQuery} value={query} />
+      <div className="border-b border-line" aria-label={t('community.feed')}>
+        <span className="relative inline-flex min-h-10 items-center px-1 text-sm font-semibold text-brand-800 after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-brand-800">
+          {t('community.forYou')}
+        </span>
       </div>
 
       {loading ? <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">{t('community.loadingAlerts')}</div> : null}
-      {error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-[13px] text-red-700">{tr(error)}</div> : null}
+      {error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{tr(error)}</div> : null}
       {!loading && !error && visiblePosts.length === 0 ? (
         <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">
           {query ? t('community.noMatchingAlerts') : t('community.noAlerts')}
@@ -147,17 +130,16 @@ export function CommunityFeed() {
       {visiblePosts.map((post) => (
         <ScamPostCard
           key={post.id}
-          onOpenComments={() => setDiscussionPost(post)}
+          onOpenComments={() => navigate(`/posts/${encodeURIComponent(post.id)}`)}
+          onOpenPost={() => navigate(`/posts/${encodeURIComponent(post.id)}`)}
           onToggleLike={() => toggleLike(post.id)}
           onShare={(channel) => recordShare(post.id, channel)}
           post={post}
         />
       ))}
 
-      {discussionPost ? <PostDiscussionModal currentUser={currentUser} onClose={() => setDiscussionPost(null)} onCommentCountChange={changeDiscussionCommentCount} post={discussionPost} /> : null}
-
       {meta && meta.page < meta.totalPages && !query ? (
-        <button className="mb-2 rounded-xl border border-line bg-white py-3 text-[13px] font-semibold text-brand-700" disabled={loadingMore} onClick={loadMore} type="button">
+        <button className="mb-2 rounded-xl border border-line bg-white py-3 text-sm font-semibold text-brand-700" disabled={loadingMore} onClick={loadMore} type="button">
           {loadingMore ? t('community.loading') : t('community.loadMoreAlerts')}
         </button>
       ) : null}

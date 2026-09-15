@@ -18,17 +18,32 @@
     --color-brand-700: #1764c0;
     --color-brand-100: #eaf2ff;
     --color-surface: #ffffff;
-    --color-canvas: #f6f8fb;
+    --color-canvas: #ffffff;
     --color-ink: #15233b;
     --color-muted: #6c7890;
     --color-line: #e5eaf1;
     --color-risk-high: #dc4455;
     --color-risk-medium: #c98311;
     --color-risk-low: #25845a;
-    --font-sans: "DM Sans", "Khmer UI", "Kantumruy Pro", system-ui, sans-serif;
+    --font-sans: "Inter", "Khmer UI", "Kantumruy Pro", system-ui, sans-serif;
 }
 
-:root { color-scheme: light; --radius-card: 0.875rem; --shadow-card: 0 1px 2px rgb(16 42 67 / 0.04); }
+/* Shared typography hierarchy. Use these semantic utilities for new UI instead of
+   one-off type values so English and Khmer retain the same visual rhythm. */
+@layer components {
+  .type-page-title { @apply text-2xl font-bold leading-tight tracking-tight sm:text-3xl; }
+  .type-section-title { @apply text-xl font-bold leading-snug tracking-tight; }
+  .type-card-title { @apply text-lg font-bold leading-snug; }
+  .type-body { @apply text-base font-normal leading-6; }
+  .type-helper { @apply text-sm font-normal leading-5; }
+  .type-nav { @apply text-sm font-medium leading-5; }
+  .type-button { @apply text-sm font-semibold leading-5; }
+  .type-label { @apply text-sm font-medium leading-5; }
+  .type-input { @apply text-base font-normal leading-6; }
+  .type-badge { @apply text-xs font-semibold leading-4; }
+}
+
+:root { color-scheme: light; --radius-card: 0.8rem; --shadow-card: 0 1px 2px rgb(16 42 67 / 0.04); }
 [data-theme="dark"] {
   --color-surface: #19283e;
   --color-canvas: #0b1422;
@@ -52,8 +67,10 @@ html[lang="km"] :is(p, label, button, a, li, small, input, textarea, select) { l
 html[lang="km"] :is(h1, h2, h3) { line-height: 1.4; }
 html[lang="km"] .app-navbar > div { height: auto; min-height: 68px; padding-block: 0.5rem; }
 html[lang="km"] .app-main-navigation { min-width: 0; flex-wrap: wrap; }
-body { margin: 0; min-width: 320px; overflow-x: clip; background: var(--color-canvas); line-height: 1.55; }
+body { margin: 0; min-width: 320px; overflow-x: clip; background: var(--color-canvas); line-height: 1.5; }
 button, input, select, textarea { font-family: inherit; }
+button { font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; }
+input, select, textarea { font-size: 1rem; line-height: 1.5rem; }
 button:not(:disabled) { cursor: pointer; }
 button, a, select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid rgb(22 119 210 / 0.3); outline-offset: 2px; }

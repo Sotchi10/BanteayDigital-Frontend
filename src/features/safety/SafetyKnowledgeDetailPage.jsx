@@ -79,7 +79,7 @@ export function SafetyKnowledgeDetailPage() {
     );
 
   return (
-    <main className="min-w-0 lg:px-10" id="main-content">
+    <main className="min-w-0 lg:px-6" id="main-content">
       <Link
         to="/safety"
         className="mb-5 inline-flex min-h-10 items-center gap-2 text-sm font-bold text-brand-800 hover:text-brand-700"

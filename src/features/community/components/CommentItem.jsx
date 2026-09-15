@@ -45,6 +45,7 @@ export function CommentItem({
   const [reporting, setReporting] = useState(false);
   const [reportReason, setReportReason] = useState("SPAM");
   const [reportDetails, setReportDetails] = useState("");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -81,8 +82,6 @@ export function CommentItem({
   };
 
   const remove = async () => {
-    if (!window.confirm(`${t("community.delete")} ${t("community.comments")}?`))
-      return;
     const response = await run(
       () => deleteCommunityComment(comment.id),
       t("community.delete"),
@@ -171,11 +170,11 @@ export function CommentItem({
           {isActive ? (
             <>
               <div className="flex flex-wrap items-baseline gap-x-2">
-                <strong className="text-[13px]">
+                <strong className="text-sm">
                   {comment.author?.name || t("community.communityMember")}
                 </strong>
                 <time
-                  className="text-[10px] text-[#8a96a8]"
+                  className="text-xs text-[#8a96a8]"
                   dateTime={comment.createdAt}
                 >
                   {commentTimestamp(comment.createdAt, i18n.language)}
@@ -184,14 +183,14 @@ export function CommentItem({
               {editing ? (
                 <div className="mt-2 space-y-2">
                   <textarea
-                    className="min-h-16 w-full resize-y rounded-lg border border-line p-2 text-[13px] outline-none focus:border-brand-600"
+                    className="min-h-16 w-full resize-y rounded-lg border border-line p-2 text-sm outline-none focus:border-brand-600"
                     maxLength={1000}
                     onChange={(event) => setEditContent(event.target.value)}
                     value={editContent}
                   />
                   <div className="flex gap-2">
                     <button
-                      className="rounded-md bg-brand-700 px-2.5 py-1 text-[11px] font-semibold text-white"
+                      className="rounded-md bg-brand-700 px-2.5 py-1 text-xs font-semibold text-white"
                       disabled={busy}
                       onClick={saveEdit}
                       type="button"
@@ -199,7 +198,7 @@ export function CommentItem({
                       {t("community.save")}
                     </button>
                     <button
-                      className="rounded-md border border-line bg-white px-2.5 py-1 text-[11px]"
+                      className="rounded-md border border-line bg-white px-2.5 py-1 text-xs"
                       onClick={() => setEditing(false)}
                       type="button"
                     >
@@ -208,20 +207,20 @@ export function CommentItem({
                   </div>
                 </div>
               ) : (
-                <p className="my-1 whitespace-pre-wrap wrap-break-words text-[13px] leading-relaxed text-[#3f4f66]">
+                <p className="my-1 whitespace-pre-wrap wrap-break-words text-sm leading-relaxed text-[#3f4f66]">
                   {comment.content}
                 </p>
               )}
             </>
           ) : (
-            <p className="my-1 text-[12px] italic text-[#8a96a8]">
+            <p className="my-1 text-xs italic text-[#8a96a8]">
               {comment.status === "HIDDEN"
                 ? t("community.commentHidden")
                 : t("community.commentDeleted")}
             </p>
           )}
 
-          <div className="flex flex-wrap gap-3 text-[11px] font-semibold text-[#68778d]">
+          <div className="flex flex-wrap gap-3 text-xs font-semibold text-[#68778d]">
             {currentUser && isActive && !comment.parentId ? (
               <button
                 className="border-0 bg-transparent p-0 hover:text-brand-700"
@@ -243,7 +242,7 @@ export function CommentItem({
             {isOwner && comment.status !== "DELETED" ? (
               <button
                 className="border-0 bg-transparent p-0 hover:text-red-600"
-                onClick={remove}
+                onClick={() => setDeleteConfirmOpen(true)}
                 type="button"
               >
                 {t("community.delete")}
@@ -272,7 +271,7 @@ export function CommentItem({
           {reporting ? (
             <div className="mt-2 flex flex-wrap items-center gap-2 rounded-lg bg-[#fff7f7] p-2">
               <select
-                className="rounded-md border border-line bg-white px-2 py-1 text-[11px]"
+                className="rounded-md border border-line bg-white px-2 py-1 text-xs"
                 onChange={(event) => setReportReason(event.target.value)}
                 value={reportReason}
               >
@@ -283,14 +282,14 @@ export function CommentItem({
                 ))}
               </select>
               <input
-                className="min-w-48 flex-1 rounded-md border border-line bg-white px-2 py-1 text-[11px]"
+                className="min-w-48 flex-1 rounded-md border border-line bg-white px-2 py-1 text-xs"
                 maxLength={500}
                 onChange={(event) => setReportDetails(event.target.value)}
                 placeholder={t("community.optionalDetails")}
                 value={reportDetails}
               />
               <button
-                className="rounded-md bg-red-600 px-2.5 py-1 text-[11px] font-semibold text-white"
+                className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-semibold text-white"
                 disabled={busy}
                 onClick={submitReport}
                 type="button"
@@ -298,7 +297,7 @@ export function CommentItem({
                 {t("community.submitReport")}
               </button>
               <button
-                className="text-[11px]"
+                className="text-xs"
                 onClick={() => setReporting(false)}
                 type="button"
               >
@@ -308,26 +307,27 @@ export function CommentItem({
           ) : null}
           {replying ? (
             <div className="mt-3">
-              <CommentComposer
+                <CommentComposer
                 autoFocus
                 compact
                 currentUser={currentUser}
+                isReply
                 onCancel={() => setReplying(false)}
                 onSubmit={addReply}
               />
             </div>
           ) : null}
           {error ? (
-            <p className="my-1 text-[11px] text-red-600">{tr(error)}</p>
+            <p className="my-1 text-xs text-red-600">{tr(error)}</p>
           ) : null}
           {notice ? (
-            <p className="my-1 text-[11px] text-green-700">{notice}</p>
+            <p className="my-1 text-xs text-green-700">{notice}</p>
           ) : null}
         </div>
       </div>
 
       {replies.length ? (
-        <div className="mt-3 space-y-3 pl-3">
+        <div className="mt-3 space-y-3 border-l-2 border-brand-100 pl-4">
           {replies.map((reply) => (
             <CommentItem
               comment={reply}
@@ -341,7 +341,7 @@ export function CommentItem({
       ) : null}
       {repliesMeta.hasMore ? (
         <button
-          className="ml-12 mt-2 border-0 bg-transparent text-[11px] font-semibold text-brand-700"
+          className="ml-12 mt-2 border-0 bg-transparent text-xs font-semibold text-brand-700"
           disabled={busy}
           onClick={loadMoreReplies}
           type="button"
@@ -350,6 +350,50 @@ export function CommentItem({
             ? t("community.loading")
             : t("community.viewMoreReplies", { count: Math.max(0, (comment.replyCount || 0) - replies.length) })}
         </button>
+      ) : null}
+      {deleteConfirmOpen ? (
+        <div
+          className="fixed inset-0 z-[70] grid place-items-center bg-[#071a33]/55 p-4"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !busy) setDeleteConfirmOpen(false);
+          }}
+        >
+          <section
+            aria-modal="true"
+            aria-labelledby={`delete-comment-${comment.id}`}
+            className="w-full max-w-sm rounded-xl border border-line bg-white p-5 shadow-2xl"
+            role="dialog"
+          >
+            <h2 id={`delete-comment-${comment.id}`} className="m-0 text-lg font-bold text-brand-900">
+              {t("community.delete")} {t("community.comment")}?
+            </h2>
+            <p className="mb-0 mt-2 text-sm leading-6 text-muted">
+              {t("community.commentDeleted")}
+            </p>
+            <div className="mt-5 flex justify-end gap-3">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => setDeleteConfirmOpen(false)}
+                className="min-h-10 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100 disabled:opacity-60"
+              >
+                {t("common.cancel")}
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={async () => {
+                  await remove();
+                  setDeleteConfirmOpen(false);
+                }}
+                className="min-h-10 rounded-lg bg-risk-high px-4 text-sm font-bold text-white hover:opacity-90 disabled:opacity-60"
+              >
+                {t("community.delete")}
+              </button>
+            </div>
+          </section>
+        </div>
       ) : null}
     </article>
   );

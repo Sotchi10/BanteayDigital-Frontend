@@ -69,12 +69,12 @@ export function PostDiscussionModal({
                   <strong className="truncate text-sm text-ink">
                     {authorName}
                   </strong>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2670c9]">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-[#2670c9]">
                     <Icon name="shield" size={12} />
                     {t("community.verified")}
                   </span>
                 </div>
-                <p className="mb-0 mt-0.5 text-[11px] text-muted">
+                <p className="mb-0 mt-0.5 text-xs text-muted">
                   {t("community.published", { date: publishedDate(post.publishedAt, i18n.language) })}
                 </p>
               </div>

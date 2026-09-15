@@ -2,33 +2,36 @@ import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, Icon } from "../ui";
+import { listScans } from "../../services/scans";
+import {
+  EVENT_NAME as SCAN_HISTORY_EVENT,
+  initializeScanHistorySeenAt,
+  scanHistoryUnreadCount,
+} from "../../services/scanHistoryNotifications";
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 
 const navigation = [
   { label: "Home", icon: "home", to: "/" },
   { label: "Analyze Scam", icon: "shield", to: "/analysis" },
-  { label: "Alerts", icon: "bookmark", to: "/alerts" },
+  { label: "Scan History", icon: "clock", to: "/history" },
   { label: "Community Safety", icon: "users", to: "/safety" },
 ];
 const desktopNavClass = ({ isActive }) =>
-  `flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#52647a] hover:bg-[#f2f5f8] hover:text-brand-800"}`;
+  `flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#52647a] hover:bg-[#f2f5f8] hover:text-brand-800"}`;
 const mobileNavClass = ({ isActive }) =>
-  `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${isActive ? "text-brand-800" : "text-[#607089]"}`;
+  `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-xs font-medium ${isActive ? "text-brand-800" : "text-[#607089]"}`;
 
 const mobileMainLinks = [
   { label: "Home", icon: "home", to: "/" },
   { label: "Analyze Scam", icon: "shield", to: "/analysis" },
-  { label: "Alerts", icon: "bell", to: "/alerts" },
   { label: "Community Safety", icon: "book", to: "/safety" },
-  { label: "Leaderboard", icon: "trophy", to: "/leaderboard" },
 ];
 
 const mobileUserLinks = [
-  { label: "Report a scam", icon: "edit", to: "/report", protected: true },
-  { label: "Saved", icon: "bookmark", to: "/saved", protected: true },
-  { label: "History", icon: "clock", to: "/history", protected: true },
+  { label: "Scan History", icon: "clock", to: "/history", protected: true },
   { label: "My reports", icon: "edit", to: "/reports/history", protected: true },
+  { label: "Saved", icon: "bookmark", to: "/saved", protected: true },
 ];
 
 export function TopNavbar() {
@@ -40,8 +43,38 @@ export function TopNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [unseenScanCount, setUnseenScanCount] = useState(0);
   const profileMenuRef = useRef(null);
   const cancelLogoutRef = useRef(null);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) {
+      setUnseenScanCount(0);
+      return undefined;
+    }
+    let active = true;
+    const refreshUnreadScanCount = async () => {
+      try {
+        const response = await listScans();
+        const scans = response.scans || [];
+        initializeScanHistorySeenAt(user.id, scans);
+        if (active) setUnseenScanCount(scanHistoryUnreadCount(user.id, scans));
+      } catch {
+        if (active) setUnseenScanCount(0);
+      }
+    };
+    const handleStorage = (event) => {
+      if (event.key === `banteay-scan-history-seen-at:${user.id}`) refreshUnreadScanCount();
+    };
+    refreshUnreadScanCount();
+    window.addEventListener(SCAN_HISTORY_EVENT, refreshUnreadScanCount);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      active = false;
+      window.removeEventListener(SCAN_HISTORY_EVENT, refreshUnreadScanCount);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [isAuthenticated, user?.id]);
 
   const handleLogout = async () => {
     if (loggingOut) return;
@@ -94,7 +127,7 @@ export function TopNavbar() {
   return (
     <>
       <header className="app-navbar sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-[68px] max-w-[1600px] items-center gap-2 px-3 sm:gap-4 sm:px-6 lg:px-8 xl:grid xl:grid-cols-[240px_minmax(0,800px)_minmax(280px,1fr)] xl:gap-6">
+        <div className="mx-auto flex h-[68px] max-w-[1440px] items-center gap-2 px-3 sm:gap-4 sm:px-6 lg:px-8 xl:grid xl:grid-cols-[220px_minmax(0,760px)_minmax(240px,1fr)] xl:gap-5">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -116,10 +149,10 @@ export function TopNavbar() {
               alt={tr("BanteayDigital logo")}
             />
             <span className="hidden leading-tight sm:grid">
-              <strong className="text-[15px] text-brand-900">
+              <strong className="text-base text-brand-900">
                 BanteayDigital
               </strong>
-              <small className="text-[11px] text-muted">{tr("Digital safety community")}</small>
+              <small className="text-xs text-muted">{tr("Digital safety community")}</small>
             </span>
           </NavLink>
           <nav
@@ -135,6 +168,9 @@ export function TopNavbar() {
               >
                 <Icon name={item.icon} size={17} />
                 <span>{tr(item.label)}</span>
+                {item.to === "/history" && unseenScanCount ? (
+                  <span className="grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-xs font-bold leading-none text-white">{unseenScanCount > 99 ? "99+" : unseenScanCount}</span>
+                ) : null}
               </NavLink>
             ))}
             {navigation.slice(2).map((item) => (
@@ -145,10 +181,22 @@ export function TopNavbar() {
               >
                 <Icon name={item.icon} size={17} />
                 <span>{tr(item.label)}</span>
+                {item.to === "/history" && unseenScanCount ? (
+                  <span className="grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-xs font-bold leading-none text-white">{unseenScanCount > 99 ? "99+" : unseenScanCount}</span>
+                ) : null}
               </NavLink>
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-1.5 xl:col-start-3 xl:ml-0 xl:justify-self-end">
+            <NavLink
+              to="/alerts"
+              className={({ isActive }) =>
+                `relative inline-grid h-11 w-11 place-items-center rounded-lg transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#40546b] hover:bg-[#f2f5f8] hover:text-brand-800"}`
+              }
+              aria-label={tr("Safety alerts")}
+            >
+              <Icon name="bell" size={19} />
+            </NavLink>
             <button
               type="button"
               onClick={() =>
@@ -156,11 +204,11 @@ export function TopNavbar() {
                   i18n.resolvedLanguage === "km" ? "en" : "km",
                 )
               }
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 text-xs font-semibold text-[#40546b] hover:border-[#b8c8d9] hover:bg-[#f8fafc] sm:px-3 sm:text-sm"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 text-xs font-medium text-[#40546b] hover:border-[#b8c8d9] hover:bg-[#f8fafc] sm:px-3 sm:text-sm"
               aria-label={t("nav.language")}
             >
               <Icon name="globe" size={16} />
-              <span className="inline font-bold sm:hidden">
+              <span className="inline font-semibold sm:hidden">
                 {i18n.resolvedLanguage === "km" ? "EN" : "ខ្មែរ"}
               </span>
               <span className="hidden sm:inline">
@@ -171,16 +219,6 @@ export function TopNavbar() {
                 <span>{i18n.resolvedLanguage === "km" ? "ខ្មែរ" : "EN"}</span>
               </span>
             </button>
-            <NavLink
-              to="/alerts"
-              className="relative inline-grid h-11 w-11 place-items-center rounded-full text-[#52647a] hover:bg-brand-100 hover:text-brand-800"
-              aria-label={tr("Open alerts, 3 new")}
-            >
-              <Icon name="bell" />
-              <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-[10px] font-bold text-white">
-                3
-              </span>
-            </NavLink>
             {isAuthenticated ? (
               <div className="relative hidden lg:block" ref={profileMenuRef}>
                 <button
@@ -228,7 +266,7 @@ export function TopNavbar() {
                             user.phoneNumber ||
                             t("nav.signedInAccount")}
                         </span>
-                        <span className="mt-1 block text-sm font-semibold text-brand-800">{tr("View profile")}</span>
+                        <span className="mt-1 block text-sm font-medium text-brand-800">{tr("View profile")}</span>
                       </div>
                     </NavLink>
                     <div className="my-1 border-t border-line" />
@@ -236,14 +274,14 @@ export function TopNavbar() {
                       to={user.username ? `/${encodeURIComponent(user.username)}` : "/reports/history"}
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="edit" size={18} />{tr("My approved reports")}</NavLink>
                     <button
                       type="button"
                       role="menuitem"
                       onClick={() => i18n.changeLanguage(i18n.resolvedLanguage === "km" ? "en" : "km")}
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="globe" size={18} />
                       {t("nav.language")}
@@ -252,7 +290,7 @@ export function TopNavbar() {
                       to="/settings"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="settings" size={18} />
                       {t("nav.settings")}
@@ -261,7 +299,7 @@ export function TopNavbar() {
                       to="/settings?section=appearance"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="lightbulb" size={18} />
                       {t("nav.appearance")}
@@ -270,7 +308,7 @@ export function TopNavbar() {
                       to="/settings?section=support"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="help" size={18} />{tr("Help & support")}</NavLink>
                     <div className="my-1 border-t border-line" />
@@ -282,7 +320,7 @@ export function TopNavbar() {
                         setProfileMenuOpen(false);
                         setLogoutConfirmOpen(true);
                       }}
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-semibold text-risk-high transition hover:bg-[#fff0f1]"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-risk-high transition hover:bg-[#fff0f1]"
                     >
                       <Icon name="logout" size={18} />
                       {loggingOut ? t("nav.loggingOut") : t("nav.logOut")}
@@ -293,7 +331,7 @@ export function TopNavbar() {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-bold text-white hover:bg-brand-700 sm:px-4"
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-brand-800 px-3 text-sm font-medium text-white hover:bg-brand-700 sm:px-4"
               >
                 <Icon name="user" size={17} />
                 <span className="hidden sm:inline">{t("nav.signIn")}</span>
@@ -318,7 +356,7 @@ export function TopNavbar() {
             <div className="flex items-center justify-between border-b border-line pb-3">
               <Link
                 to="/"
-                className="flex items-center gap-2 font-bold text-brand-900"
+                className="flex items-center gap-2 font-medium text-brand-900"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <img className="h-8 w-8" src="/BanteayDigitalLogo.svg" alt="" />
@@ -365,30 +403,34 @@ export function TopNavbar() {
               className="mt-4 grid gap-1"
               aria-label={tr("Main mobile navigation")}
             >
-              <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-muted">
+              <div className="px-3 pb-1 text-xs font-bold uppercase tracking-wider text-muted">
                 {tr("Explore")}
               </div>
-              {mobileMainLinks.map((item) => (
+              {mobileMainLinks.filter((item) => !item.protected || isAuthenticated).map((item) => (
                 <NavLink
                   key={item.label}
                   to={item.to}
                   end={item.to === "/"}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition ${isActive ? "bg-brand-100 text-brand-800 font-semibold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
                   }
                 >
                   <Icon name={item.icon} size={18} />
-                  <span>{tr(item.label)}</span>
+                  <span className="flex items-center gap-2">{tr(item.label)}
+                    {item.to === "/history" && unseenScanCount ? (
+                      <span className="grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-xs font-bold leading-none text-white">{unseenScanCount > 99 ? "99+" : unseenScanCount}</span>
+                    ) : null}
+                  </span>
                 </NavLink>
               ))}
 
-              <div className="mt-3 px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-muted">
-                {tr("Your Safety")}
-              </div>
-              {mobileUserLinks
-                .filter((item) => !item.protected || isAuthenticated)
-                .map((item) => (
+              {isAuthenticated ? (
+                <>
+                  <div className="mt-3 px-3 pb-1 text-xs font-bold uppercase tracking-wider text-muted">
+                    {tr("Your activity")}
+                  </div>
+                  {mobileUserLinks.map((item) => (
                   <NavLink
                     key={item.label}
                     to={item.to}
@@ -400,7 +442,22 @@ export function TopNavbar() {
                     <Icon name={item.icon} size={18} />
                     <span>{tr(item.label)}</span>
                   </NavLink>
-                ))}
+                  ))}
+                </>
+              ) : null}
+              <div className="mt-3 px-3 pb-1 text-xs font-bold uppercase tracking-wider text-muted">
+                {tr("Community activity")}
+              </div>
+              <NavLink
+                to="/leaderboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                }
+              >
+                <Icon name="trophy" size={18} />
+                <span>{tr("Leaderboard")}</span>
+              </NavLink>
               <NavLink
                 to="/about"
                 onClick={() => setMobileMenuOpen(false)}
@@ -412,7 +469,11 @@ export function TopNavbar() {
                 <span>{tr("About Us")}</span>
               </NavLink>
               {isAuthenticated ? (
-                <NavLink
+                <>
+                  <div className="mt-3 px-3 pb-1 text-xs font-bold uppercase tracking-wider text-muted">
+                    {tr("Account & Profile")}
+                  </div>
+                  <NavLink
                   to="/settings"
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
@@ -421,7 +482,8 @@ export function TopNavbar() {
                 >
                   <Icon name="settings" size={18} />
                   <span>{t("nav.settings")}</span>
-                </NavLink>
+                  </NavLink>
+                </>
               ) : null}
             </nav>
             <div className="mt-5 border-t border-line pt-4">
@@ -459,14 +521,16 @@ export function TopNavbar() {
           <Icon name="home" size={20} />
           <span>{tr("Home")}</span>
         </NavLink>
-        <NavLink to="/alerts" className={mobileNavClass}>
+        <NavLink to="/history" className={mobileNavClass}>
           <div className="relative">
-            <Icon name="bell" size={20} />
-            <span className="absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-[#d92d3a] px-1 text-[9px] font-bold text-white">
-              3
-            </span>
+            <Icon name="clock" size={20} />
+            {unseenScanCount ? (
+              <span className="absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full bg-[#d92d3a] px-1 text-xs font-bold text-white">
+                {unseenScanCount > 99 ? "99+" : unseenScanCount}
+              </span>
+            ) : null}
           </div>
-          <span>{tr("Alerts")}</span>
+          <span>{tr("Scan History")}</span>
         </NavLink>
         <NavLink
           to="/analysis"
@@ -476,7 +540,7 @@ export function TopNavbar() {
           <span className="cyber-scanner-btn grid h-12 w-12 place-items-center rounded-full text-white shadow-lg">
             <Icon name="shield" size={22} />
           </span>
-          <span className="mt-1 text-[10px] font-bold text-brand-800">
+          <span className="mt-1 text-xs font-bold text-brand-800">
             {tr("Analyze")}
           </span>
         </NavLink>

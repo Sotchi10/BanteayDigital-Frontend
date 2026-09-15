@@ -26,4 +26,8 @@ function getScan(scanId) {
   return request(`/v1/scans/${scanId}`);
 }
 
-export { createImageScan, createScan, getScan, listScans };
+function deleteScan(scanId) {
+  return request(`/v1/scans/${scanId}`, { method: "delete" });
+}
+
+export { createImageScan, createScan, deleteScan, getScan, listScans };

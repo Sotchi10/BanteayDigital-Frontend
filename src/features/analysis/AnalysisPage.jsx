@@ -3,14 +3,29 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
 import { createImageScan, createScan } from "../../services/scans";
-import { createReportFromScan } from "../../services/reports";
+import { notifyScanCreated } from "../../services/scanHistoryNotifications";
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 
 const modes = (t) => [
-  { id: "TEXT", label: t("scan.text"), detail: t("scan.textDetail"), icon: "message" },
-  { id: "URL", label: t("scan.link"), detail: t("scan.linkDetail"), icon: "link" },
-  { id: "IMAGE", label: t("scan.image"), detail: t("scan.imageDetail"), icon: "image" },
+  {
+    id: "TEXT",
+    label: t("scan.text"),
+    detail: t("scan.textDetail"),
+    icon: "message",
+  },
+  {
+    id: "URL",
+    label: t("scan.link"),
+    detail: t("scan.linkDetail"),
+    icon: "link",
+  },
+  {
+    id: "IMAGE",
+    label: t("scan.image"),
+    detail: t("scan.imageDetail"),
+    icon: "image",
+  },
 ];
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -72,11 +87,10 @@ const asPercent = (score) => {
   return Math.round(numericScore <= 1 ? numericScore * 100 : numericScore);
 };
 
-const localizedValue = (value, khmerValue, language) => (
+const localizedValue = (value, khmerValue, language) =>
   language === "km" && typeof khmerValue === "string" && khmerValue.trim()
     ? khmerValue
-    : value
-);
+    : value;
 
 const relatedScamMatches = (result, language, t) => {
   const aiMatches = Array.isArray(result?.aiMatches) ? result.aiMatches : [];
@@ -86,7 +100,11 @@ const relatedScamMatches = (result, language, t) => {
   const storedMatches = Array.isArray(result?.matchedScamCases)
     ? result.matchedScamCases
     : [];
-  const matches = aiMatches.length ? aiMatches : retrievedMatches.length ? retrievedMatches : storedMatches;
+  const matches = aiMatches.length
+    ? aiMatches
+    : retrievedMatches.length
+      ? retrievedMatches
+      : storedMatches;
 
   return matches.map((match, index) => {
     const payload = match.payload || {};
@@ -94,17 +112,32 @@ const relatedScamMatches = (result, language, t) => {
       id: payload.caseId ?? match.caseId ?? match.id ?? index,
       title: localizedValue(
         payload.title ?? match.title ?? t("scanExtra.relatedCase"),
-        payload.titleKm ?? payload.title_km ?? payload.khmerTitle ?? payload.translations?.km?.title ?? match.titleKm ?? match.title_km ?? match.khmerTitle ?? match.translations?.km?.title,
+        payload.titleKm ??
+          payload.title_km ??
+          payload.khmerTitle ??
+          payload.translations?.km?.title ??
+          match.titleKm ??
+          match.title_km ??
+          match.khmerTitle ??
+          match.translations?.km?.title,
         language,
       ),
       scamType: localizedValue(
         payload.scamType ?? match.scamType,
-        payload.scamTypeKm ?? payload.scam_type_km ?? payload.khmerScamType ?? payload.translations?.km?.scamType ?? match.scamTypeKm ?? match.scam_type_km ?? match.khmerScamType ?? match.translations?.km?.scamType,
+        payload.scamTypeKm ??
+          payload.scam_type_km ??
+          payload.khmerScamType ??
+          payload.translations?.km?.scamType ??
+          match.scamTypeKm ??
+          match.scam_type_km ??
+          match.khmerScamType ??
+          match.translations?.km?.scamType,
         language,
       ),
       riskLevel: payload.riskLevel ?? match.riskLevel,
       confidence: asPercent(match.score ?? match.similarity),
-      description: match.matchReason ?? match.description ?? payload.description,
+      description:
+        match.matchReason ?? match.description ?? payload.description,
       source: payload.source ?? match.source,
       relation: match.relation,
     };
@@ -112,8 +145,7 @@ const relatedScamMatches = (result, language, t) => {
 };
 
 const errorMessage = (requestError, t) => {
-  if (requestError.response?.status === 401)
-    return t("scan.loginRequired");
+  if (requestError.response?.status === 401) return t("scan.loginRequired");
   return (
     requestError.response?.data?.message ||
     requestError.response?.data?.error ||
@@ -137,10 +169,17 @@ function normalizeUrl(value, t) {
 
 function ProgressTracker({ hasResult }) {
   const { t } = useTranslation();
-  const steps = [t("scan.stepScan"), t("scan.stepReview"), t("scan.stepReport")];
+  const steps = [
+    t("scan.stepScan"),
+    t("scan.stepReview"),
+    t("scan.stepReport"),
+  ];
   const currentStep = hasResult ? 1 : 0;
   return (
-    <ol className="mb-5 flex w-full items-center" aria-label={t("scan.progress")}>
+    <ol
+      className="mb-5 flex w-full items-center"
+      aria-label={t("scan.progress")}
+    >
       {steps.map((label, index) => (
         <li
           key={label}
@@ -148,7 +187,7 @@ function ProgressTracker({ hasResult }) {
         >
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <span
-              className={`grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-full border text-[11px] sm:text-xs font-extrabold transition-colors ${index < currentStep ? "border-brand-800 bg-brand-800 text-white" : index === currentStep ? "border-brand-800 bg-brand-100 text-brand-800 ring-2 ring-brand-700/20" : "border-line bg-white text-muted"}`}
+              className={`grid h-7 w-7 sm:h-8 sm:w-8 shrink-0 place-items-center rounded-full border text-xs sm:text-xs font-extrabold transition-colors ${index < currentStep ? "border-brand-800 bg-brand-800 text-white" : index === currentStep ? "border-brand-800 bg-brand-100 text-brand-800 ring-2 ring-brand-700/20" : "border-line bg-white text-muted"}`}
             >
               {index < currentStep ? (
                 <Icon name="check" size={14} />
@@ -157,7 +196,7 @@ function ProgressTracker({ hasResult }) {
               )}
             </span>
             <span
-              className={`text-[11px] sm:text-xs font-bold truncate ${index <= currentStep ? "text-brand-900" : "text-muted"}`}
+              className={`text-xs sm:text-xs font-bold truncate ${index <= currentStep ? "text-brand-900" : "text-muted"}`}
             >
               {label}
             </span>
@@ -180,16 +219,18 @@ function ScanModeCard({ mode, active, onSelect }) {
       role="radio"
       aria-checked={active}
       onClick={onSelect}
-      className={`group flex min-h-20 sm:min-h-24 flex-col items-center sm:items-start rounded-xl border p-2.5 sm:p-3.5 text-center sm:text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:ring-offset-2 ${active ? "border-brand-800 bg-brand-800 text-white shadow-md shadow-brand-800/20" : "border-line bg-white text-ink hover:-translate-y-0.5 hover:border-brand-700 hover:bg-brand-100 hover:shadow-sm"}`}
+      className={`group flex min-h-20 sm:min-h-24 flex-col items-center sm:items-start rounded-xl border p-2.5 sm:p-4 text-center sm:text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:ring-offset-2 ${active ? "border-brand-800 bg-brand-800 text-white shadow-md shadow-brand-800/20" : "border-line bg-white text-ink hover:-translate-y-0.5 hover:border-brand-700 hover:bg-brand-100 hover:shadow-sm"}`}
     >
       <span
         className={`mb-1.5 sm:mb-2 grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg transition-colors ${active ? "bg-white/15 text-white" : "bg-brand-100 text-brand-800 group-hover:bg-white"}`}
       >
         <Icon name={mode.icon} size={16} />
       </span>
-      <span className="text-xs sm:text-sm font-bold truncate w-full">{mode.label}</span>
+      <span className="text-xs sm:text-sm font-bold truncate w-full">
+        {mode.label}
+      </span>
       <span
-        className={`mt-0.5 text-[10px] sm:text-[11px] font-medium truncate w-full ${active ? "text-white/75" : "text-muted"}`}
+        className={`mt-0.5 text-xs sm:text-xs font-medium truncate w-full ${active ? "text-white/75" : "text-muted"}`}
       >
         {mode.detail}
       </span>
@@ -232,7 +273,10 @@ function RelatedScamResults({ result }) {
 
   if (retrievalStatus === "UNAVAILABLE") {
     return (
-      <section className="rounded-xl border border-line bg-[#fbfcfe] p-4" aria-live="polite">
+      <section
+        className="rounded-xl border border-line bg-[#fbfcfe] p-4"
+        aria-live="polite"
+      >
         <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
           <Icon name="search" size={16} /> {t("scanExtra.relatedResults")}
         </h3>
@@ -245,7 +289,10 @@ function RelatedScamResults({ result }) {
 
   if (!matches.length) {
     return (
-      <section className="rounded-xl border border-line bg-[#fbfcfe] p-4" aria-live="polite">
+      <section
+        className="mt-3 rounded-xl border border-line bg-[#fbfcfe] p-4"
+        aria-live="polite"
+      >
         <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
           <Icon name="search" size={16} /> {t("scanExtra.relatedResults")}
         </h3>
@@ -260,27 +307,57 @@ function RelatedScamResults({ result }) {
     <section aria-labelledby="related-scam-results-title">
       <div className="mt-3 flex items-center gap-2">
         <Icon name="search" size={17} className="text-brand-800" />
-        <h3 id="related-scam-results-title" className="m-0 text-lg font-bold text-brand-900">
+        <h3
+          id="related-scam-results-title"
+          className="m-0 text-lg font-bold text-brand-900"
+        >
           {t("scanExtra.relatedResults")}
         </h3>
       </div>
       <div className="mt-3 grid gap-3">
         {matches.map((item) => (
-          <article key={item.id} className="rounded-xl border border-line bg-white p-4">
+          <article
+            key={item.id}
+            className="rounded-xl border border-line bg-white p-4"
+          >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0">
-                <strong className="block text-sm text-brand-900">{tr(item.title)}</strong>
-                {item.scamType ? <span className="mt-1 block text-xs font-semibold text-muted">{item.scamType}</span> : null}
+                <strong className="block text-sm text-brand-900">
+                  {tr(item.title)}
+                </strong>
+                {item.scamType ? (
+                  <span className="mt-1 block text-xs font-semibold text-muted">
+                    {item.scamType}
+                  </span>
+                ) : null}
               </div>
               {item.confidence !== null ? (
-                <Badge tone={caseTone(item.riskLevel)}>{t("scanExtra.match", { percent: item.confidence })}</Badge>
+                <Badge tone={caseTone(item.riskLevel)}>
+                  {t("scanExtra.match", { percent: item.confidence })}
+                </Badge>
               ) : null}
             </div>
-            {item.description ? <p className="mb-0 mt-2 text-sm leading-6 text-muted">{tr(item.description)}</p> : null}
+            {item.description ? (
+              <p className="mb-0 mt-2 text-sm leading-6 text-muted">
+                {tr(item.description)}
+              </p>
+            ) : null}
             <div className="mt-3 flex flex-wrap items-center gap-3 text-xs font-semibold">
-              {item.relation ? <span className="text-muted">{t(`scanExtra.relation.${item.relation}`, { defaultValue: item.relation.replaceAll("_", " ") })}</span> : null}
-              {typeof item.source === "string" && /^https?:\/\//i.test(item.source) ? (
-                <a className="text-brand-800 hover:underline" href={item.source} target="_blank" rel="noreferrer">
+              {item.relation ? (
+                <span className="text-muted">
+                  {t(`scanExtra.relation.${item.relation}`, {
+                    defaultValue: item.relation.replaceAll("_", " "),
+                  })}
+                </span>
+              ) : null}
+              {typeof item.source === "string" &&
+              /^https?:\/\//i.test(item.source) ? (
+                <a
+                  className="text-brand-800 hover:underline"
+                  href={item.source}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {t("scanExtra.viewSource")}
                 </a>
               ) : null}
@@ -330,7 +407,9 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
             </button>
           </div>
           <Badge tone={riskTone(result.risk)} className="mt-4 px-3 py-1.5">
-            {t(`scanExtra.assessment.${result.assessment}`, { defaultValue: result.assessment.replaceAll("_", " ") })}
+            {t(`scanExtra.assessment.${result.assessment}`, {
+              defaultValue: result.assessment.replaceAll("_", " "),
+            })}
           </Badge>
           <p className="mb-0 mt-4 text-base leading-7 text-[#40546b]">
             {result.analysis.summary}
@@ -374,7 +453,9 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
             className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
             onClick={onReport}
             type="button"
-          >{tr("Report this scam")}</button>
+          >
+            {tr("Report this scam")}
+          </button>
         </div>
       </section>
     </div>
@@ -429,11 +510,19 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
             <h2
               id="report-title"
               className="m-0 text-xl font-bold text-brand-900"
-            >{tr("Report this scam")}</h2>
-            <p className="mb-0 mt-1 text-sm text-muted">{tr("Your report is private and will be reviewed before anything is shared.")}</p>
+            >
+              {tr("Report this scam")}
+            </h2>
+            <p className="mb-0 mt-1 text-sm text-muted">
+              {tr(
+                "Your report is private and will be reviewed before anything is shared.",
+              )}
+            </p>
           </div>
           <div className="grid gap-4 p-5 sm:p-6">
-            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Report reason")}<select
+            <label className="grid gap-1.5 text-sm font-bold text-ink">
+              {tr("Report reason")}
+              <select
                 required
                 value={reason}
                 onChange={(event) => setReason(event.target.value)}
@@ -441,21 +530,35 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
               >
                 <option value="">{tr("Select a reason")}</option>
                 <option value="Scam attempt">{tr("Scam attempt")}</option>
-                <option value="Phishing or impersonation">{tr("Phishing or impersonation")}</option>
+                <option value="Phishing or impersonation">
+                  {tr("Phishing or impersonation")}
+                </option>
                 <option value="Payment fraud">{tr("Payment fraud")}</option>
-                <option value="Other suspicious activity">{tr("Other suspicious activity")}</option>
+                <option value="Other suspicious activity">
+                  {tr("Other suspicious activity")}
+                </option>
               </select>
             </label>
-            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Description and details")}<textarea
+            <label className="grid gap-1.5 text-sm font-bold text-ink">
+              {tr("Description and details")}
+              <textarea
                 required
                 rows="4"
                 value={details}
                 onChange={(event) => setDetails(event.target.value)}
                 className="resize-y rounded-lg border border-line p-3 font-normal"
-                placeholder={tr("Describe what happened without passwords, OTPs, or banking details.")}
+                placeholder={tr(
+                  "Describe what happened without passwords, OTPs, or banking details.",
+                )}
               />
             </label>
-            <label className="grid gap-1.5 text-sm font-bold text-ink">{tr("Optional evidence")}<label className="text-xs font-normal text-muted">{tr("Add a safe reference or link (do not include sensitive information).")}</label>
+            <label className="grid gap-1.5 text-sm font-bold text-ink">
+              {tr("Optional evidence")}
+              <label className="text-xs font-normal text-muted">
+                {tr(
+                  "Add a safe reference or link (do not include sensitive information).",
+                )}
+              </label>
               <input
                 value={evidence}
                 onChange={(event) => setEvidence(event.target.value)}
@@ -478,7 +581,9 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
               className="min-h-11 px-4 text-sm font-bold text-muted"
               onClick={onClose}
               type="button"
-            >{tr("Cancel")}</button>
+            >
+              {tr("Cancel")}
+            </button>
             <button
               disabled={submitting}
               className="min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white disabled:opacity-60"
@@ -496,16 +601,53 @@ function ReportDialog({ scanId, onClose, onSuccess }) {
 function AccountRequiredDialog({ onClose, onCreateAccount, onSignIn }) {
   const tr = useInterfaceTranslation();
   return (
-    <div className="fixed inset-0 z-[60] flex items-end bg-[#071a33]/55 p-4 sm:items-center sm:justify-center" role="presentation">
-      <section aria-labelledby="account-required-title" aria-modal="true" className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl sm:p-6" role="dialog">
-        <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-100 text-brand-800"><Icon name="users" size={21} /></span>
-        <h2 id="account-required-title" className="mb-1 mt-4 text-xl font-bold text-brand-900">{tr("Create an account to submit a report")}</h2>
-        <p className="m-0 text-sm leading-6 text-muted">{tr("Reports are shared with the community, so an account is required. Your scan result will be ready when you return.")}</p>
+    <div
+      className="fixed inset-0 z-[60] flex items-end bg-[#071a33]/55 p-4 sm:items-center sm:justify-center"
+      role="presentation"
+    >
+      <section
+        aria-labelledby="account-required-title"
+        aria-modal="true"
+        className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl sm:p-6"
+        role="dialog"
+      >
+        <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-100 text-brand-800">
+          <Icon name="users" size={21} />
+        </span>
+        <h2
+          id="account-required-title"
+          className="mb-1 mt-4 text-xl font-bold text-brand-900"
+        >
+          {tr("Create an account to submit a report")}
+        </h2>
+        <p className="m-0 text-sm leading-6 text-muted">
+          {tr(
+            "Reports are shared with the community, so an account is required. Your scan result will be ready when you return.",
+          )}
+        </p>
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
-          <button className="min-h-11 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100" onClick={onSignIn} type="button">{tr("Sign In")}</button>
-          <button className="min-h-11 rounded-lg bg-brand-800 px-4 text-sm font-bold text-white hover:bg-brand-700" onClick={onCreateAccount} type="button">{tr("Create Account")}</button>
+          <button
+            className="min-h-11 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100"
+            onClick={onSignIn}
+            type="button"
+          >
+            {tr("Sign In")}
+          </button>
+          <button
+            className="min-h-11 rounded-lg bg-brand-800 px-4 text-sm font-bold text-white hover:bg-brand-700"
+            onClick={onCreateAccount}
+            type="button"
+          >
+            {tr("Create Account")}
+          </button>
         </div>
-        <button className="mt-4 w-full text-sm font-semibold text-muted hover:text-brand-800" onClick={onClose} type="button">{tr("Not now")}</button>
+        <button
+          className="mt-4 w-full text-sm font-semibold text-muted hover:text-brand-800"
+          onClick={onClose}
+          type="button"
+        >
+          {tr("Not now")}
+        </button>
       </section>
     </div>
   );
@@ -522,10 +664,10 @@ export function AnalysisPage() {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [result, setResult] = useState(() => location.state?.reportResult || null);
-  const [showReportDialog, setShowReportDialog] = useState(() => Boolean(location.state?.reportResult && isAuthenticated));
+  const [result, setResult] = useState(
+    () => location.state?.reportResult || null,
+  );
   const [showAccountRequired, setShowAccountRequired] = useState(false);
-  const [reportSubmitted, setReportSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -600,6 +742,7 @@ export function AnalysisPage() {
           ? await createImageScan(image)
           : await createScan({ inputType, value });
       setResult(serializeResult(response.scan));
+      if (isAuthenticated) notifyScanCreated();
     } catch (requestError) {
       setError(errorMessage(requestError, t));
     } finally {
@@ -609,7 +752,7 @@ export function AnalysisPage() {
 
   const startReport = () => {
     if (isAuthenticated) {
-      setShowReportDialog(true);
+      navigate(`/report?scan=${encodeURIComponent(result.id)}`);
       return;
     }
     setShowAccountRequired(true);
@@ -625,7 +768,7 @@ export function AnalysisPage() {
   };
 
   return (
-    <main className="lg:px-10" id="main-content">
+    <main className="lg:px-6" id="main-content">
       <ProgressTracker hasResult={Boolean(result)} />
       <Card className="relative overflow-hidden p-4 sm:p-6">
         {isSubmitting ? <ScanningOverlay /> : null}
@@ -637,12 +780,10 @@ export function AnalysisPage() {
         >
           <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-line pb-5">
             <div>
-              <h2 className="m-0 flex items-center gap-2 text-lg font-bold text-brand-900">
+              <h2 className="m-0 flex items-center gap-2 text-lg font-bold text-black">
                 <Icon name="search" size={19} /> {t("scan.heading")}
               </h2>
-              <p className="mb-0 mt-1 text-sm text-muted">
-                {t("scan.intro")}
-              </p>
+              <p className="mb-0 mt-1 text-sm text-muted">{t("scan.intro")}</p>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f8fbff] px-2.5 py-1.5 text-xs font-semibold text-muted">
               <Icon name="lock" size={13} /> {t("scan.private")}
@@ -675,7 +816,7 @@ export function AnalysisPage() {
                     setError("");
                   }}
                   rows="7"
-                  className="w-full resize-y rounded-xl border border-line bg-white p-4 text-base text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
+                  className="w-full resize-y rounded-xl border border-line bg-white p-4 text-sm placeholder:text-sm text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
                   placeholder={t("scan.messagePlaceholder")}
                   aria-describedby={error ? "analysis-error" : "scan-help"}
                 />
@@ -728,7 +869,9 @@ export function AnalysisPage() {
                 <span className="mt-3 text-sm font-bold text-brand-900">
                   {t("scan.upload")}
                 </span>
-                <span className="mt-1 text-xs text-muted">{tr("PNG, JPG, JPEG, or WEBP · up to 10 MB")}</span>
+                <span className="mt-1 text-xs text-muted">
+                  {tr("PNG, JPG, JPEG, or WEBP · up to 10 MB")}
+                </span>
                 {previewUrl ? (
                   <span className="mt-4 block overflow-hidden rounded-xl border border-line bg-white p-1 shadow-sm">
                     <img
@@ -782,11 +925,15 @@ export function AnalysisPage() {
                     {t("scanExtra.result")}
                   </p>
                   <h2 className="mb-0 mt-1 text-2xl font-extrabold text-brand-900">
-                    {t("scanExtra.riskLevel", { risk: t(`scanExtra.riskLabels.${result.risk}`) })}
+                    {t("scanExtra.riskLevel", {
+                      risk: t(`scanExtra.riskLabels.${result.risk}`),
+                    })}
                   </h2>
                 </div>
                 <Badge tone={riskTone(result.risk)} className="px-3 py-1.5">
-                  {t(`scanExtra.assessment.${result.assessment}`, { defaultValue: result.assessment.replaceAll("_", " ") })}
+                  {t(`scanExtra.assessment.${result.assessment}`, {
+                    defaultValue: result.assessment.replaceAll("_", " "),
+                  })}
                 </Badge>
               </div>
               <p className="mb-0 mt-4 max-w-3xl text-base leading-7 text-[#40546b]">
@@ -805,10 +952,14 @@ export function AnalysisPage() {
                 </section>
                 <section className="rounded-xl border border-brand-100 bg-brand-100/40 p-4">
                   <h3 className="m-0 flex items-center gap-2 text-sm font-bold text-brand-900">
-                    <Icon name="shield" size={16} /> {t("scanExtra.recommendedAction")}
+                    <Icon name="shield" size={16} />{" "}
+                    {t("scanExtra.recommendedAction")}
                   </h3>
                   <p className="mb-0 mt-3 text-sm leading-6 text-muted">
-                    {result.analysis.recommendedActions[0] || tr("Verify the sender through an official contact method.")}
+                    {result.analysis.recommendedActions[0] ||
+                      tr(
+                        "Verify the sender through an official contact method.",
+                      )}
                   </p>
                 </section>
               </div>
@@ -816,8 +967,12 @@ export function AnalysisPage() {
             </div>
             <section className="flex flex-col gap-3 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
               <div>
-                <p className="m-0 text-sm font-bold text-brand-900">{tr("Did you encounter this scam?")}</p>
-                <p className="mb-0 mt-1 text-xs text-muted">{tr("Your report can help protect the community.")}</p>
+                <p className="m-0 text-sm font-bold text-brand-900">
+                  {tr("Did you encounter this scam?")}
+                </p>
+                <p className="mb-0 mt-1 text-xs text-muted">
+                  {tr("Your report can help protect the community.")}
+                </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button
@@ -838,51 +993,15 @@ export function AnalysisPage() {
                 >
                   {t("scanExtra.done")}
                 </button>
-
               </div>
             </section>
           </Card>
-          {showReportDialog ? (
-            <ReportDialog
-              scanId={result.id}
-              onClose={() => setShowReportDialog(false)}
-              onSuccess={() => {
-                setShowReportDialog(false);
-                setReportSubmitted(true);
-              }}
-            />
-          ) : null}
           {showAccountRequired ? (
             <AccountRequiredDialog
               onClose={() => setShowAccountRequired(false)}
               onSignIn={() => continueWithAccount("/login")}
               onCreateAccount={() => continueWithAccount("/signup")}
             />
-          ) : null}
-          {reportSubmitted ? (
-            <div className="fixed inset-0 z-[60] grid place-items-center bg-[#071a33]/55 p-4">
-              <div
-                className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl"
-                role="status"
-              >
-                <span className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-[#eaf8f3] text-risk-low">
-                  <Icon name="check" size={22} />
-                </span>
-                <h2 className="mb-1 mt-4 text-xl font-bold text-brand-900">
-                  {t("scanExtra.reportSubmitted")}
-                </h2>
-                <p className="m-0 text-sm leading-6 text-muted">
-                  {t("scanExtra.reportSubmittedDetail")}
-                </p>
-                <button
-                  className="mt-5 min-h-11 rounded-lg bg-brand-800 px-5 text-sm font-bold text-white"
-                  onClick={() => setReportSubmitted(false)}
-                  type="button"
-                >
-                  {t("scanExtra.done")}
-                </button>
-              </div>
-            </div>
           ) : null}
         </>
       ) : null}

@@ -72,7 +72,7 @@ export function PublicProfilePage() {
 
   const displayName = profile.name || profile.username;
   return (
-    <main className="min-w-0 lg:px-10" id="main-content">
+    <main className="min-w-0 lg:px-6" id="main-content">
       <Card className="overflow-hidden">
         <div className="h-24 bg-linear-to-r from-brand-900 via-brand-800 to-[#2670c9] sm:h-40" />
         <div className="mt-15 px-5 pb-6 sm:px-7">
@@ -88,24 +88,33 @@ export function PublicProfilePage() {
             </div>
           </div>
           <p className="mb-0 mt-5 flex items-center gap-2 text-sm text-muted">
-            <Icon name="user" size={16} />{" "}{tr("Community member since")}{" "}
+            <Icon name="user" size={16} /> {tr("Community member since")}{" "}
             {formatDate(profile.createdAt)}
           </p>
         </div>
       </Card>
 
       <section className="mt-7">
-        <div className="mb-4 flex items-end justify-between gap-4">
-          <div>
-            <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">{tr("Community contributions")}</p>
-            <h2 className="mb-0 mt-1 text-xl font-bold text-brand-900">{tr("Reported Scams")}</h2>
-          </div>
+        <div
+          className="mb-4 flex border-b border-line"
+          role="tablist"
+          aria-label={tr("Your reports")}
+        >
+          <span
+            role="tab"
+            aria-selected="true"
+            className="-mb-px inline-flex min-h-10 items-center border-b-2 border-brand-800 px-4 text-sm font-bold text-brand-800"
+          >
+            {tr("Your reports")}
+          </span>
         </div>
         {profile.reports.length === 0 ? (
           <EmptyState
             icon="shield"
             title={tr("No published reports yet")}
-            message={tr("Approved community scam reports from this member will appear here.")}
+            message={tr(
+              "Approved community scam reports from this member will appear here.",
+            )}
           />
         ) : (
           <div className="grid gap-4">
@@ -113,10 +122,12 @@ export function PublicProfilePage() {
               <Card key={report.communityPost.id} className="p-5 sm:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="m-0 text-lg font-bold text-brand-900">
+                    <h3 className="m-0 text-lg font-bold text-black">
                       {report.communityPost.title}
                     </h3>
-                    <p className="mb-0 mt-1 text-xs text-muted">{tr("Published")}{" "}{formatDate(report.communityPost.publishedAt)}
+                    <p className="mb-0 mt-1 text-xs text-muted">
+                      {tr("Published")}{" "}
+                      {formatDate(report.communityPost.publishedAt)}
                     </p>
                   </div>
                   {report.scan?.assessment ? (

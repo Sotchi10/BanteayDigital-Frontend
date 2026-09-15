@@ -1,6 +1,7 @@
 export default {
   translation: {
     rightSidebar: {
+      communitySafety: 'Community Safety', communitySafetyDetail: 'Browse practical guidance to help you stay safer online.', exploreCommunitySafety: 'Explore Community Safety',
       beforeCheck: 'Before you check', beforeCheckOne: 'Remove passwords, OTP codes, and banking details.', beforeCheckTwo: 'Include the complete message or link for better context.', beforeCheckThree: 'Verify urgent requests through an official contact channel.',
       reportIncludes: 'A useful report includes', reportOne: 'What happened and what the sender requested.', reportTwo: 'The suspicious account, phone number, or website.', reportThree: 'Evidence with names and private details removed.',
       whenAlert: 'When you receive an alert', checkMessage: 'Check a suspicious message', alertOne: 'Pause and avoid links, payments, or urgent requests.', alertTwo: "Verify the message through the organisation's official channel.", alertThree: 'Warn people who may have received the same message.',
@@ -32,6 +33,7 @@ export default {
       or: 'or', google: 'Continue with Google', terms: 'By continuing, you agree to keep reports truthful and protect private information.',
     },
     community: {
+      forYou: 'For You',
       verifiedBy: 'Verified by BanteayDigital', verified: 'Verified', public: 'Public', published: 'Published {{date}}',
       risk: '{{level}} risk', riskLevels: { High: 'High', Medium: 'Medium', Low: 'Low', Critical: 'Critical' },
       categories: { PHISHING: 'Phishing', IMPERSONATION: 'Impersonation', INVESTMENT: 'Investment', JOB: 'Job scam', SHOPPING: 'Shopping scam', OTHER: 'Other' },

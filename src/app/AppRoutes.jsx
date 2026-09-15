@@ -6,6 +6,7 @@ import { AlertsPage } from "../features/alerts/AlertsPage";
 import { AboutPage } from "../features/about/AboutPage";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
 import { CommunityPage } from "../features/community/CommunityPage";
+import { PostDetailPage } from "../features/community/PostDetailPage";
 import { HomePage } from "../features/home/HomePage";
 import { ScanHistoryPage } from "../features/history/ScanHistoryPage";
 import { ScanDetailPage } from "../features/history/ScanDetailPage";
@@ -37,7 +38,7 @@ export function AppRoutes() {
     <Routes>
         <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="posts/:postId" element={<CommunityPage />} />
+        <Route path="posts/:postId" element={<PostDetailPage />} />
         <Route path="community" element={<Navigate to="/" replace />} />
         <Route path="community/posts/:postId" element={<LegacyCommunityPostRedirect />} />
         <Route path="leaderboard" element={<LeaderboardPage />} />

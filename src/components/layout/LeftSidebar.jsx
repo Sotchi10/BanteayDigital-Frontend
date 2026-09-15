@@ -13,7 +13,7 @@ export function LeftSidebar() {
   const [reportCount, setReportCount] = useState(null);
   const [reportError, setReportError] = useState(false);
   const shortcutClass = ({ isActive }) =>
-    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#52647a] hover:bg-white hover:text-brand-800"}`;
+    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#52647a] hover:bg-white hover:text-brand-800"}`;
 
   useEffect(() => {
     if (!user) return undefined;
@@ -35,7 +35,7 @@ export function LeftSidebar() {
 
   return (
     <aside
-      className="desktop-left-sidebar hidden self-start lg:sticky lg:top-[84px] lg:min-h-[calc(100vh-100px)] lg:flex lg:flex-col lg:gap-3"
+      className="desktop-left-sidebar hidden self-start lg:sticky lg:top-[84px] lg:min-h-[calc(100vh-100px)] lg:flex lg:flex-col lg:gap-4"
       aria-label={tr("Profile and safety shortcuts")}
     >
       {user ? (
@@ -47,7 +47,7 @@ export function LeftSidebar() {
           {user.username ? (
             <p className="mb-2 mt-0 text-xs text-muted">@{user.username}</p>
           ) : null}
-          <div className="mt-4 flex items-center justify-between border-t border-line pt-3 text-xs text-muted">
+          <div className="mt-4 flex flex-col items-start justify-between border-t border-line pt-3 text-xs text-muted">
             <span>
               {reportError
                 ? t("sidebar.reportsUnavailable")
@@ -59,17 +59,23 @@ export function LeftSidebar() {
           </div>
         </Card>
       ) : null}
-      <nav className="grid gap-1" aria-label={tr("Safety shortcuts")}>
-        <NavLink to="/saved" className={shortcutClass}>
-          <Icon name="bookmark" size={18} />
-          {t("sidebar.saved")}
-        </NavLink>
+      <nav className="grid gap-1 border-t border-line pt-3" aria-label={tr("Your activity")}>
         <NavLink to="/history" className={shortcutClass}>
           <Icon name="clock" size={18} />
           {t("sidebar.history")}
         </NavLink>
         <NavLink to="/reports/history" className={shortcutClass}>
           <Icon name="edit" size={18} />{tr("My reports")}</NavLink>
+        <NavLink to="/saved" className={shortcutClass}>
+          <Icon name="bookmark" size={18} />
+          {t("sidebar.saved")}
+        </NavLink>
+      </nav>
+      <nav className="grid gap-1 border-t border-line pt-3" aria-label={tr("Community activity")}>
+        <NavLink to="/leaderboard" className={shortcutClass}>
+          <Icon name="trophy" size={18} />
+          {tr("Leaderboard")}
+        </NavLink>
       </nav>
       <p className="mb-0 mt-auto border-t border-line pt-4 text-xs text-muted">{tr("© BanteayDigital")}</p>
     </aside>
