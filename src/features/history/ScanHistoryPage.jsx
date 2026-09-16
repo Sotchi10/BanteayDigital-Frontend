@@ -19,9 +19,11 @@ const riskFor = (assessment) =>
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
-      : "Low";
+      : assessment === "NO_STRONG_WARNING_SIGNS"
+        ? "Low"
+        : "Unknown";
 const toneFor = (risk) =>
-  risk === "High" ? "high" : risk === "Medium" ? "medium" : "low";
+  risk === "High" ? "high" : risk === "Medium" ? "medium" : risk === "Low" ? "low" : "neutral";
 const typeLabel = (type) =>
   type === "URL" ? "Website link" : type === "IMAGE" ? "Image" : "Text message";
 const dateLabel = (date) =>
@@ -196,7 +198,7 @@ export function ScanHistoryPage() {
             </button>
             {riskFilterOpen ? (
               <div className="absolute left-0 z-20 mt-1 w-40 rounded-lg border border-line bg-white p-1.5 shadow-lg">
-                {["ALL", "High", "Medium", "Low"].map((risk) => (
+                {["ALL", "High", "Medium", "Low", "Unknown"].map((risk) => (
                   <button
                     key={risk}
                     type="button"
