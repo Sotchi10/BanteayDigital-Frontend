@@ -8,16 +8,16 @@ function getCommunityPost(postId) {
   return request(`/v1/community/posts/${postId}`)
 }
 
+function listSavedCommunityPosts({ page = 1, limit = 20 } = {}) {
+  return request('/v1/community/posts/saved', { params: { page, limit } })
+}
+
 function likeCommunityPost(postId) {
   return request(`/v1/community/posts/${postId}/like`, { method: 'PUT' })
 }
 
 function unlikeCommunityPost(postId) {
   return request(`/v1/community/posts/${postId}/like`, { method: 'DELETE' })
-}
-
-function listSavedCommunityPosts({ page = 1, limit = 20 } = {}) {
-  return request('/v1/community/posts/saved', { params: { page, limit } })
 }
 
 function saveCommunityPost(postId) {

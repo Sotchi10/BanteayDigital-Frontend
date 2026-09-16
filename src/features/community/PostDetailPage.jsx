@@ -107,16 +107,24 @@ export function PostDetailPage() {
   const toggleSave = async () => {
     if (!post) return;
     if (!currentUser) {
-      const unauthenticated = new Error(t("community.signInToLike"));
-      unauthenticated.response = { status: 401, data: { message: t("community.signInToLike") } };
+      const unauthenticated = new Error(t("community.signInToSave"));
+      unauthenticated.response = {
+        status: 401,
+        data: { message: t("community.signInToSave") },
+      };
       throw unauthenticated;
     }
     const previous = post.interaction;
     const nextSaved = !previous.savedByMe;
     updateInteraction(() => ({ ...previous, savedByMe: nextSaved }));
     try {
-      const result = nextSaved ? await saveCommunityPost(post.id) : await unsaveCommunityPost(post.id);
-      updateInteraction((interaction) => ({ ...interaction, savedByMe: result.saved }));
+      const result = nextSaved
+        ? await saveCommunityPost(post.id)
+        : await unsaveCommunityPost(post.id);
+      updateInteraction((interaction) => ({
+        ...interaction,
+        savedByMe: result.saved,
+      }));
     } catch (requestError) {
       updateInteraction(() => previous);
       throw requestError;

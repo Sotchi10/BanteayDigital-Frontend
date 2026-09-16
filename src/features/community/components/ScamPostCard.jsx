@@ -163,6 +163,7 @@ function copyText(value) {
 export function PostActions({
   onShare,
   onOpenComments,
+  onToggleSave,
   onToggleLike,
   onToggleSave,
   post,
@@ -190,6 +191,19 @@ export function PostActions({
   };
 
   const shareUrl = `${window.location.origin}/posts/${encodeURIComponent(post.id)}`;
+
+  const toggleSave = async () => {
+    if (savePending) return;
+    setSavePending(true);
+    setError("");
+    try {
+      await onToggleSave();
+    } catch (requestError) {
+      setError(apiErrorMessage(requestError, t("community.save")));
+    } finally {
+      setSavePending(false);
+    }
+  };
 
   const shareNative = async () => {
     setSharePending(true);
@@ -340,6 +354,17 @@ export function PostActions({
             </div>
           ) : null}
         </div>
+        <button
+          aria-label={post.interaction.savedByMe ? t("community.removeFromSaved") : t("community.save")}
+          aria-pressed={post.interaction.savedByMe}
+          className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition hover:bg-[#f2f5f8] ${post.interaction.savedByMe ? "text-brand-800 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
+          disabled={savePending}
+          onClick={toggleSave}
+          title={post.interaction.savedByMe ? t("community.removeFromSaved") : t("community.save")}
+          type="button"
+        >
+          <Icon name="bookmark" size={15} />
+        </button>
       </div>
       {error ? (
         <p className="mx-3 mb-3 rounded-md bg-red-50 px-3 py-2 text-xs text-red-700 sm:mx-5 sm:mb-4">
@@ -359,6 +384,7 @@ export function ScamPostCard({
   onOpenPost,
   onOpenComments,
   onShare,
+  onToggleSave,
   onToggleLike,
   onToggleSave,
   post,
@@ -406,6 +432,7 @@ export function ScamPostCard({
       </article>
       <PostActions
         onShare={onShare}
+        onToggleSave={onToggleSave}
         onOpenComments={onOpenComments}
         onToggleLike={onToggleLike}
         onToggleSave={onToggleSave}

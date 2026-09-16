@@ -89,12 +89,14 @@ export function CommunityFeed() {
     if (!post) return
     if (!currentUser) {
       const errorResponse = new Error('Authentication is required')
-      errorResponse.response = { status: 401, data: { message: t('community.signInToLike') } }
+      errorResponse.response = { status: 401, data: { message: t('community.signInToSave') } }
       throw errorResponse
     }
+
     const previous = post.interaction
     const nextSaved = !previous.savedByMe
     updateInteraction(postId, () => ({ ...previous, savedByMe: nextSaved }))
+
     try {
       const result = nextSaved ? await saveCommunityPost(postId) : await unsaveCommunityPost(postId)
       updateInteraction(postId, (interaction) => ({ ...interaction, savedByMe: result.saved }))
