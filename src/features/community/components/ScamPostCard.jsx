@@ -165,7 +165,6 @@ export function PostActions({
   onOpenComments,
   onToggleSave,
   onToggleLike,
-  onToggleSave,
   post,
 }) {
   const tr = useInterfaceTranslation();
@@ -235,18 +234,7 @@ export function PostActions({
     setShareOpen((value) => !value);
   };
 
-  const toggleSave = async () => {
-    if (!onToggleSave || savePending) return;
-    setSavePending(true);
-    setError("");
-    try {
-      await onToggleSave();
-    } catch (requestError) {
-      setError(apiErrorMessage(requestError, t("Could not update saved posts.")));
-    } finally {
-      setSavePending(false);
-    }
-  };
+
 
   const shareToTelegram = async () => {
     setShareOpen(false);
@@ -354,17 +342,6 @@ export function PostActions({
             </div>
           ) : null}
         </div>
-        <button
-          aria-label={post.interaction.savedByMe ? t("community.removeFromSaved") : t("community.save")}
-          aria-pressed={post.interaction.savedByMe}
-          className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition hover:bg-[#f2f5f8] ${post.interaction.savedByMe ? "text-brand-800 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
-          disabled={savePending}
-          onClick={toggleSave}
-          title={post.interaction.savedByMe ? t("community.removeFromSaved") : t("community.save")}
-          type="button"
-        >
-          <Icon name="bookmark" size={15} />
-        </button>
       </div>
       {error ? (
         <p className="mx-3 mb-3 rounded-md bg-red-50 px-3 py-2 text-xs text-red-700 sm:mx-5 sm:mb-4">
@@ -386,7 +363,6 @@ export function ScamPostCard({
   onShare,
   onToggleSave,
   onToggleLike,
-  onToggleSave,
   post,
 }) {
   const { i18n, t } = useTranslation();
@@ -435,7 +411,6 @@ export function ScamPostCard({
         onToggleSave={onToggleSave}
         onOpenComments={onOpenComments}
         onToggleLike={onToggleLike}
-        onToggleSave={onToggleSave}
         post={post}
       />
       {imageOpen && imageSource ? <ImageLightbox alt={post.title} src={imageSource} onClose={() => setImageOpen(false)} /> : null}
