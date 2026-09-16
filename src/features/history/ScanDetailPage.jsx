@@ -9,7 +9,9 @@ const riskFor = (assessment) =>
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
-      : "Low";
+      : assessment === "NO_STRONG_WARNING_SIGNS"
+        ? "Low"
+        : "Unknown";
 export function ScanDetailPage() {
   const tr = useInterfaceTranslation();
   const { scanId } = useParams();
@@ -106,7 +108,7 @@ export function ScanDetailPage() {
               {tr("Assessment")}
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-3">
-              <span className={`grid h-11 w-11 place-items-center rounded-full ${risk === "High" ? "bg-[#fff0f1] text-risk-high" : risk === "Medium" ? "bg-[#fff7e6] text-risk-medium" : "bg-[#eaf8f3] text-risk-low"}`}>
+              <span className={`grid h-11 w-11 place-items-center rounded-full ${risk === "High" ? "bg-[#fff0f1] text-risk-high" : risk === "Medium" ? "bg-[#fff7e6] text-risk-medium" : risk === "Low" ? "bg-[#eaf8f3] text-risk-low" : "bg-[#f2f4f7] text-muted"}`}>
                 <Icon name={risk === "Low" ? "shield" : "alert"} size={21} />
               </span>
               <div>

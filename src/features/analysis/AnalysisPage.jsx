@@ -32,7 +32,13 @@ const modes = (t) => [
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const supportedImageTypes = new Set(["image/png", "image/jpeg", "image/webp"]);
 const riskTone = (risk) =>
-  risk === "High" ? "high" : risk === "Medium" ? "medium" : "low";
+  risk === "High"
+    ? "high"
+    : risk === "Medium"
+      ? "medium"
+      : risk === "Low"
+        ? "low"
+        : "neutral";
 const caseTone = (risk) =>
   risk === "HIGH" || risk === "CRITICAL"
     ? "high"
@@ -75,7 +81,9 @@ const riskFromAssessment = (assessment) =>
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
-      : "Low";
+      : assessment === "NO_STRONG_WARNING_SIGNS"
+        ? "Low"
+        : "Unknown";
 
 const serializeResult = (scan) => ({
   ...scan,
@@ -919,7 +927,7 @@ export function AnalysisPage() {
       {result ? (
         <>
           <Card
-            className={`mt-6 overflow-hidden border-l-4 shadow-lg ${result.risk === "High" ? "border-l-risk-high" : result.risk === "Medium" ? "border-l-risk-medium" : "border-l-risk-low"}`}
+            className={`mt-6 overflow-hidden border-l-4 shadow-lg ${result.risk === "High" ? "border-l-risk-high" : result.risk === "Medium" ? "border-l-risk-medium" : result.risk === "Low" ? "border-l-risk-low" : "border-l-slate-400"}`}
           >
             <div className="mx-auto max-w-4xl p-5 sm:p-7">
               <div className="flex flex-wrap items-start justify-between gap-4">

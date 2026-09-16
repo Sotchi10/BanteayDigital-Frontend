@@ -1,9 +1,15 @@
 import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "../../components/ui";
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
+import {
+  clearRememberedCredentials,
+  getRememberedContact,
+  getRememberedCredentials,
+  saveRememberedCredentials,
+} from "./rememberedCredentials";
 
 const benefits = (t) => [
   {
@@ -34,13 +40,31 @@ export function AuthPage() {
   const { t } = useTranslation();
   const authBenefits = benefits(t);
   const isSignUp = location.pathname === "/signup";
-  const [contact, setContact] = useState("");
+  const initialRememberedContact = isSignUp ? "" : getRememberedContact();
+  const [contact, setContact] = useState(initialRememberedContact);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(Boolean(initialRememberedContact));
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [recoveryNotice, setRecoveryNotice] = useState("");
+
+  useEffect(() => {
+    if (isSignUp) return undefined;
+
+    let cancelled = false;
+    getRememberedCredentials().then((credentials) => {
+      if (cancelled || !credentials.contact) return;
+      setContact(credentials.contact);
+      setPassword(credentials.password);
+      setRemember(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isSignUp]);
+
   const changeMode = (nextPath) => {
     setError("");
     setRecoveryNotice("");
@@ -63,7 +87,11 @@ export function AuthPage() {
     setLoading(true);
     try {
       if (isSignUp) await signUp(payload);
-      else await signIn(payload);
+      else {
+        await signIn(payload);
+        if (remember) await saveRememberedCredentials(trimmedContact, password);
+        else clearRememberedCredentials();
+      }
       navigate(location.state?.from || "/", {
         replace: true,
         state: location.state?.returnState,
@@ -149,6 +177,7 @@ export function AuthPage() {
             <label className="grid gap-1.5 text-sm font-bold text-ink">
               {t("auth.contact")}
               <input
+                name="username"
                 disabled={loading}
                 value={contact}
                 onChange={(event) => {
@@ -166,6 +195,7 @@ export function AuthPage() {
               {t("auth.password")}
               <span className="relative">
                 <input
+                  name="password"
                   disabled={loading}
                   required
                   type={showPassword ? "text" : "password"}

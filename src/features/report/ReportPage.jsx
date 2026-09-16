@@ -11,13 +11,15 @@ import { createReportFromScan } from "../../services/reports";
 import { getScan, listScans } from "../../services/scans";
 
 const toneFor = (risk) =>
-  risk === "High" ? "high" : risk === "Medium" ? "medium" : "low";
+  risk === "High" ? "high" : risk === "Medium" ? "medium" : risk === "Low" ? "low" : "neutral";
 const riskFromAssessment = (assessment) =>
   assessment === "STRONG_SCAM_INDICATORS"
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
-      : "Low";
+      : assessment === "NO_STRONG_WARNING_SIGNS"
+        ? "Low"
+        : "Unknown";
 
 const reportAnalysisFromScan = (scan) => ({
   ...scan,

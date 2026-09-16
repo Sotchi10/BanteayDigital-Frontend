@@ -13,7 +13,7 @@ export default {
       result: 'លទ្ធផលពិនិត្យ', risk: 'ហានិភ័យ {{risk}}', indicators: 'សញ្ញាដែលបានរកឃើញ',
       recommendedAction: 'សកម្មភាពដែលបានណែនាំ', submitReport: 'ដាក់ស្នើរបាយការណ៍', done: 'រួចរាល់', close: 'បិទលទ្ធផលស្កេន', newScan: 'ស្កេនថ្មី', defaultRecommendation: 'ផ្ទៀងផ្ទាត់អ្នកផ្ញើតាមរយៈវិធីទំនាក់ទំនងផ្លូវការ។',
       relatedResults: 'លទ្ធផលករណីឆបោកពាក់ព័ន្ធ', relatedUnavailable: 'មិនអាចបង្ហាញការផ្គូផ្គងករណីឆបោកពាក់ព័ន្ធបានទេនៅពេលនេះ។ លទ្ធផលស្កេនខាងលើនៅតែអាចប្រើបាន។', relatedNone: 'មិនមានករណីឆបោកដែលពាក់ព័ន្ធខ្លាំងសម្រាប់ការស្កេននេះទេ។', relatedCase: 'ករណីឆបោកពាក់ព័ន្ធ', match: 'ដូចគ្នា {{percent}}%', viewSource: 'មើលប្រភព',
-      riskLevel: 'ហានិភ័យ {{risk}}', riskLabels: { High: 'ខ្ពស់', Medium: 'មធ្យម', Low: 'ទាប' }, assessment: { NO_STRONG_WARNING_SIGNS: 'មិនមានសញ្ញាព្រមានខ្លាំង', INSUFFICIENT_EVIDENCE: 'ភស្តុតាងមិនគ្រប់គ្រាន់', CAUTION: 'គួរប្រុងប្រយ័ត្ន', SUSPICIOUS: 'គួរឱ្យសង្ស័យ', STRONG_SCAM_INDICATORS: 'សញ្ញាឆបោកខ្លាំង', UNABLE_TO_ASSESS: 'មិនអាចវាយតម្លៃ' }, relation: { LIKELY_RELATED: 'ទាក់ទងគ្នាទំនង', CONTEXTUAL: 'បរិបទពាក់ព័ន្ធ' },
+      riskLevel: 'ហានិភ័យ {{risk}}', riskLabels: { High: 'ខ្ពស់', Medium: 'មធ្យម', Low: 'ទាប', Unknown: 'មិនទាន់កំណត់' }, assessment: { NO_STRONG_WARNING_SIGNS: 'មិនមានសញ្ញាព្រមានខ្លាំង', INSUFFICIENT_EVIDENCE: 'ភស្តុតាងមិនគ្រប់គ្រាន់', CAUTION: 'គួរប្រុងប្រយ័ត្ន', SUSPICIOUS: 'គួរឱ្យសង្ស័យ', STRONG_SCAM_INDICATORS: 'សញ្ញាឆបោកខ្លាំង', UNABLE_TO_ASSESS: 'មិនអាចវាយតម្លៃ' }, relation: { LIKELY_RELATED: 'ទាក់ទងគ្នាទំនង', CONTEXTUAL: 'បរិបទពាក់ព័ន្ធ' },
       reportSubmitted: 'បានដាក់ស្នើរបាយការណ៍', reportSubmittedDetail: 'សូមអរគុណ។ របាយការណ៍របស់អ្នកត្រូវបានរក្សាទុកសម្រាប់ពិនិត្យ។',
     },
     authExtra: {
