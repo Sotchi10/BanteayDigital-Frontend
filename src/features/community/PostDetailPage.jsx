@@ -7,7 +7,9 @@ import {
   getCurrentUser,
   likeCommunityPost,
   recordCommunityPostShare,
+  saveCommunityPost,
   unlikeCommunityPost,
+  unsaveCommunityPost,
 } from "./api/communityApi";
 import { CommentSection } from "./components/CommentSection";
 import {
@@ -102,6 +104,33 @@ export function PostDetailPage() {
       shareCount: result.shareCount,
     }));
     return result;
+  };
+
+  const toggleSave = async () => {
+    if (!post) return;
+    if (!currentUser) {
+      const unauthenticated = new Error(t("community.signInToSave"));
+      unauthenticated.response = {
+        status: 401,
+        data: { message: t("community.signInToSave") },
+      };
+      throw unauthenticated;
+    }
+    const previous = post.interaction;
+    const nextSaved = !previous.savedByMe;
+    updateInteraction(() => ({ ...previous, savedByMe: nextSaved }));
+    try {
+      const result = nextSaved
+        ? await saveCommunityPost(post.id)
+        : await unsaveCommunityPost(post.id);
+      updateInteraction((interaction) => ({
+        ...interaction,
+        savedByMe: result.saved,
+      }));
+    } catch (requestError) {
+      updateInteraction(() => previous);
+      throw requestError;
+    }
   };
 
   const changeCommentCount = (amount) => {
@@ -209,6 +238,7 @@ export function PostDetailPage() {
           <PostActions
             post={post}
             onToggleLike={toggleLike}
+            onToggleSave={toggleSave}
             onShare={recordShare}
             onOpenComments={() =>
               document

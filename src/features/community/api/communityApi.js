@@ -8,12 +8,24 @@ function getCommunityPost(postId) {
   return request(`/v1/community/posts/${postId}`)
 }
 
+function listSavedCommunityPosts({ page = 1, limit = 20 } = {}) {
+  return request('/v1/community/posts/saved', { params: { page, limit } })
+}
+
 function likeCommunityPost(postId) {
   return request(`/v1/community/posts/${postId}/like`, { method: 'PUT' })
 }
 
 function unlikeCommunityPost(postId) {
   return request(`/v1/community/posts/${postId}/like`, { method: 'DELETE' })
+}
+
+function saveCommunityPost(postId) {
+  return request(`/v1/community/posts/${postId}/save`, { method: 'PUT' })
+}
+
+function unsaveCommunityPost(postId) {
+  return request(`/v1/community/posts/${postId}/save`, { method: 'DELETE' })
 }
 
 function recordCommunityPostShare(postId, channel) {
@@ -71,10 +83,13 @@ export {
   getCommunityPost,
   likeCommunityPost,
   listCommunityPosts,
+  listSavedCommunityPosts,
   listPostComments,
   moderateCommunityComment,
   recordCommunityPostShare,
   reportCommunityComment,
+  saveCommunityPost,
   unlikeCommunityPost,
+  unsaveCommunityPost,
   updateCommunityComment,
 }

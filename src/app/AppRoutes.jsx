@@ -1,19 +1,17 @@
-import { useInterfaceTranslation } from "../locales/useInterfaceTranslation";
 import { cloneElement } from "react";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { AppLayout } from "../components/layout/AppLayout";
 import { AlertsPage } from "../features/alerts/AlertsPage";
 import { AboutPage } from "../features/about/AboutPage";
 import { AnalysisPage } from "../features/analysis/AnalysisPage";
-import { CommunityPage } from "../features/community/CommunityPage";
 import { PostDetailPage } from "../features/community/PostDetailPage";
+import { SavedPostsPage } from "../features/community/SavedPostsPage";
 import { HomePage } from "../features/home/HomePage";
 import { ScanHistoryPage } from "../features/history/ScanHistoryPage";
 import { ScanDetailPage } from "../features/history/ScanDetailPage";
 import { ReportHistoryPage } from "../features/history/ReportHistoryPage";
 import { LeaderboardPage } from "../features/leaderboard/LeaderboardPage";
 import { ReportPage } from "../features/report/ReportPage";
-import { FeaturePlaceholder } from "../components/FeaturePlaceholder";
 import { SettingsPage } from "../features/settings/SettingsPage";
 import { SafetyKnowledgePage } from "../features/safety/SafetyKnowledgePage";
 import { SafetyKnowledgeDetailPage } from "../features/safety/SafetyKnowledgeDetailPage";
@@ -33,7 +31,6 @@ function LegacyCommunityPostRedirect() {
 }
 
 export function AppRoutes() {
-  const tr = useInterfaceTranslation();
   return (
     <Routes>
         <Route element={<AppLayout />}>
@@ -49,7 +46,7 @@ export function AppRoutes() {
         <Route path="safety/:slug" element={<SafetyKnowledgeDetailPage />} />
         <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="profile" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-        <Route path="saved" element={<ProtectedRoute><FeaturePlaceholder icon="bookmark" eyebrow={tr("Your saved items")} title={tr("Saved")} description={tr("Keep useful scam alerts, community posts, and safety resources here for quick reference.")} /></ProtectedRoute>} />
+        <Route path="saved" element={<ProtectedRoute><SavedPostsPage /></ProtectedRoute>} />
         <Route path="history" element={<ProtectedRoute><ScanHistoryPage /></ProtectedRoute>} />
         <Route path="history/:scanId" element={<ProtectedRoute><ScanDetailPage /></ProtectedRoute>} />
         <Route path="reports/history" element={<ProtectedRoute><ReportHistoryPage /></ProtectedRoute>} />

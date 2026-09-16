@@ -8,7 +8,9 @@ import {
   likeCommunityPost,
   listCommunityPosts,
   recordCommunityPostShare,
+  saveCommunityPost,
   unlikeCommunityPost,
+  unsaveCommunityPost,
 } from '../api/communityApi'
 import { PostComposer } from './PostComposer'
 import { ScamPostCard } from './ScamPostCard'
@@ -82,11 +84,26 @@ export function CommunityFeed() {
     }
   }
 
-  const changeCommentCount = (postId, amount) => {
-    updateInteraction(postId, (interaction) => ({
-      ...interaction,
-      commentCount: Math.max(0, interaction.commentCount + amount),
-    }))
+  const toggleSave = async (postId) => {
+    const post = posts.find((item) => item.id === postId)
+    if (!post) return
+    if (!currentUser) {
+      const errorResponse = new Error('Authentication is required')
+      errorResponse.response = { status: 401, data: { message: t('community.signInToSave') } }
+      throw errorResponse
+    }
+
+    const previous = post.interaction
+    const nextSaved = !previous.savedByMe
+    updateInteraction(postId, () => ({ ...previous, savedByMe: nextSaved }))
+
+    try {
+      const result = nextSaved ? await saveCommunityPost(postId) : await unsaveCommunityPost(postId)
+      updateInteraction(postId, (interaction) => ({ ...interaction, savedByMe: result.saved }))
+    } catch (requestError) {
+      updateInteraction(postId, () => previous)
+      throw requestError
+    }
   }
 
   const recordShare = async (sharedPostId, channel) => {
@@ -133,6 +150,7 @@ export function CommunityFeed() {
           onOpenComments={() => navigate(`/posts/${encodeURIComponent(post.id)}`)}
           onOpenPost={() => navigate(`/posts/${encodeURIComponent(post.id)}`)}
           onToggleLike={() => toggleLike(post.id)}
+          onToggleSave={() => toggleSave(post.id)}
           onShare={(channel) => recordShare(post.id, channel)}
           post={post}
         />
