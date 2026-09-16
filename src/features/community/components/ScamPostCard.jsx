@@ -1,5 +1,6 @@
 import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Avatar, Badge, Card, Icon } from "../../../components/ui";
 import { apiErrorMessage } from "../api/communityApi";
@@ -30,118 +31,6 @@ function postTimestamp(value, locale) {
   if (Math.abs(days) < 30) return formatter.format(days, "day");
   return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
     date,
-  );
-}
-
-function ImageEvidence({ src, alt, onOpen }) {
-  if (!src) return null;
-  return (
-    <button
-      type="button"
-      className="group mt-4 block w-full overflow-hidden rounded-md border border-line bg-canvas text-left"
-      onClick={(event) => {
-        event.stopPropagation();
-        onOpen();
-      }}
-    >
-      <img
-        alt={alt}
-        className="max-h-[340px] w-full object-contain"
-        onError={({ currentTarget }) => {
-          currentTarget.onerror = null;
-          currentTarget.parentElement?.classList.add("hidden");
-        }}
-        loading="lazy"
-        referrerPolicy="no-referrer"
-        src={src}
-      />
-    </button>
-  );
-}
-
-function ImageLightbox({ alt, src, onClose }) {
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    const closeOnEscape = (event) => {
-      if (event.key === "Escape") onClose();
-    };
-    const previousOverflow = document.body.style.overflow;
-    document.addEventListener("keydown", closeOnEscape);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", closeOnEscape);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [onClose]);
-
-  return (
-    <div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-[#071a33]/90 p-4 sm:p-8"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-      role="presentation"
-    >
-      <section className="relative flex h-full w-full items-center justify-center" role="dialog" aria-modal="true" aria-label={alt}>
-        <img
-          src={src}
-          alt={alt}
-          className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-          referrerPolicy="no-referrer"
-        />
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={t("common.close")}
-          className="absolute right-0 top-0 grid h-11 w-11 place-items-center rounded-full bg-white/95 text-brand-900 shadow-lg transition hover:bg-white"
-        >
-          <Icon name="close" size={22} />
-        </button>
-      </section>
-    </div>
-  );
-}
-
-function ExpandableDescription({ children }) {
-  const { t } = useTranslation();
-  const descriptionRef = useRef(null);
-  const [expanded, setExpanded] = useState(false);
-  const [hasOverflow, setHasOverflow] = useState(false);
-
-  useEffect(() => {
-    const element = descriptionRef.current;
-    if (!element) return undefined;
-    const updateOverflow = () =>
-      setHasOverflow(element.scrollHeight > element.clientHeight);
-    updateOverflow();
-    const observer = new ResizeObserver(updateOverflow);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [children]);
-
-  return (
-    <div>
-      <p
-        ref={descriptionRef}
-        className={`community-body mb-1 whitespace-pre-wrap wrap-break-word text-[#44536a] ${expanded ? "" : "line-clamp-3"}`}
-      >
-        {children}
-      </p>
-      {hasOverflow || expanded ? (
-        <button
-          aria-expanded={expanded}
-          className="community-meta border-0 bg-transparent p-0 font-medium text-brand-700 hover:text-brand-900"
-          onClick={(event) => {
-            event.stopPropagation();
-            setExpanded((value) => !value);
-          }}
-          type="button"
-        >
-          {expanded ? t("community.seeLess") : t("community.seeMore")}
-        </button>
-      ) : null}
-    </div>
   );
 }
 
@@ -358,7 +247,6 @@ export function PostActions({
 }
 
 export function ScamPostCard({
-  onOpenPost,
   onOpenComments,
   onShare,
   onToggleSave,
@@ -367,13 +255,12 @@ export function ScamPostCard({
 }) {
   const { i18n, t } = useTranslation();
   const authorName = post.author?.username || post.author?.name || t("community.safetyTeam");
-  const imageSource = post.imageUrl || post.image;
-  const [imageOpen, setImageOpen] = useState(false);
+  const description = post.reportDescription || post.summary || "";
 
   return (
-    <Card className="flex w-full flex-col overflow-hidden rounded-lg p-0 shadow-none">
-      <article className="flex flex-col gap-3 p-5 sm:p-6">
-        <header className="flex min-h-8 items-center gap-3">
+    <Card className="flex min-h-[270px] w-full flex-col overflow-hidden p-0 shadow-none">
+      <article className="flex flex-1 flex-col p-4 sm:p-5">
+        <header className="flex min-h-10 items-center gap-3">
           <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" size="sm" />
           <div className="min-w-0 flex-1">
             <div className="flex min-h-5 flex-wrap items-center gap-x-2 gap-y-0.5">
@@ -392,21 +279,26 @@ export function ScamPostCard({
               {postTimestamp(post.publishedAt, i18n.language)} · {t("community.public")}
             </p>
           </div>
-        </header>
-        <div className="flex flex-wrap items-center gap-2">
           <RiskBadge level={post.risk} />
-          <CategoryBadge category={post.category} />
-        </div>
-        <section
-          className={`flex flex-col gap-2 ${onOpenPost ? "cursor-pointer" : ""}`}
-          onClick={onOpenPost}
-        >
-          <h2 className="community-post-title m-0">
+        </header>
+        <div className="mt-4 flex flex-1 flex-col">
+          <h2 className="community-post-title m-0 line-clamp-2 min-h-[2rem] text-[18px] leading-4">
             {post.title}
           </h2>
-          <ExpandableDescription>{post.content}</ExpandableDescription>
-          <ImageEvidence alt={post.title} src={imageSource} onOpen={() => setImageOpen(true)} />
-        </section>
+          <p className="community-body whitespace-pre-wrap wrap-break-word text-[#44536a] line-clamp-3">
+            {description}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CategoryBadge category={post.category} />
+          <Link
+            className="inline-flex items-center gap-1 text-sm font-semibold text-brand-800 hover:text-brand-700"
+            to={`/posts/${encodeURIComponent(post.id)}`}
+          >
+            {t("community.seeMore")}
+            <Icon name="chevron" size={16} />
+          </Link>
+        </div>
       </article>
       <PostActions
         onShare={onShare}
@@ -415,7 +307,6 @@ export function ScamPostCard({
         onToggleLike={onToggleLike}
         post={post}
       />
-      {imageOpen && imageSource ? <ImageLightbox alt={post.title} src={imageSource} onClose={() => setImageOpen(false)} /> : null}
     </Card>
   );
 }

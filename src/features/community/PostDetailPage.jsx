@@ -168,6 +168,13 @@ export function PostDetailPage() {
   const authorName =
     post.author?.username || post.author?.name || t("community.safetyTeam");
   const imageSource = post.imageUrl || post.image;
+  const reportDetails = post.reportDetails || {};
+  const reportDescription =
+    reportDetails.description || post.reportDescription || post.content;
+  const analysis = reportDetails.analysis || {};
+  const relatedScams = Array.isArray(reportDetails.relatedScams)
+    ? reportDetails.relatedScams
+    : [];
   return (
     <main
       className="post-detail-page mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-5 lg:gap-6"
@@ -218,7 +225,7 @@ export function PostDetailPage() {
             <CategoryBadge category={post.category} />
           </div>
           <p className="community-body mb-3 mt-3 whitespace-pre-wrap wrap-break-word text-[#40546b]">
-            {post.content}
+            {reportDescription}
           </p>
           {imageSource ? (
             <figure className="m-0 overflow-hidden rounded-md border border-line bg-canvas">
@@ -234,6 +241,62 @@ export function PostDetailPage() {
             </figure>
           ) : null}
         </article>
+
+        {reportDetails.scannedContent || analysis.summary || relatedScams.length || reportDetails.evidence ? (
+          <section className="grid gap-4 border-t border-line bg-surface p-5 sm:p-6">
+            {reportDetails.scannedContent ? (
+              <div>
+                <h2 className="community-section-title m-0 text-base">
+                  {t("community.scannedContent", { defaultValue: "Scanned content" })}
+                </h2>
+                <p className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-words rounded-lg border border-line bg-canvas p-3 font-mono text-xs leading-6 text-[#40546b]">
+                  {reportDetails.scannedContent}
+                </p>
+              </div>
+            ) : null}
+            {analysis.summary || analysis.reasons?.length || analysis.recommendedActions?.length ? (
+              <div>
+                <h2 className="community-section-title m-0 text-base">
+                  {t("community.scamAnalysis", { defaultValue: "Scam analysis" })}
+                </h2>
+                {analysis.summary ? <p className="community-body mb-0 mt-2 text-[#40546b]">{analysis.summary}</p> : null}
+                {analysis.reasons?.length ? (
+                  <ul className="community-body mb-0 mt-3 grid gap-1.5 pl-5 text-[#40546b]">
+                    {analysis.reasons.map((reason, index) => <li key={`${reason}-${index}`}>{reason}</li>)}
+                  </ul>
+                ) : null}
+                {analysis.recommendedActions?.length ? (
+                  <ul className="community-body mb-0 mt-3 grid gap-1.5 pl-5 text-[#40546b]">
+                    {analysis.recommendedActions.map((action, index) => <li key={`${action}-${index}`}>{action}</li>)}
+                  </ul>
+                ) : null}
+              </div>
+            ) : null}
+            {relatedScams.length ? (
+              <div>
+                <h2 className="community-section-title m-0 text-base">
+                  {t("community.relatedScams", { defaultValue: "Related scam information" })}
+                </h2>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {relatedScams.map((match) => (
+                    <div key={match.id} className="rounded-lg border border-line bg-canvas p-3">
+                      <strong className="block text-sm text-ink">{match.title}</strong>
+                      <span className="community-meta mt-1 block">{match.scamType} · {match.riskLevel}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+            {reportDetails.evidence ? (
+              <div>
+                <h2 className="community-section-title m-0 text-base">
+                  {t("community.evidence", { defaultValue: "Evidence" })}
+                </h2>
+                <p className="community-body mb-0 mt-2 whitespace-pre-wrap text-[#40546b]">{reportDetails.evidence}</p>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
 
         <div className="bg-surface">
           <PostActions
