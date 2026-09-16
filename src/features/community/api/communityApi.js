@@ -16,6 +16,18 @@ function unlikeCommunityPost(postId) {
   return request(`/v1/community/posts/${postId}/like`, { method: 'DELETE' })
 }
 
+function listSavedCommunityPosts({ page = 1, limit = 20 } = {}) {
+  return request('/v1/community/posts/saved', { params: { page, limit } })
+}
+
+function saveCommunityPost(postId) {
+  return request(`/v1/community/posts/${postId}/save`, { method: 'PUT' })
+}
+
+function unsaveCommunityPost(postId) {
+  return request(`/v1/community/posts/${postId}/save`, { method: 'DELETE' })
+}
+
 function recordCommunityPostShare(postId, channel) {
   return request(`/v1/community/posts/${postId}/shares`, { method: 'POST', body: { channel } })
 }
@@ -71,10 +83,13 @@ export {
   getCommunityPost,
   likeCommunityPost,
   listCommunityPosts,
+  listSavedCommunityPosts,
   listPostComments,
   moderateCommunityComment,
   recordCommunityPostShare,
   reportCommunityComment,
+  saveCommunityPost,
   unlikeCommunityPost,
+  unsaveCommunityPost,
   updateCommunityComment,
 }

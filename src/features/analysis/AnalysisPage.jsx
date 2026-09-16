@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
 import { createImageScan, createScan } from "../../services/scans";
+import { createReportFromScan } from "../../services/reports";
 import { notifyScanCreated } from "../../services/scanHistoryNotifications";
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
@@ -462,7 +463,9 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
   );
 }
 
-function ReportDialog({ scanId, onClose, onSuccess }) {
+// Kept as an exported, reusable reporting dialog for entry points that need
+// inline reporting rather than the dedicated report page.
+export function ReportDialog({ scanId, onClose, onSuccess }) {
   const tr = useInterfaceTranslation();
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");

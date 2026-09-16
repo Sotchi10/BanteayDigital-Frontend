@@ -164,6 +164,7 @@ export function PostActions({
   onShare,
   onOpenComments,
   onToggleLike,
+  onToggleSave,
   post,
 }) {
   const tr = useInterfaceTranslation();
@@ -171,6 +172,7 @@ export function PostActions({
   const [likePending, setLikePending] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [sharePending, setSharePending] = useState(false);
+  const [savePending, setSavePending] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -217,6 +219,19 @@ export function PostActions({
       return;
     }
     setShareOpen((value) => !value);
+  };
+
+  const toggleSave = async () => {
+    if (!onToggleSave || savePending) return;
+    setSavePending(true);
+    setError("");
+    try {
+      await onToggleSave();
+    } catch (requestError) {
+      setError(apiErrorMessage(requestError, t("Could not update saved posts.")));
+    } finally {
+      setSavePending(false);
+    }
   };
 
   const shareToTelegram = async () => {
@@ -281,6 +296,19 @@ export function PostActions({
           <Icon name="message" size={15} />
           <span className="text-xs">{post.interaction.commentCount}</span>
         </button>
+        {onToggleSave ? (
+          <button
+            aria-label={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
+            aria-pressed={post.interaction.savedByMe}
+            title={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
+            className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition hover:bg-[#f2f5f8] ${post.interaction.savedByMe ? "text-brand-800 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
+            disabled={savePending}
+            onClick={toggleSave}
+            type="button"
+          >
+            <Icon name="bookmark" size={15} />
+          </button>
+        ) : null}
         <div className="relative">
           <button
             aria-label={t("community.share")}
@@ -332,6 +360,7 @@ export function ScamPostCard({
   onOpenComments,
   onShare,
   onToggleLike,
+  onToggleSave,
   post,
 }) {
   const { i18n, t } = useTranslation();
@@ -379,6 +408,7 @@ export function ScamPostCard({
         onShare={onShare}
         onOpenComments={onOpenComments}
         onToggleLike={onToggleLike}
+        onToggleSave={onToggleSave}
         post={post}
       />
       {imageOpen && imageSource ? <ImageLightbox alt={post.title} src={imageSource} onClose={() => setImageOpen(false)} /> : null}

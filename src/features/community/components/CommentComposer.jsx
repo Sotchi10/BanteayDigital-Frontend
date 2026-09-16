@@ -1,7 +1,6 @@
 import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Icon } from '../../../components/ui'
 import { apiErrorMessage } from '../api/communityApi'
 
 export function CommentComposer({ currentUser, onSubmit, compact = false, autoFocus = false, minimal = false, isReply = false, onCancel }) {

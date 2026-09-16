@@ -49,7 +49,6 @@ export function TopNavbar() {
 
   useEffect(() => {
     if (!isAuthenticated || !user?.id) {
-      setUnseenScanCount(0);
       return undefined;
     }
     let active = true;

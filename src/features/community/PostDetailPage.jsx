@@ -7,7 +7,9 @@ import {
   getCurrentUser,
   likeCommunityPost,
   recordCommunityPostShare,
+  saveCommunityPost,
   unlikeCommunityPost,
+  unsaveCommunityPost,
 } from "./api/communityApi";
 import { CommentSection } from "./components/CommentSection";
 import {
@@ -33,27 +35,25 @@ export function PostDetailPage() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    setError("");
-    Promise.all([getCommunityPost(postId), getCurrentUser()])
-      .then(([response, user]) => {
+    const loadPost = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const [response, user] = await Promise.all([getCommunityPost(postId), getCurrentUser()]);
         if (!active) return;
         setPost(response.post);
         setCurrentUser(user);
-      })
-      .catch((requestError) => {
-        if (active)
-          setError(
-            requestError.response?.data?.message || t("community.noAlerts"),
-          );
-      })
-      .finally(() => {
+      } catch (requestError) {
+        if (active) setError(requestError.response?.data?.message || t("community.noAlerts"));
+      } finally {
         if (active) setLoading(false);
-      });
+      }
+    };
+    void loadPost();
     return () => {
       active = false;
     };
-  }, [postId]);
+  }, [postId, t]);
 
   const updateInteraction = (transform) => {
     setPost((current) =>
@@ -102,6 +102,25 @@ export function PostDetailPage() {
       shareCount: result.shareCount,
     }));
     return result;
+  };
+
+  const toggleSave = async () => {
+    if (!post) return;
+    if (!currentUser) {
+      const unauthenticated = new Error(t("community.signInToLike"));
+      unauthenticated.response = { status: 401, data: { message: t("community.signInToLike") } };
+      throw unauthenticated;
+    }
+    const previous = post.interaction;
+    const nextSaved = !previous.savedByMe;
+    updateInteraction(() => ({ ...previous, savedByMe: nextSaved }));
+    try {
+      const result = nextSaved ? await saveCommunityPost(post.id) : await unsaveCommunityPost(post.id);
+      updateInteraction((interaction) => ({ ...interaction, savedByMe: result.saved }));
+    } catch (requestError) {
+      updateInteraction(() => previous);
+      throw requestError;
+    }
   };
 
   const changeCommentCount = (amount) => {
@@ -209,6 +228,7 @@ export function PostDetailPage() {
           <PostActions
             post={post}
             onToggleLike={toggleLike}
+            onToggleSave={toggleSave}
             onShare={recordShare}
             onOpenComments={() =>
               document

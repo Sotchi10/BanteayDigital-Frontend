@@ -49,7 +49,7 @@ function ReportSourceChooser() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [tr]);
 
   const availableScans = scans.filter(
     (scan) =>
@@ -189,32 +189,25 @@ export function ReportPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!selectedScanId) {
-      setSelectedScan(null);
-      setLoadingScan(false);
-      return undefined;
-    }
+    if (!selectedScanId) return undefined;
     let active = true;
-    setLoadingScan(true);
-    setScanError("");
-    getScan(selectedScanId)
-      .then((response) => {
+    const loadScan = async () => {
+      setLoadingScan(true);
+      setScanError("");
+      try {
+        const response = await getScan(selectedScanId);
         if (active) setSelectedScan(reportAnalysisFromScan(response.scan));
-      })
-      .catch((requestError) => {
-        if (active)
-          setScanError(
-            requestError.response?.data?.message ||
-              tr("We could not load this scan."),
-          );
-      })
-      .finally(() => {
+      } catch (requestError) {
+        if (active) setScanError(requestError.response?.data?.message || tr("We could not load this scan."));
+      } finally {
         if (active) setLoadingScan(false);
-      });
+      }
+    };
+    void loadScan();
     return () => {
       active = false;
     };
-  }, [selectedScanId]);
+  }, [selectedScanId, tr]);
 
   const analysis = state?.analysis || selectedScan;
 

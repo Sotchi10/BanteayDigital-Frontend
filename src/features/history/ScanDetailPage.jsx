@@ -1,8 +1,7 @@
-import appI18n from "../../i18n";
 import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Badge, Card, Icon } from "../../components/ui";
+import { Card, Icon } from "../../components/ui";
 import { getScan } from "../../services/scans";
 
 const riskFor = (assessment) =>
@@ -11,14 +10,6 @@ const riskFor = (assessment) =>
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
       : "Low";
-const typeLabel = (type) =>
-  type === "URL" ? "Website link" : type === "IMAGE" ? "Image" : "Text message";
-const dateLabel = (date) =>
-  new Intl.DateTimeFormat(appI18n.resolvedLanguage, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(date));
-
 export function ScanDetailPage() {
   const tr = useInterfaceTranslation();
   const { scanId } = useParams();
@@ -92,7 +83,6 @@ export function ScanDetailPage() {
   const indicators = reasons.length
     ? reasons
     : findings.map((finding) => finding.message || finding.code);
-  const scanType = tr(typeLabel(scan.inputType));
   const summary =
     scan.analysis?.summary ||
     scan.analysisSummary ||
