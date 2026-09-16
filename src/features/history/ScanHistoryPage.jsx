@@ -154,7 +154,7 @@ export function ScanHistoryPage() {
                   role="tab"
                   aria-selected={selected}
                   onClick={() => setStatusFilter(value)}
-                  className={`feature-tab relative shrink-0 min-h-10 px-3 text-[18px] font-bold transition-colors sm:px-4 ${selected ? "text-brand-800" : "text-muted hover:text-brand-800"}`}
+                  className={`feature-tab relative shrink-0 min-h-10 px-3 text-[12px] font-semibold transition-colors sm:px-4 ${selected ? "text-brand-800" : "text-muted hover:text-brand-800"}`}
                 >
                   {tr(label)}
                   {selected ? (
@@ -204,7 +204,7 @@ export function ScanHistoryPage() {
                       setRiskFilter(risk);
                       setRiskFilterOpen(false);
                     }}
-                    className={`flex min-h-9 w-full items-center justify-between rounded-md px-2.5 text-left text-sm font-medium ${riskFilter === risk ? "bg-brand-100 text-brand-800" : "text-muted hover:bg-surface"}`}
+                    className={`flex min-h-9 w-full items-center justify-between rounded-md px-2.5 text-left text-sm font-medium ${riskFilter === risk ? "bg-brand-100 text-brand-800" : "text-black hover:bg-surface"}`}
                   >
                     {tr(risk)}
                     {riskFilter === risk ? (
@@ -344,8 +344,7 @@ export function ScanHistoryPage() {
                     </Link>
                     {scan.reportStatus !== "REPORTED" ? (
                       <Link
-                        to="/report"
-                        state={{ scanId: scan.id }}
+                        to={`/report?scan=${encodeURIComponent(scan.id)}`}
                         className="inline-flex min-h-10 items-center justify-center rounded-lg bg-brand-800 px-3 text-sm font-medium text-white hover:bg-brand-700"
                       >
                         {tr("Report")}

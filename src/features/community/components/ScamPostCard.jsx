@@ -380,9 +380,12 @@ export function ScamPostCard({
               <strong className="community-author text-ink">
                 {authorName}
               </strong>
-              <span className="community-author inline-flex items-center gap-1 text-brand-700">
-                <Icon name="shield" size={12} />
-                {t("community.verifiedBy")}
+              <span
+                className="inline-flex items-center text-brand-700"
+                aria-label={t("community.verifiedBy")}
+                title={t("community.verifiedBy")}
+              >
+                <Icon name="check" size={16} />
               </span>
             </div>
             <p className="community-meta m-0">

@@ -104,7 +104,7 @@ export function ReportHistoryPage() {
                       setStatusFilter(value);
                       setFilterOpen(false);
                     }}
-                    className={`flex min-h-9 w-full items-center justify-between rounded-md px-2.5 text-left text-sm font-medium ${statusFilter === value ? "bg-brand-100 text-brand-800" : "text-muted hover:bg-surface"}`}
+                    className={`flex min-h-9 w-full items-center justify-between rounded-md px-2.5 text-left text-sm font-medium ${statusFilter === value ? "bg-brand-100 text-brand-800" : "text-black hover:bg-surface"}`}
                   >
                     {tr(label)}
                     {statusFilter === value ? <Icon name="check" size={15} /> : null}

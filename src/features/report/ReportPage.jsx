@@ -378,25 +378,8 @@ export function ReportPage() {
               )}
             </p>
           </div>
-          <div className="rounded-xl border border-line bg-[#fbfcfe] p-4">
-            <h2 className="m-0 text-sm font-bold text-brand-900">
-              {tr("Included with this report")}
-            </h2>
-            <ul className="mb-0 mt-2 grid gap-1 pl-5 text-sm leading-6 text-muted">
-              <li>{tr("Analyzed text or URL")}</li>
-              <li>
-                {tr("{{level}} assessment and detected indicators", {
-                  level: tr(analysis.risk),
-                })}
-              </li>
-              <li>
-                {tr("Similar scam case references: {{count}}", {
-                  count: analysis.matchedScamCases?.length || 0,
-                })}
-              </li>
-            </ul>
-          </div>
-          <label className="flex items-start gap-3 rounded-lg border border-line bg-[#fbfcfe] p-4 text-sm leading-6 text-muted">
+       
+          <label className="flex items-start gap-3 rounded-lg bg-[#fbfcfe] py-4 text-sm leading-6 text-muted">
             <input
               disabled={submitting}
               type="checkbox"

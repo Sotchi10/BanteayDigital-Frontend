@@ -13,6 +13,7 @@ export function CommentSection({
   className = "",
   compact = false,
   currentUser,
+  dense = false,
   minimalComposer = false,
   onCountChange,
   composerAfter = false,
@@ -100,7 +101,7 @@ export function CommentSection({
           {t("community.noComments")}
         </p>
       ) : null}
-      <div className="space-y-4">
+      <div className={dense ? "space-y-3" : "space-y-4"}>
         {comments.map((comment) => (
           <CommentItem
             comment={comment}
@@ -134,7 +135,7 @@ export function CommentSection({
 
   return (
     <section
-      className={`border-t border-line bg-[#fbfcfe] px-1 py-4 ${className}`}
+      className={` border-line bg-[#fbfcfe] px-1 py-4 ${className}`}
       aria-label={t("community.comments")}
     >
       {pinnedComposer ? (
@@ -151,7 +152,7 @@ export function CommentSection({
           {composerAfter ? (
             <>
               {commentList}
-              <div className="mt-5 border-t border-line pt-4">{composer}</div>
+              <div className={`${dense ? "mt-3 pt-3" : "mt-5 pt-4"} border-t border-line`}>{composer}</div>
             </>
           ) : (
             <>

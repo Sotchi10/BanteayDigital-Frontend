@@ -184,7 +184,7 @@ export function SettingsPage() {
                 key={section.id}
                 type="button"
                 onClick={() => setActive(section.id)}
-                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition ${active === section.id ? "bg-brand-800 text-white shadow-sm" : "border border-line bg-surface text-muted hover:bg-canvas hover:text-ink"}`}
+                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition ${active === section.id ? "bg-brand-100 text-brand-800 shadow-sm" : "border border-line bg-surface text-black hover:bg-canvas hover:text-brand-800"}`}
                 aria-current={active === section.id ? "page" : undefined}
               >
                 <Icon name={section.icon} size={16} />
@@ -199,7 +199,7 @@ export function SettingsPage() {
                   key={section.id}
                   type="button"
                   onClick={() => setActive(section.id)}
-                  className={`flex min-h-12 items-center gap-3 rounded-lg px-3 text-left text-base font-semibold transition ${active === section.id ? "bg-brand-100 text-brand-800" : "text-muted hover:bg-canvas hover:text-ink"}`}
+                  className={`flex min-h-12 items-center gap-3 rounded-lg px-3 text-left text-base font-semibold transition ${active === section.id ? "bg-brand-100 text-brand-800" : "text-black hover:bg-canvas hover:text-brand-800"}`}
                   aria-current={active === section.id ? "page" : undefined}
                 >
                   <Icon name={section.icon} size={18} className="shrink-0" />

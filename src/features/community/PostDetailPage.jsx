@@ -170,19 +170,24 @@ export function PostDetailPage() {
   const imageSource = post.imageUrl || post.image;
   return (
     <main
-      className="mx-auto flex min-w-0 max-w-3xl flex-col gap-4"
+      className="post-detail-page mx-auto flex w-full min-w-0 max-w-5xl flex-col gap-5 lg:gap-6"
       id="main-content"
     >
-      <Link
-        to="/"
-        className="inline-flex min-h-10 w-fit items-center gap-2 text-sm font-bold text-brand-800 hover:text-brand-700"
-      >
-        <Icon name="chevron" size={17} className="rotate-180" />
-        {t("community.feed")}
-      </Link>
+      <header className="flex flex-col items-start gap-1">
+        <Link
+          to="/"
+          className="inline-flex min-h-9 w-fit items-center gap-2 text-sm font-bold text-brand-800 hover:text-brand-700"
+        >
+          <Icon name="chevron" size={17} className="rotate-180" />
+          {t("community.feed")}
+        </Link>
+        <h1 className="community-post-title m-0 text-xl sm:text-2xl">
+          {post.title}
+        </h1>
+      </header>
 
-      <Card className="overflow-hidden rounded-lg p-0 shadow-none">
-        <header className="flex items-center gap-3 border-b border-line bg-white p-5 sm:p-6">
+      <Card className="overflow-hidden p-0 shadow-none">
+        <header className="flex items-center gap-3 border-b border-line bg-surface p-5 sm:p-6">
           <Avatar
             imageUrl={post.author?.avatarUrl}
             name={authorName}
@@ -207,15 +212,12 @@ export function PostDetailPage() {
           </div>
         </header>
 
-        <article className="bg-white p-5 sm:p-6">
+        <article className="bg-surface p-5 sm:p-6">
           <div className="flex flex-wrap gap-1.5">
             <RiskBadge level={post.risk} />
             <CategoryBadge category={post.category} />
           </div>
-          <h1 className="community-post-title m-0 mt-2">
-            {post.title}
-          </h1>
-          <p className="community-body mb-3 whitespace-pre-wrap wrap-break-word text-[#40546b]">
+          <p className="community-body mb-3 mt-3 whitespace-pre-wrap wrap-break-word text-[#40546b]">
             {post.content}
           </p>
           {imageSource ? (
@@ -226,14 +228,14 @@ export function PostDetailPage() {
                 loading="lazy"
                 src={imageSource}
               />
-              <figcaption className="community-meta border-t border-line bg-white px-3 py-2">
+              <figcaption className="community-meta border-t border-line bg-surface px-3 py-2">
                 {t("community.attachedEvidence")}
               </figcaption>
             </figure>
           ) : null}
         </article>
 
-        <div className="bg-white">
+        <div className="bg-surface">
           <PostActions
             post={post}
             onToggleLike={toggleLike}
@@ -249,19 +251,20 @@ export function PostDetailPage() {
       </Card>
 
       <Card className="overflow-hidden p-0 shadow-none" id="post-discussion">
-        <header className="flex items-center justify-between border-b border-line bg-white px-5 py-4 sm:px-6">
+        <header className="flex items-center justify-between border-b border-line bg-surface px-5 py-3 sm:px-6">
           <div>
-            <h2 className="community-section-title m-0 mt-1">
+            <h2 className="community-section-title m-0">
               {t("community.comments")}
             </h2>
           </div>
-          <Badge tone="blue">{post.interaction.commentCount}</Badge>
+          <Badge>{post.interaction.commentCount}</Badge>
         </header>
         <CommentSection
           key={post.id}
-          className="border-0 bg-[#fbfcfe] px-5 py-5 sm:px-6"
+          className="border-0 bg-surface px-4 py-3 sm:px-5"
           compact
           composerAfter
+          dense
           currentUser={currentUser}
           onCountChange={changeCommentCount}
           postId={post.id}

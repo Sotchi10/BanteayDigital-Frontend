@@ -12,7 +12,7 @@ import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 
 const mobileNavClass = ({ isActive }) =>
-  `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-xs font-medium ${isActive ? "text-brand-800" : "text-[#607089]"}`;
+  `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-xs font-medium ${isActive ? "text-brand-800" : "text-black"}`;
 
 const mobileMainLinks = [
   { label: "Home", icon: "home", to: "/" },
@@ -126,20 +126,16 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
             aria-label={tr("BanteayDigital home")}
           >
             <img
-              className="h-8 w-8"
-              src="/BanteayDigitalLogo.svg"
-              alt={tr("BanteayDigital logo")}
-            />
-            <span className="hidden leading-tight md:grid">
-              <strong className="text-sm text-brand-900">
-                BanteayDigital
-              </strong>
-            </span>
+                className="h-8 w-8"
+                src="/BanteayDigitalLogo.svg"
+                alt={tr("BanteayDigital logo")}
+              />
+            
           </NavLink>
-          <label className="mx-auto flex h-9 min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-line bg-canvas px-3 text-muted" aria-label={tr("Search scams, users, or keywords...")}>
+          <label className="mx-auto flex h-10 min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-line bg-canvas px-3 text-muted" aria-label={tr("Search scams, users, or keywords...")}>
             <Icon name="search" size={17} className="shrink-0" />
             <input
-              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-muted"
+              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-muted placeholder:text-[13px]"
               type="search"
               placeholder={tr("Search community posts")}
               value={feedQuery}
@@ -147,15 +143,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
             />
           </label>
           <div className="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
-            <NavLink
-              to="/alerts"
-              className={({ isActive }) =>
-                `relative inline-grid h-9 w-9 place-items-center rounded-lg transition ${isActive ? "bg-brand-100 text-brand-800" : "text-muted hover:bg-[#f2f5f8] hover:text-brand-800"}`
-              }
-              aria-label={tr("Safety alerts")}
-            >
-              <Icon name="bell" size={19} />
-            </NavLink>
+            
             <button
               type="button"
               onClick={() =>
@@ -163,7 +151,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                   i18n.resolvedLanguage === "km" ? "en" : "km",
                 )
               }
-              className="inline-flex h-9 items-center gap-1 rounded-lg px-1.5 text-xs font-medium text-muted hover:bg-[#f2f5f8] sm:px-2"
+              className="inline-flex h-9 items-center gap-1 rounded-lg px-1.5 text-xs font-medium text-black hover:bg-[#f2f5f8] sm:px-2"
               aria-label={t("nav.language")}
             >
               <Icon name="globe" size={16} />
@@ -178,6 +166,15 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                 <span>{i18n.resolvedLanguage === "km" ? "ខ្មែរ" : "EN"}</span>
               </span>
             </button>
+            <NavLink
+              to="/alerts"
+              className={({ isActive }) =>
+                `relative inline-grid h-9 w-9 place-items-center rounded-lg transition ${isActive ? "bg-brand-100 text-brand-800" : "text-black hover:bg-[#f2f5f8] hover:text-brand-800"}`
+              }
+              aria-label={tr("Safety alerts")}
+            >
+              <Icon name="bell" size={19} />
+            </NavLink>
             {isAuthenticated ? (
               <div className="relative" ref={profileMenuRef}>
                 <button
@@ -233,14 +230,14 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                       to={user.username ? `/${encodeURIComponent(user.username)}` : "/reports/history"}
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-black transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="edit" size={18} />{tr("My approved reports")}</NavLink>
                     <button
                       type="button"
                       role="menuitem"
                       onClick={() => i18n.changeLanguage(i18n.resolvedLanguage === "km" ? "en" : "km")}
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-black transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="globe" size={18} />
                       {t("nav.language")}
@@ -249,7 +246,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                       to="/settings"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-black transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="settings" size={18} />
                       {t("nav.settings")}
@@ -258,7 +255,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                       to="/settings?section=appearance"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-black transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="lightbulb" size={18} />
                       {t("nav.appearance")}
@@ -267,7 +264,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                       to="/settings?section=support"
                       onClick={() => setProfileMenuOpen(false)}
                       role="menuitem"
-                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-[#40546b] transition hover:bg-brand-100 hover:text-brand-800"
+                      className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-black transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="help" size={18} />{tr("Help & support")}</NavLink>
                     <div className="my-1 border-t border-line" />
@@ -372,7 +369,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                   end={item.to === "/"}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition ${isActive ? "bg-brand-100 text-brand-800 font-semibold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition ${isActive ? "bg-brand-100 text-brand-800 font-semibold" : "text-black hover:bg-[#f2f5f8]"}`
                   }
                 >
                   <Icon name={item.icon} size={18} />
@@ -395,7 +392,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                     to={item.to}
                     onClick={() => setMobileMenuOpen(false)}
                     className={({ isActive }) =>
-                      `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                      `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-black hover:bg-[#f2f5f8]"}`
                     }
                   >
                     <Icon name={item.icon} size={18} />
@@ -411,7 +408,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                 to="/leaderboard"
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                  `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-black hover:bg-[#f2f5f8]"}`
                 }
               >
                 <Icon name="trophy" size={18} />
@@ -421,7 +418,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                 to="/about"
                 onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                  `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-black hover:bg-[#f2f5f8]"}`
                 }
               >
                 <Icon name="book" size={18} />
@@ -436,7 +433,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                   to="/settings"
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-[#40546b] hover:bg-[#f2f5f8]"}`
+                    `flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${isActive ? "bg-brand-100 text-brand-800 font-bold" : "text-black hover:bg-[#f2f5f8]"}`
                   }
                 >
                   <Icon name="settings" size={18} />
@@ -473,7 +470,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
         </div>
       ) : null}
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 flex h-[calc(4rem+env(safe-area-inset-bottom,0px))] items-center border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 flex h-[calc(4rem+env(safe-area-inset-bottom,0px))] items-center border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur lg:hidden"
         aria-label={tr("Mobile navigation")}
       >
         <NavLink to="/" end className={mobileNavClass}>
