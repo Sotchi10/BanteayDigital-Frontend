@@ -1,150 +1,73 @@
-import { Badge, Card, Icon } from "../ui";
-import { Link, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
+import { listCommunityPosts } from "../../features/community/api/communityApi";
+import { listSafetyKnowledge } from "../../services/safetyKnowledge";
+import { Icon } from "../ui";
 
-const guidanceByRoute = (t) => ({
-  "/analysis": {
-    title: t("rightSidebar.beforeCheck"),
-    icon: "shield",
-    items: [
-      t("rightSidebar.beforeCheckOne"),
-      t("rightSidebar.beforeCheckTwo"),
-      t("rightSidebar.beforeCheckThree"),
-    ],
-  },
-  "/report": {
-    title: t("rightSidebar.reportIncludes"),
-    icon: "edit",
-    items: [
-      t("rightSidebar.reportOne"),
-      t("rightSidebar.reportTwo"),
-      t("rightSidebar.reportThree"),
-    ],
-  },
-});
-
-const alertGuidance = (t) => ({
-  title: t("rightSidebar.whenAlert"),
-  icon: "alert",
-  action: { label: t("rightSidebar.checkMessage"), to: "/analysis" },
-  items: [
-    t("rightSidebar.alertOne"),
-    t("rightSidebar.alertTwo"),
-    t("rightSidebar.alertThree"),
-  ],
-});
-
-const sidebarCardClass = "w-full shrink-0 p-4 shadow-none";
-
-function SidebarCardTitle({ children, className = "" }) {
+function Panel({ title, children }) {
   return (
-    <h2 className={`type-card-title m-0 text-ink ${className}`}>{children}</h2>
-  );
-}
-
-function GuidanceCard({ guidance }) {
-  return (
-    <Card className={sidebarCardClass}>
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-100 text-brand-800">
-          <Icon name={guidance.icon} size={18} />
-        </span>
-        <SidebarCardTitle>{guidance.title}</SidebarCardTitle>
-      </div>
-      <ul className="m-0 grid list-none gap-3 p-0">
-        {guidance.items.map((item) => (
-          <li
-            key={item}
-            className="type-helper flex items-start gap-2.5 text-muted"
-          >
-            <Icon
-              name="check"
-              size={16}
-              className="mt-0.5 shrink-0 text-risk-low"
-            />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-      {guidance.action ? (
-        <Link
-          to={guidance.action.to}
-          className="type-button mt-4 inline-flex min-h-10 w-full items-center justify-center rounded-lg bg-brand-100 px-3 text-brand-800 hover:bg-[#dceaff]"
-        >
-          {guidance.action.label}
-        </Link>
-      ) : null}
-    </Card>
-  );
-}
-
-function RiskLevelCard() {
-  const { t } = useTranslation();
-  const levels = [
-    {
-      risk: t("rightSidebar.high"),
-      tone: "high",
-      detail: t("rightSidebar.highDetail"),
-    },
-    {
-      risk: t("rightSidebar.medium"),
-      tone: "medium",
-      detail: t("rightSidebar.mediumDetail"),
-    },
-    {
-      risk: t("rightSidebar.low"),
-      tone: "low",
-      detail: t("rightSidebar.lowDetail"),
-    },
-  ];
-
-  return (
-    <Card className={sidebarCardClass}>
-      <SidebarCardTitle className="mb-3">
-        {t("rightSidebar.riskLevels")}
-      </SidebarCardTitle>
-      <ul className="m-0 grid list-none gap-3 p-0">
-        {levels.map((level) => (
-          <li
-            key={level.risk}
-            className="flex items-center justify-between gap-3"
-          >
-            <Badge tone={level.tone}>{level.risk}</Badge>
-            <span className="type-helper text-right text-muted">
-              {level.detail}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </Card>
+    <section className="rounded-lg border border-line bg-surface p-5">
+      <h2 className="text-[18px] community-section-title m-0 border-b border-line pb-4">{title}</h2>
+      <div className="pt-4">{children}</div>
+    </section>
   );
 }
 
 export function RightSidebar() {
-  const { pathname } = useLocation();
-  const { t } = useTranslation();
-  const guidance = guidanceByRoute(t)[pathname];
-  const isAlerts = pathname.startsWith("/alerts");
+  const tr = useInterfaceTranslation();
+  const [posts, setPosts] = useState([]);
+  const [topics, setTopics] = useState([]);
 
-  const content = guidance ? (
-    <>
-      <RiskLevelCard />
-      <GuidanceCard guidance={guidance} />
-    </>
-  ) : isAlerts ? (
-    <>
-      <GuidanceCard guidance={alertGuidance(t)} />
-      {/*<TrendingScamsCard />*/}
-    </>
-  ) : (
-    <>
-      <RiskLevelCard />
-    </>
-  );
+  useEffect(() => {
+    let active = true;
+    listCommunityPosts({ limit: 20 })
+      .then((response) => { if (active) setPosts(response.posts || []); })
+      .catch(() => { if (active) setPosts([]); });
+    listSafetyKnowledge()
+      .then((response) => { if (active) setTopics(response.knowledge || []); })
+      .catch(() => { if (active) setTopics([]); });
+    return () => { active = false; };
+  }, []);
+
+  const trending = useMemo(() => [...posts]
+    .sort((a, b) => ((b.interaction?.commentCount || 0) + (b.interaction?.likeCount || 0)) - ((a.interaction?.commentCount || 0) + (a.interaction?.likeCount || 0)))
+    .slice(0, 3), [posts]);
 
   return (
-    <aside className="hidden self-start xl:sticky xl:top-[84px] xl:min-h-[calc(100vh-100px)] xl:flex xl:flex-col xl:gap-4">
-      {content}
+    <aside className="hidden self-start xl:sticky xl:top-[88px] xl:flex xl:w-[288px] xl:flex-col xl:gap-5" aria-label={tr("Community information")}>
+      <Panel title={tr("Community guidelines")}>
+        <ul className="community-body m-0 grid list-disc gap-3 pl-4 text-muted">
+          <li>{tr("Share verified information and useful safety advice.")}</li>
+          <li>{tr("Respect others and protect personal information.")}</li>
+          <li>{tr("Report suspicious content to keep the community safe.")}</li>
+        </ul>
+      </Panel>
+
+      <Panel title={tr("Popular topics")}>
+        {topics.length ? <div className="flex flex-wrap gap-2.5">{topics.slice(0, 6).map((topic) => (
+          <Link key={topic.id} to={`/safety/${encodeURIComponent(topic.slug)}`} className="community-body rounded-full border border-line px-2.5 py-1 text-muted hover:border-brand-700 hover:text-brand-800">{topic.title}</Link>
+        ))}</div> : <Link to="/safety" className="community-body font-medium text-brand-800">{tr("Browse safety topics")}</Link>}
+      </Panel>
+
+      <Panel title={tr("Trending discussions")}>
+        {trending.length ? <div className="grid divide-y divide-line">{trending.map((post) => (
+          <Link key={post.id} to={`/posts/${encodeURIComponent(post.id)}`} className="group py-3 first:pt-0 last:pb-0">
+            <span className="community-post-title line-clamp-2 group-hover:text-brand-800">{post.title}</span>
+            <span className="community-meta mt-1 block">{post.interaction?.commentCount || 0} {tr("comments")}</span>
+          </Link>
+        ))}</div> : <p className="community-body m-0 text-muted">{tr("Discussions will appear as posts are published.")}</p>}
+      </Panel>
+
+      <Panel title={tr("Helpful resources")}>
+        <nav className="grid gap-2" aria-label={tr("Helpful resources")}>
+          {[
+            { to: "/safety", icon: "book", label: "Community Safety" },
+            { to: "/analysis", icon: "shield", label: "Analyze Scam" },
+            { to: "/leaderboard", icon: "trophy", label: "Leaderboard" },
+          ].map((item) => <Link key={item.to} to={item.to} className="community-body flex min-h-9 items-center gap-2 font-medium text-muted hover:text-brand-800"><Icon name={item.icon} size={16} />{tr(item.label)}</Link>)}
+        </nav>
+      </Panel>
     </aside>
   );
 }

@@ -143,6 +143,7 @@ export function PostDiscussionModal({
             </span>
           </div>
           <CommentSection
+            key={post.id}
             className="flex min-h-0 flex-1 flex-col border-0 bg-transparent px-4 py-4 sm:px-5"
             compact
             currentUser={currentUser}

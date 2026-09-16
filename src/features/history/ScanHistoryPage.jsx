@@ -154,7 +154,7 @@ export function ScanHistoryPage() {
                   role="tab"
                   aria-selected={selected}
                   onClick={() => setStatusFilter(value)}
-                  className={`relative shrink-0 min-h-10 px-3 text-sm font-bold transition-colors sm:px-4 ${selected ? "text-brand-800" : "text-muted hover:text-brand-800"}`}
+                  className={`feature-tab relative shrink-0 min-h-10 px-3 text-[18px] font-bold transition-colors sm:px-4 ${selected ? "text-brand-800" : "text-muted hover:text-brand-800"}`}
                 >
                   {tr(label)}
                   {selected ? (

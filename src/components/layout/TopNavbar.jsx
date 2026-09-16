@@ -11,14 +11,6 @@ import {
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 
-const navigation = [
-  { label: "Home", icon: "home", to: "/" },
-  { label: "Analyze Scam", icon: "shield", to: "/analysis" },
-  { label: "Scan History", icon: "clock", to: "/history" },
-  { label: "Community Safety", icon: "users", to: "/safety" },
-];
-const desktopNavClass = ({ isActive }) =>
-  `flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#52647a] hover:bg-[#f2f5f8] hover:text-brand-800"}`;
 const mobileNavClass = ({ isActive }) =>
   `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-xs font-medium ${isActive ? "text-brand-800" : "text-[#607089]"}`;
 
@@ -34,18 +26,19 @@ const mobileUserLinks = [
   { label: "Saved", icon: "bookmark", to: "/saved", protected: true },
 ];
 
-export function TopNavbar() {
+export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeedQueryChange, onUnseenScanCountChange }) {
   const tr = useInterfaceTranslation();
   const { isAuthenticated, user, logout } = useAuth();
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [unseenScanCount, setUnseenScanCount] = useState(0);
   const profileMenuRef = useRef(null);
   const cancelLogoutRef = useRef(null);
+
+  useEffect(() => { onUnseenScanCountChange(unseenScanCount); }, [onUnseenScanCountChange, unseenScanCount]);
 
   useEffect(() => {
     if (!isAuthenticated || !user?.id) {
@@ -125,72 +118,39 @@ export function TopNavbar() {
 
   return (
     <>
-      <header className="app-navbar sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-[68px] max-w-[1440px] items-center gap-2 px-3 sm:gap-4 sm:px-6 lg:px-8 xl:grid xl:grid-cols-[220px_minmax(0,760px)_minmax(240px,1fr)] xl:gap-5">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-            className="inline-grid h-11 w-11 shrink-0 place-items-center rounded-lg text-[#40546b] hover:bg-brand-100 hover:text-brand-800 lg:hidden"
-            aria-label={tr("Open navigation menu")}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-navigation-drawer"
-          >
-            <Icon name="menu" size={23} />
-          </button>
+      <header className="app-navbar sticky top-0 z-30 border-b border-line bg-surface">
+        <div className="mx-auto flex min-h-[64px] max-w-[1640px] items-center gap-4 px-4 sm:px-6 lg:gap-6 lg:px-8">
           <NavLink
-            className="flex min-w-0 items-center gap-2.5 xl:col-start-1"
+            className="flex shrink-0 items-center gap-2"
             to="/"
             aria-label={tr("BanteayDigital home")}
           >
             <img
-              className="h-9 w-9"
+              className="h-8 w-8"
               src="/BanteayDigitalLogo.svg"
               alt={tr("BanteayDigital logo")}
             />
-            <span className="hidden leading-tight sm:grid">
-              <strong className="text-base text-brand-900">
+            <span className="hidden leading-tight md:grid">
+              <strong className="text-sm text-brand-900">
                 BanteayDigital
               </strong>
-              <small className="text-xs text-muted">{tr("Digital safety community")}</small>
             </span>
           </NavLink>
-          <nav
-            className="app-main-navigation ml-6 hidden items-center gap-1 lg:flex xl:col-start-2 xl:ml-0 xl:justify-self-center"
-            aria-label={tr("Main navigation")}
-          >
-            {navigation.slice(0, 2).map((item) => (
-              <NavLink
-                key={item.label}
-                to={item.to}
-                end={item.to === "/"}
-                className={desktopNavClass}
-              >
-                <Icon name={item.icon} size={17} />
-                <span>{tr(item.label)}</span>
-                {item.to === "/history" && unseenScanCount ? (
-                  <span className="grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-xs font-bold leading-none text-white">{unseenScanCount > 99 ? "99+" : unseenScanCount}</span>
-                ) : null}
-              </NavLink>
-            ))}
-            {navigation.slice(2).map((item) => (
-              <NavLink
-                key={item.label}
-                to={item.to}
-                className={desktopNavClass}
-              >
-                <Icon name={item.icon} size={17} />
-                <span>{tr(item.label)}</span>
-                {item.to === "/history" && unseenScanCount ? (
-                  <span className="grid h-4 min-w-4 place-items-center rounded-full bg-[#d92d3a] px-1 text-xs font-bold leading-none text-white">{unseenScanCount > 99 ? "99+" : unseenScanCount}</span>
-                ) : null}
-              </NavLink>
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-1.5 xl:col-start-3 xl:ml-0 xl:justify-self-end">
+          <label className="mx-auto flex h-9 min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-line bg-canvas px-3 text-muted" aria-label={tr("Search scams, users, or keywords...")}>
+            <Icon name="search" size={17} className="shrink-0" />
+            <input
+              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-muted"
+              type="search"
+              placeholder={tr("Search community posts")}
+              value={feedQuery}
+              onChange={(event) => { onFeedQueryChange(event.target.value); navigate("/"); }}
+            />
+          </label>
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
             <NavLink
               to="/alerts"
               className={({ isActive }) =>
-                `relative inline-grid h-11 w-11 place-items-center rounded-lg transition ${isActive ? "bg-brand-100 text-brand-800" : "text-[#40546b] hover:bg-[#f2f5f8] hover:text-brand-800"}`
+                `relative inline-grid h-9 w-9 place-items-center rounded-lg transition ${isActive ? "bg-brand-100 text-brand-800" : "text-muted hover:bg-[#f2f5f8] hover:text-brand-800"}`
               }
               aria-label={tr("Safety alerts")}
             >
@@ -203,14 +163,14 @@ export function TopNavbar() {
                   i18n.resolvedLanguage === "km" ? "en" : "km",
                 )
               }
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 text-xs font-medium text-[#40546b] hover:border-[#b8c8d9] hover:bg-[#f8fafc] sm:px-3 sm:text-sm"
+              className="inline-flex h-9 items-center gap-1 rounded-lg px-1.5 text-xs font-medium text-muted hover:bg-[#f2f5f8] sm:px-2"
               aria-label={t("nav.language")}
             >
               <Icon name="globe" size={16} />
               <span className="inline font-semibold sm:hidden">
                 {i18n.resolvedLanguage === "km" ? "EN" : "ខ្មែរ"}
               </span>
-              <span className="hidden sm:inline">
+              <span className="hidden lg:inline">
                 <span lang={i18n.resolvedLanguage === "km" ? "en" : "km"}>
                   {i18n.resolvedLanguage === "km" ? "EN" : "ខ្មែរ"}
                 </span>
@@ -219,11 +179,11 @@ export function TopNavbar() {
               </span>
             </button>
             {isAuthenticated ? (
-              <div className="relative hidden lg:block" ref={profileMenuRef}>
+              <div className="relative" ref={profileMenuRef}>
                 <button
                   type="button"
                   onClick={() => setProfileMenuOpen((isOpen) => !isOpen)}
-                  className="flex min-h-11 items-center gap-2 rounded-lg px-1.5 text-left hover:bg-[#f2f5f8]"
+                  className="flex h-9 items-center gap-2 rounded-lg px-1 text-left hover:bg-[#f2f5f8]"
                   aria-label={tr("Open profile menu for {{value1}}", { value1: user.name })}
                   aria-expanded={profileMenuOpen}
                   aria-controls="profile-menu"
@@ -243,7 +203,7 @@ export function TopNavbar() {
                     id="profile-menu"
                     role="menu"
                     aria-label={t("nav.profileMenu")}
-                    className="absolute right-0 top-[calc(100%+8px)] z-50 w-80 overflow-hidden rounded-xl border border-line bg-white p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
+                    className="absolute right-0 top-[calc(100%+8px)] z-50 w-[min(20rem,calc(100vw-1rem))] overflow-hidden rounded-xl border border-line bg-white p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
                   >
                     <NavLink
                       to={

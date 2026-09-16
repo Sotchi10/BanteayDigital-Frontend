@@ -170,7 +170,7 @@ export function PostDetailPage() {
   const imageSource = post.imageUrl || post.image;
   return (
     <main
-      className="mx-auto flex min-w-0 max-w-3xl flex-col gap-4 lg:px-6"
+      className="mx-auto flex min-w-0 max-w-3xl flex-col gap-4"
       id="main-content"
     >
       <Link
@@ -181,24 +181,25 @@ export function PostDetailPage() {
         {t("community.feed")}
       </Link>
 
-      <Card className="overflow-hidden p-0">
-        <header className="flex items-start gap-3 border-b border-line bg-white px-5 py-4 sm:px-6">
+      <Card className="overflow-hidden rounded-lg p-0 shadow-none">
+        <header className="flex items-center gap-3 border-b border-line bg-white p-5 sm:p-6">
           <Avatar
             imageUrl={post.author?.avatarUrl}
             name={authorName}
             tone="indigo"
+            size="sm"
           />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-              <strong className="text-sm font-bold text-ink">
+              <strong className="community-author text-ink">
                 {authorName}
               </strong>
-              <span className="inline-flex items-center gap-1 text-xs font-bold text-[#2670c9]">
+              <span className="community-author inline-flex items-center gap-1 text-[#2670c9]">
                 <Icon name="shield" size={12} />
                 {t("community.verified")}
               </span>
             </div>
-            <p className="mb-0 mt-0.5 text-xs text-muted">
+            <p className="community-meta mb-0 mt-0.5">
               {t("community.published", {
                 date: publishedDate(post.publishedAt, i18n.language),
               })}
@@ -206,33 +207,33 @@ export function PostDetailPage() {
           </div>
         </header>
 
-        <article className=" bg-white p-5 sm:p-6">
-          <div className="flex flex-wrap gap-2">
+        <article className="bg-white p-5 sm:p-6">
+          <div className="flex flex-wrap gap-1.5">
             <RiskBadge level={post.risk} />
             <CategoryBadge category={post.category} />
           </div>
-          <h1 className="m-0 text-xm font-bold leading-8 text-brand-900 sm:text-xl">
+          <h1 className="community-post-title m-0 mt-2">
             {post.title}
           </h1>
-          <p className="mb-3 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-[#40546b]">
+          <p className="community-body mb-3 whitespace-pre-wrap wrap-break-word text-[#40546b]">
             {post.content}
           </p>
           {imageSource ? (
-            <figure className="m-0 overflow-hidden rounded-xl border border-line bg-[#f5f8fc]">
+            <figure className="m-0 overflow-hidden rounded-md border border-line bg-canvas">
               <img
                 alt={post.title}
-                className="max-h-[32rem] w-full object-contain"
+                className="max-h-[400px] w-full object-contain"
                 loading="lazy"
                 src={imageSource}
               />
-              <figcaption className="border-t border-line bg-white px-3 py-2 text-xs font-medium text-muted">
+              <figcaption className="community-meta border-t border-line bg-white px-3 py-2">
                 {t("community.attachedEvidence")}
               </figcaption>
             </figure>
           ) : null}
         </article>
 
-        <div className="border-t border-line bg-[#fbfcfe] px-2 py-1 sm:px-3">
+        <div className="bg-white">
           <PostActions
             post={post}
             onToggleLike={toggleLike}
@@ -247,16 +248,17 @@ export function PostDetailPage() {
         </div>
       </Card>
 
-      <Card className="overflow-hidden p-0" id="post-discussion">
+      <Card className="overflow-hidden p-0 shadow-none" id="post-discussion">
         <header className="flex items-center justify-between border-b border-line bg-white px-5 py-4 sm:px-6">
           <div>
-            <h2 className="m-0 mt-1 text-lg font-bold text-brand-900">
+            <h2 className="community-section-title m-0 mt-1">
               {t("community.comments")}
             </h2>
           </div>
           <Badge tone="blue">{post.interaction.commentCount}</Badge>
         </header>
         <CommentSection
+          key={post.id}
           className="border-0 bg-[#fbfcfe] px-5 py-5 sm:px-6"
           compact
           composerAfter

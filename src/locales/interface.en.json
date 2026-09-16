@@ -194,6 +194,8 @@
   "One quick step": "One quick step",
   "Open alerts, 3 new": "Open alerts, 3 new",
   "Open navigation menu": "Open navigation menu",
+  "Menu": "Menu",
+  "Explore": "Explore",
   "Open profile": "Open profile",
   "Open profile menu for {{value1}}": "Open profile menu for {{value1}}",
   "Optional evidence": "Optional evidence",
@@ -343,5 +345,18 @@
   "Your scan": "Your scan",
   "About Us": "About Us",
   "Start a new scan": "Start a new scan",
-  "Your safety": "Your safety"
+  "Your safety": "Your safety",
+  "Toggle navigation menu": "Toggle navigation menu",
+  "Search community posts": "Search community posts",
+  "Community information": "Community information",
+  "Popular topics": "Popular topics",
+  "Trending discussions": "Trending discussions",
+  "Helpful resources": "Helpful resources",
+  "Share verified information and useful safety advice.": "Share verified information and useful safety advice.",
+  "Respect others and protect personal information.": "Respect others and protect personal information.",
+  "Report suspicious content to keep the community safe.": "Report suspicious content to keep the community safe.",
+  "Browse safety topics": "Browse safety topics",
+  "Discussions will appear as posts are published.": "Discussions will appear as posts are published.",
+  "posts": "posts",
+  "comments": "comments"
 }

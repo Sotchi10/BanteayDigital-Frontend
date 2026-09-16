@@ -1,7 +1,7 @@
 import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Badge, Card, Icon, IconButton } from "../../../components/ui";
+import { Avatar, Badge, Card, Icon } from "../../../components/ui";
 import { apiErrorMessage } from "../api/communityApi";
 
 export function RiskBadge({ level }) {
@@ -38,7 +38,7 @@ function ImageEvidence({ src, alt, onOpen }) {
   return (
     <button
       type="button"
-      className="group mt-3 block w-full overflow-hidden rounded-lg border border-[#e1e6ed] bg-[#f5f8fc] text-left"
+      className="group mt-4 block w-full overflow-hidden rounded-md border border-line bg-canvas text-left"
       onClick={(event) => {
         event.stopPropagation();
         onOpen();
@@ -46,7 +46,7 @@ function ImageEvidence({ src, alt, onOpen }) {
     >
       <img
         alt={alt}
-        className="h-80 w-full object-cover transition duration-200 group-hover:scale-[1.01]"
+        className="max-h-[340px] w-full object-contain"
         onError={({ currentTarget }) => {
           currentTarget.onerror = null;
           currentTarget.parentElement?.classList.add("hidden");
@@ -124,14 +124,14 @@ function ExpandableDescription({ children }) {
     <div>
       <p
         ref={descriptionRef}
-        className={`mb-1 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-[#44536a] ${expanded ? "" : "line-clamp-3"}`}
+        className={`community-body mb-1 whitespace-pre-wrap wrap-break-word text-[#44536a] ${expanded ? "" : "line-clamp-3"}`}
       >
         {children}
       </p>
       {hasOverflow || expanded ? (
         <button
           aria-expanded={expanded}
-          className="border-0 bg-transparent p-0 text-sm font-semibold text-brand-700 hover:text-brand-900"
+          className="community-meta border-0 bg-transparent p-0 font-medium text-brand-700 hover:text-brand-900"
           onClick={(event) => {
             event.stopPropagation();
             setExpanded((value) => !value);
@@ -275,35 +275,35 @@ export function PostActions({
 
   return (
     <>
-      <div className="flex min-h-8 flex-wrap items-center gap-1 px-3 pb-3 sm:pb-4">
+      <div className="flex min-h-12 flex-wrap items-center gap-2 border-t border-line px-4 py-2 sm:px-5">
         <button
           aria-label={`${t("community.like")}: ${post.interaction.likeCount}`}
           aria-pressed={post.interaction.likedByMe}
           title={t("community.like")}
-          className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition hover:bg-[#f2f5f8] ${post.interaction.likedByMe ? "text-red-600 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
+          className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium transition hover:bg-[#f2f5f8] ${post.interaction.likedByMe ? "text-red-600 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
           disabled={likePending}
           onClick={toggleLike}
           type="button"
         >
-          <Icon name="heart" size={15} />
-          <span className="text-xs">{post.interaction.likeCount}</span>
+          <Icon name="heart" size={16} />
+          <span>{post.interaction.likeCount}</span>
         </button>
         <button
           aria-label={`${t("community.comment")}: ${post.interaction.commentCount}`}
           title={t("community.comment")}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold text-[#61718a] transition hover:bg-[#f2f5f8] hover:text-brand-700"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-[#61718a] transition hover:bg-[#f2f5f8] hover:text-brand-700"
           onClick={onOpenComments}
           type="button"
         >
           <Icon name="message" size={15} />
-          <span className="text-xs">{post.interaction.commentCount}</span>
+          <span>{post.interaction.commentCount}</span>
         </button>
         {onToggleSave ? (
           <button
             aria-label={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
             aria-pressed={post.interaction.savedByMe}
             title={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
-            className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold transition hover:bg-[#f2f5f8] ${post.interaction.savedByMe ? "text-brand-800 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
+            className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium transition hover:bg-[#f2f5f8] ${post.interaction.savedByMe ? "text-brand-800 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
             disabled={savePending}
             onClick={toggleSave}
             type="button"
@@ -315,7 +315,7 @@ export function PostActions({
           <button
             aria-label={t("community.share")}
             aria-expanded={shareOpen}
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-xs font-semibold text-[#61718a] transition hover:bg-[#f2f5f8] hover:text-brand-700"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-[#61718a] transition hover:bg-[#f2f5f8] hover:text-brand-700"
             disabled={sharePending}
             onClick={openShareOptions}
             title={t("community.share")}
@@ -326,14 +326,14 @@ export function PostActions({
           {shareOpen ? (
             <div className="absolute bottom-full right-0 sm:right-2 z-10 mb-2 min-w-40 rounded-lg border border-line bg-white p-1.5 shadow-lg">
               <button
-                className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-xs font-semibold text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
+                className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
                 onClick={shareToTelegram}
                 type="button"
               >
                 {t("community.shareToTelegram")}
               </button>
               <button
-                className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-xs font-semibold text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
+                className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
                 onClick={copyLink}
                 type="button"
               >
@@ -344,12 +344,12 @@ export function PostActions({
         </div>
       </div>
       {error ? (
-        <p className="mx-3 mb-3 rounded-md bg-red-50 px-3 py-2 text-xs text-red-700 sm:mx-5 sm:mb-4">
+        <p className="community-meta mx-3 mb-3 rounded-md bg-red-50 px-3 py-2 text-red-700 sm:mx-5 sm:mb-4">
           {tr(error)}
         </p>
       ) : null}
       {notice ? (
-        <p className="mx-3 mb-3 rounded-md bg-green-50 px-3 py-2 text-xs text-green-700 sm:mx-5 sm:mb-4">
+        <p className="community-meta mx-3 mb-3 rounded-md bg-green-50 px-3 py-2 text-green-700 sm:mx-5 sm:mb-4">
           {notice}
         </p>
       ) : null}
@@ -371,35 +371,34 @@ export function ScamPostCard({
   const [imageOpen, setImageOpen] = useState(false);
 
   return (
-    <Card className="flex w-full flex-col overflow-hidden p-0">
-      <article className="flex flex-col p-4 sm:p-5">
-        <header className="flex min-h-11 items-start gap-3">
-          <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" />
+    <Card className="flex w-full flex-col overflow-hidden rounded-lg p-0 shadow-none">
+      <article className="flex flex-col gap-3 p-5 sm:p-6">
+        <header className="flex min-h-8 items-center gap-3">
+          <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" size="sm" />
           <div className="min-w-0 flex-1">
             <div className="flex min-h-5 flex-wrap items-center gap-x-2 gap-y-0.5">
-              <strong className="text-sm font-bold text-ink">
+              <strong className="community-author text-ink">
                 {authorName}
               </strong>
-              <span className="inline-flex items-center gap-1 text-xs font-bold text-[#2670c9]">
+              <span className="community-author inline-flex items-center gap-1 text-brand-700">
                 <Icon name="shield" size={12} />
                 {t("community.verifiedBy")}
               </span>
             </div>
-            <p className="m-0 text-xs text-[#8490a2]">
+            <p className="community-meta m-0">
               {postTimestamp(post.publishedAt, i18n.language)} · {t("community.public")}
             </p>
           </div>
-          <IconButton label={t("community.moreOptions")} icon="more" />
         </header>
-        <div className=" flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <RiskBadge level={post.risk} />
           <CategoryBadge category={post.category} />
         </div>
         <section
-          className={`mt-2 flex flex-col ${onOpenPost ? "cursor-pointer" : ""}`}
+          className={`flex flex-col gap-2 ${onOpenPost ? "cursor-pointer" : ""}`}
           onClick={onOpenPost}
         >
-          <h2 className="m-0 text-sm font-bold leading-6 text-ink">
+          <h2 className="community-post-title m-0">
             {post.title}
           </h2>
           <ExpandableDescription>{post.content}</ExpandableDescription>

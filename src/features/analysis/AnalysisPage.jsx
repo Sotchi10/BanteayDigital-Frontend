@@ -213,28 +213,20 @@ function ProgressTracker({ hasResult }) {
   );
 }
 
-function ScanModeCard({ mode, active, onSelect }) {
+function ScanModeTab({ mode, active, onSelect }) {
   return (
     <button
       type="button"
-      role="radio"
-      aria-checked={active}
+      id={`scan-tab-${mode.id.toLowerCase()}`}
+      role="tab"
+      aria-selected={active}
+      aria-controls="scan-input-panel"
+      tabIndex={active ? 0 : -1}
       onClick={onSelect}
-      className={`group flex min-h-20 sm:min-h-24 flex-col items-center sm:items-start rounded-xl border p-2.5 sm:p-4 text-center sm:text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:ring-offset-2 ${active ? "border-brand-800 bg-brand-800 text-white shadow-md shadow-brand-800/20" : "border-line bg-white text-ink hover:-translate-y-0.5 hover:border-brand-700 hover:bg-brand-100 hover:shadow-sm"}`}
+      className={` feature-tab -mb-px flex min-h-12 items-center justify-center gap-2 border-b-2 px-3 py-2 font-semibold transition-colors sm:px-5 ${active ? "border-brand-800 text-brand-800" : "border-transparent text-muted hover:border-line hover:text-ink"}`}
     >
-      <span
-        className={`mb-1.5 sm:mb-2 grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg transition-colors ${active ? "bg-white/15 text-white" : "bg-brand-100 text-brand-800 group-hover:bg-white"}`}
-      >
-        <Icon name={mode.icon} size={16} />
-      </span>
-      <span className="text-xs sm:text-sm font-bold truncate w-full">
-        {mode.label}
-      </span>
-      <span
-        className={`mt-0.5 text-xs sm:text-xs font-medium truncate w-full ${active ? "text-white/75" : "text-muted"}`}
-      >
-        {mode.detail}
-      </span>
+      <Icon name={mode.icon} size={18} />
+      <span>{mode.id === "URL" ? "URL" : mode.label}</span>
     </button>
   );
 }
@@ -771,7 +763,7 @@ export function AnalysisPage() {
   };
 
   return (
-    <main className="lg:px-6" id="main-content">
+    <main className="lg:px-6 " id="main-content">
       <ProgressTracker hasResult={Boolean(result)} />
       <Card className="relative overflow-hidden p-4 sm:p-6">
         {isSubmitting ? <ScanningOverlay /> : null}
@@ -781,7 +773,7 @@ export function AnalysisPage() {
           noValidate
           aria-busy={isSubmitting}
         >
-          <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-line pb-5">
+          <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-line pb-5 py-10">
             <div>
               <h2 className="m-0 flex items-center gap-2 text-lg font-bold text-black">
                 <Icon name="search" size={19} /> {t("scan.heading")}
@@ -793,12 +785,24 @@ export function AnalysisPage() {
             </span>
           </div>
           <div
-            className="grid grid-cols-3 gap-2 sm:gap-3"
-            role="radiogroup"
+            className="flex gap-1 border-line"
+            role="tablist"
             aria-label={t("scan.type")}
+            onKeyDown={(event) => {
+              const currentIndex = scanModes.findIndex((mode) => mode.id === inputType);
+              let nextIndex;
+              if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % scanModes.length;
+              else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + scanModes.length) % scanModes.length;
+              else if (event.key === "Home") nextIndex = 0;
+              else if (event.key === "End") nextIndex = scanModes.length - 1;
+              else return;
+              event.preventDefault();
+              selectType(scanModes[nextIndex].id);
+              event.currentTarget.querySelectorAll('[role="tab"]')[nextIndex]?.focus();
+            }}
           >
             {scanModes.map((mode) => (
-              <ScanModeCard
+              <ScanModeTab
                 key={mode.id}
                 mode={mode}
                 active={inputType === mode.id}
@@ -806,7 +810,15 @@ export function AnalysisPage() {
               />
             ))}
           </div>
-          <div className="mt-6">
+          <div
+            id="scan-input-panel"
+            role="tabpanel"
+            aria-labelledby={`scan-tab-${inputType.toLowerCase()}`}
+            className="mt-5"
+          >
+            <p className="mb-4 text-sm text-muted">
+              {scanModes.find((mode) => mode.id === inputType)?.detail}
+            </p>
             {inputType === "TEXT" ? (
               <label className="block">
                 <span className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">

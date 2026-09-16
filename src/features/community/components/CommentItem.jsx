@@ -53,6 +53,7 @@ export function CommentItem({
   const isOwner = currentUser?.id === comment.authorId;
   const isAdmin = currentUser?.role === "ADMIN";
   const isActive = comment.status === "ACTIVE";
+  const authorName = comment.author?.username || comment.author?.name || t("community.communityMember");
 
   const run = async (work, fallback) => {
     setBusy(true);
@@ -95,6 +96,7 @@ export function CommentItem({
       }));
       if (isActive) onCountChange(-1);
     }
+    return Boolean(response);
   };
 
   const submitReport = async () => {
@@ -161,7 +163,8 @@ export function CommentItem({
       <div className="flex gap-2">
         {comment.author ? (
           <Avatar
-            name={comment.author.name || t("community.communityMember")}
+            imageUrl={comment.author.avatarUrl}
+            name={authorName}
             size="sm"
             tone="indigo"
           />
@@ -170,11 +173,11 @@ export function CommentItem({
           {isActive ? (
             <>
               <div className="flex flex-wrap items-baseline gap-x-2">
-                <strong className="text-sm">
-                  {comment.author?.name || t("community.communityMember")}
+                <strong className="community-author">
+                  {authorName}
                 </strong>
                 <time
-                  className="text-xs text-[#8a96a8]"
+                  className="community-meta"
                   dateTime={comment.createdAt}
                 >
                   {commentTimestamp(comment.createdAt, i18n.language)}
@@ -207,20 +210,20 @@ export function CommentItem({
                   </div>
                 </div>
               ) : (
-                <p className="my-1 whitespace-pre-wrap wrap-break-words text-sm leading-relaxed text-[#3f4f66]">
+                <p className="community-body my-1 whitespace-pre-wrap wrap-break-words text-[#3f4f66]">
                   {comment.content}
                 </p>
               )}
             </>
           ) : (
-            <p className="my-1 text-xs italic text-[#8a96a8]">
+            <p className="community-meta my-1 italic">
               {comment.status === "HIDDEN"
                 ? t("community.commentHidden")
                 : t("community.commentDeleted")}
             </p>
           )}
 
-          <div className="flex flex-wrap gap-3 text-xs font-semibold text-[#68778d]">
+          <div className="flex flex-wrap gap-3 text-sm font-medium text-[#68778d]">
             {currentUser && isActive && !comment.parentId ? (
               <button
                 className="border-0 bg-transparent p-0 hover:text-brand-700"
@@ -371,6 +374,7 @@ export function CommentItem({
             <p className="mb-0 mt-2 text-sm leading-6 text-muted">
               {t("community.commentDeleted")}
             </p>
+            {error ? <p className="community-meta mb-0 mt-2 text-red-600" role="alert">{tr(error)}</p> : null}
             <div className="mt-5 flex justify-end gap-3">
               <button
                 type="button"
@@ -384,8 +388,7 @@ export function CommentItem({
                 type="button"
                 disabled={busy}
                 onClick={async () => {
-                  await remove();
-                  setDeleteConfirmOpen(false);
+                  if (await remove()) setDeleteConfirmOpen(false);
                 }}
                 className="min-h-10 rounded-lg bg-risk-high px-4 text-sm font-bold text-white hover:opacity-90 disabled:opacity-60"
               >

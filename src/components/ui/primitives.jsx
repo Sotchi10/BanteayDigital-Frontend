@@ -73,7 +73,7 @@ export function SectionHeader({ title, action = "See all" }) {
   const tr = useInterfaceTranslation();
   return (
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 className="type-section-title m-0 text-ink text-sm">{tr(title)}</h2>
+      <h2 className="type-section-title m-0">{tr(title)}</h2>
       {action ? (
         <button
           type="button"

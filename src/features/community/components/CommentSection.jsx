@@ -26,6 +26,7 @@ export function CommentSection({
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -45,7 +46,7 @@ export function CommentSection({
     return () => {
       active = false;
     };
-  }, [postId, t]);
+  }, [postId, retryKey, t]);
 
   const addComment = async (content) => {
     const response = await createPostComment(postId, { content });
@@ -80,13 +81,22 @@ export function CommentSection({
   const commentList = (
     <>
       {loading ? (
-        <p className="py-4 text-center text-xs text-muted">
+        <p className="community-meta py-4 text-center">
           {t("community.loadingComments")}
         </p>
       ) : null}
-      {error ? <p className="py-2 text-xs text-red-600">{tr(error)}</p> : null}
-      {!loading && comments.length === 0 ? (
-        <p className="py-4 text-center text-xs text-muted">
+      {error ? (
+        <div className="community-meta flex items-center justify-between gap-3 py-2 text-red-600">
+          <span>{tr(error)}</span>
+          {!comments.length ? (
+            <button className="shrink-0 font-semibold text-brand-800" onClick={() => { setError(""); setLoading(true); setRetryKey((value) => value + 1); }} type="button">
+              {tr("Try again")}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+      {!loading && !error && comments.length === 0 ? (
+        <p className="community-meta py-4 text-center">
           {t("community.noComments")}
         </p>
       ) : null}
@@ -103,7 +113,7 @@ export function CommentSection({
       </div>
       {meta.hasMore ? (
         <button
-          className="mt-4 w-full rounded-lg border border-line bg-white py-2 text-xs font-semibold text-brand-700"
+          className="mt-4 w-full rounded-lg border border-line bg-white py-2 text-sm font-semibold text-brand-700"
           disabled={loadingMore}
           onClick={loadMore}
           type="button"

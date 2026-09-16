@@ -1,7 +1,7 @@
 import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import {
   apiErrorMessage,
   getCurrentUser,
@@ -12,17 +12,16 @@ import {
   unlikeCommunityPost,
   unsaveCommunityPost,
 } from '../api/communityApi'
-import { PostComposer } from './PostComposer'
 import { ScamPostCard } from './ScamPostCard'
 
 export function CommunityFeed() {
   const tr = useInterfaceTranslation();
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { feedQuery: query = '' } = useOutletContext() || {}
   const [posts, setPosts] = useState([])
   const [currentUser, setCurrentUser] = useState(null)
   const [meta, setMeta] = useState(null)
-  const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
@@ -128,18 +127,17 @@ export function CommunityFeed() {
   }
 
   return (
-    <main className="flex min-w-0 flex-col gap-4 lg:px-6" id="main-content">
-      <PostComposer onChange={setQuery} value={query} />
+    <main className="flex min-w-0 flex-col gap-5" id="main-content">
       <div className="border-b border-line" aria-label={t('community.feed')}>
-        <span className="relative inline-flex min-h-10 items-center px-1 text-sm font-semibold text-brand-800 after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-brand-800">
+        <span className="feature-tab text-[18px] community-section-title relative inline-flex min-h-12 items-center px-2 after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-brand-800">
           {t('community.forYou')}
         </span>
       </div>
 
-      {loading ? <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">{t('community.loadingAlerts')}</div> : null}
-      {error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{tr(error)}</div> : null}
+      {loading ? <div className="community-body rounded-xl border border-line bg-white p-8 text-center text-muted">{t('community.loadingAlerts')}</div> : null}
+      {error ? <div className="community-body rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">{tr(error)}</div> : null}
       {!loading && !error && visiblePosts.length === 0 ? (
-        <div className="rounded-xl border border-line bg-white p-8 text-center text-sm text-muted">
+        <div className="community-body rounded-xl border border-line bg-white p-8 text-center text-muted">
           {query ? t('community.noMatchingAlerts') : t('community.noAlerts')}
         </div>
       ) : null}

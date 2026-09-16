@@ -77,7 +77,7 @@ export function ReportHistoryPage() {
           <span
             role="tab"
             aria-selected="true"
-            className="-mb-px inline-flex min-h-10 items-center border-b-2 border-brand-800 px-4 text-sm font-bold text-brand-800"
+            className="feature-tab -mb-px inline-flex min-h-10 items-center border-b-2 border-brand-800 px-4 text-[18px] font-bold text-brand-800"
           >
             {tr("Your reports")}
           </span>

@@ -194,6 +194,8 @@
   "One quick step": "បំពេញមួយជំហានទៀត",
   "Open alerts, 3 new": "បើកការជូនដំណឹង មាន ៣ ថ្មី",
   "Open navigation menu": "បើកម៉ឺនុយរុករក",
+  "Menu": "ម៉ឺនុយ",
+  "Explore": "ស្វែងយល់",
   "Open profile": "បើកប្រវត្តិរូប",
   "Open profile menu for {{value1}}": "បើកម៉ឺនុយប្រវត្តិរូបរបស់ {{value1}}",
   "Optional evidence": "ភស្តុតាងបន្ថែម (មិនចាំបាច់)",
@@ -343,5 +345,18 @@
   "Your scan": "ការពិនិត្យរបស់អ្នក",
   "About Us": "អំពីពួកយើង",
   "Start a new scan": "ចាប់ផ្តើមការពិនិត្យថ្មី",
-  "Your safety": "សុវត្ថិភាពរបស់អ្នក"
+  "Your safety": "សុវត្ថិភាពរបស់អ្នក",
+  "Toggle navigation menu": "បើក ឬបិទម៉ឺនុយរុករក",
+  "Search community posts": "ស្វែងរកប្រកាសសហគមន៍",
+  "Community information": "ព័ត៌មានសហគមន៍",
+  "Popular topics": "ប្រធានបទពេញនិយម",
+  "Trending discussions": "ការពិភាក្សាកំពុងពេញនិយម",
+  "Helpful resources": "ធនធានមានប្រយោជន៍",
+  "Share verified information and useful safety advice.": "ចែករំលែកព័ត៌មានដែលបានផ្ទៀងផ្ទាត់ និងដំបូន្មានសុវត្ថិភាព។",
+  "Respect others and protect personal information.": "គោរពអ្នកដទៃ និងការពារព័ត៌មានផ្ទាល់ខ្លួន។",
+  "Report suspicious content to keep the community safe.": "រាយការណ៍មាតិកាគួរឱ្យសង្ស័យ ដើម្បីរក្សាសុវត្ថិភាពសហគមន៍។",
+  "Browse safety topics": "មើលប្រធានបទសុវត្ថិភាព",
+  "Discussions will appear as posts are published.": "ការពិភាក្សានឹងបង្ហាញនៅពេលមានប្រកាស។",
+  "posts": "ប្រកាស",
+  "comments": "មតិ"
 }
