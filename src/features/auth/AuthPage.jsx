@@ -116,7 +116,7 @@ export function AuthPage() {
             alt="BanteayDigital"
           />
           <span>
-            <strong className="block text-lg">BanteayDigital</strong>
+            <strong className="block text-lg">Banteay Digital</strong>
             <small className="text-sm text-white/75">
               {t("authExtra.community")}
             </small>
@@ -161,7 +161,7 @@ export function AuthPage() {
             className="mx-auto inline-flex items-center gap-2 text-sm font-bold text-brand-800 hover:text-brand-700 lg:hidden"
           >
             <img className="h-9 w-9" src="/BanteayDigitalLogo.svg" alt="" />
-            BanteayDigital
+            Banteay Digital
           </Link>
           <div className="mb-8 text-center">
             <h2 className="mb-2 mt-2 text-3xl text-start font-bold tracking-[-0.02em] text-brand-900">

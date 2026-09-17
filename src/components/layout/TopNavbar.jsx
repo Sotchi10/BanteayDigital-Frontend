@@ -130,7 +130,9 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                 src="/BanteayDigitalLogo.svg"
                 alt={tr("BanteayDigital logo")}
               />
-            
+            <span className="hidden whitespace-nowrap text-base font-bold tracking-tight text-brand-900 sm:inline">
+              Banteay Digital
+            </span>
           </NavLink>
           <label className="mx-auto flex h-10 min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-line bg-canvas px-3 text-muted" aria-label={tr("Search scams, users, or keywords...")}>
             <Icon name="search" size={17} className="shrink-0" />
@@ -200,7 +202,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                     id="profile-menu"
                     role="menu"
                     aria-label={t("nav.profileMenu")}
-                    className="absolute right-0 top-[calc(100%+8px)] z-50 w-[min(20rem,calc(100vw-1rem))] overflow-hidden rounded-xl border border-line bg-white p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
+                    className="absolute right-0 top-[calc(100%+8px)] z-50 w-[min(20rem,calc(100vw-1rem))] overflow-hidden rounded-xl border border-line bg-surface p-2 shadow-[0_12px_28px_rgb(16_42_67/0.14)]"
                   >
                     <NavLink
                       to={
@@ -316,7 +318,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <img className="h-8 w-8" src="/BanteayDigitalLogo.svg" alt="" />
-                BanteayDigital
+                Banteay Digital
               </Link>
               <button
                 type="button"

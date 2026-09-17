@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
-import { listCommunityPosts } from "../../features/community/api/communityApi";
 import { listSafetyKnowledge } from "../../services/safetyKnowledge";
-import { Icon } from "../ui";
 
 function Panel({ title, children }) {
   return (
@@ -18,18 +16,10 @@ function Panel({ title, children }) {
 
 export function RightSidebar() {
   const tr = useInterfaceTranslation();
-  const [posts, setPosts] = useState([]);
   const [topics, setTopics] = useState([]);
 
   useEffect(() => {
     let active = true;
-    listCommunityPosts({ limit: 20 })
-      .then((response) => {
-        if (active) setPosts(response.posts || []);
-      })
-      .catch(() => {
-        if (active) setPosts([]);
-      });
     listSafetyKnowledge()
       .then((response) => {
         if (active) setTopics(response.knowledge || []);
@@ -41,20 +31,6 @@ export function RightSidebar() {
       active = false;
     };
   }, []);
-
-  const trending = useMemo(
-    () =>
-      [...posts]
-        .sort(
-          (a, b) =>
-            (b.interaction?.commentCount || 0) +
-            (b.interaction?.likeCount || 0) -
-            ((a.interaction?.commentCount || 0) +
-              (a.interaction?.likeCount || 0)),
-        )
-        .slice(0, 3),
-    [posts],
-  );
 
   return (
     <aside

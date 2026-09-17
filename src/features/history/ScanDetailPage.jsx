@@ -4,8 +4,14 @@ import { Link, useParams } from "react-router-dom";
 import { Card, Icon } from "../../components/ui";
 import { getScan } from "../../services/scans";
 
-const riskFor = (assessment) =>
-  assessment === "STRONG_SCAM_INDICATORS"
+const riskFor = (assessment, riskLevel) =>
+  riskLevel === "HIGH" || riskLevel === "CRITICAL"
+    ? "High"
+    : riskLevel === "MEDIUM"
+      ? "Medium"
+      : riskLevel === "LOW"
+        ? "Low"
+        : assessment === "STRONG_SCAM_INDICATORS"
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
@@ -77,7 +83,10 @@ export function ScanDetailPage() {
       </main>
     );
 
-  const risk = riskFor(scan.assessment);
+  const risk = riskFor(scan.assessment, scan.analysis?.riskLevel);
+  const confidence = scan.analysis?.confidenceScore == null
+    ? null
+    : Number(scan.analysis.confidenceScore);
   const findings = Array.isArray(scan.findings) ? scan.findings : [];
   const reasons = scan.analysis?.reasons || [];
   const actions =
@@ -118,6 +127,11 @@ export function ScanDetailPage() {
                 <p className="mb-0 mt-0.5 text-sm text-muted">
                   {summary}
                 </p>
+                {confidence !== null && Number.isFinite(confidence) ? (
+                  <p className="mb-0 mt-1 text-xs font-bold text-brand-800">
+                    {tr("AI confidence: {{percent}}%", { percent: Math.round(confidence * 100) })}
+                  </p>
+                ) : null}
               </div>
             </div>
           </div>

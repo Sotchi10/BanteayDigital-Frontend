@@ -12,8 +12,14 @@ import { getScan, listScans } from "../../services/scans";
 
 const toneFor = (risk) =>
   risk === "High" ? "high" : risk === "Medium" ? "medium" : risk === "Low" ? "low" : "neutral";
-const riskFromAssessment = (assessment) =>
-  assessment === "STRONG_SCAM_INDICATORS"
+const riskFromAssessment = (assessment, riskLevel) =>
+  riskLevel === "HIGH" || riskLevel === "CRITICAL"
+    ? "High"
+    : riskLevel === "MEDIUM"
+      ? "Medium"
+      : riskLevel === "LOW"
+        ? "Low"
+        : assessment === "STRONG_SCAM_INDICATORS"
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
@@ -23,7 +29,7 @@ const riskFromAssessment = (assessment) =>
 
 const reportAnalysisFromScan = (scan) => ({
   ...scan,
-  risk: riskFromAssessment(scan.assessment),
+  risk: riskFromAssessment(scan.assessment, scan.analysis?.riskLevel),
 });
 
 function ReportSourceChooser() {
@@ -125,9 +131,9 @@ function ReportSourceChooser() {
                       {scan.normalizedInput || scan.rawInput}
                     </span>
                   </span>
-                  <Badge tone={toneFor(riskFromAssessment(scan.assessment))}>
+                  <Badge tone={toneFor(riskFromAssessment(scan.assessment, scan.analysis?.riskLevel))}>
                     {tr("{{level}} risk", {
-                      level: tr(riskFromAssessment(scan.assessment)),
+                      level: tr(riskFromAssessment(scan.assessment, scan.analysis?.riskLevel)),
                     })}
                   </Badge>
                   <Link

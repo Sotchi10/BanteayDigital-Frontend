@@ -82,6 +82,8 @@ button, a, select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid rgb(22 119 210 / 0.3); outline-offset: 2px; }
 ::selection { background: #cfe5fa; color: #102a43; }
 
+.scanner-overlay { background: rgb(255 255 255 / 0.92); }
+
 .about-hero { background: radial-gradient(ellipse at 95% 20%, #195baf 0, transparent 60%), linear-gradient(125deg, #071d3f, #0c3975); }
 .about-primary-action { background: #fff; color: #082f6b; }
 .about-primary-action:hover { background: #eaf2ff; }
@@ -109,7 +111,9 @@ html[lang="km"] .about-page h1 { line-height: 1.4; }
 
 /* Legacy light utilities map to the same dark palette as the shared tokens. */
 [data-theme="dark"] :focus-visible { outline-color: #8fc6ff; }
+[data-theme="dark"] ::selection { background: #1d4f86; color: #f5f5f5; }
 [data-theme="dark"] .app-navbar { background: rgb(0 0 0 / 0.96); border-color: var(--color-line); }
+[data-theme="dark"] .scanner-overlay { background: rgb(10 10 10 / 0.94); }
 [data-theme="dark"] .text-black { color: var(--color-ink); }
 [data-theme="dark"] .bg-white,
 [data-theme="dark"] .bg-\[\#f8fafc\],
@@ -126,7 +130,8 @@ html[lang="km"] .about-page h1 { line-height: 1.4; }
 [data-theme="dark"] .border-\[\#e1e6ed\],
 [data-theme="dark"] .border-\[\#b8c8d9\],
 [data-theme="dark"] .border-\[\#cbd8e5\],
-[data-theme="dark"] .border-\[\#cbdcf0\] { border-color: var(--color-line); }
+[data-theme="dark"] .border-\[\#cbdcf0\],
+[data-theme="dark"] .border-\[\#f3c9cf\] { border-color: var(--color-line); }
 
 [data-theme="dark"] .text-\[\#3f4e66\],
 [data-theme="dark"] .text-\[\#3f4f66\],
@@ -179,6 +184,9 @@ html[lang="km"] .about-page h1 { line-height: 1.4; }
 [data-theme="dark"] select:focus { border-color: #8fc6ff; box-shadow: 0 0 0 3px rgb(143 198 255 / 0.2); }
 [data-theme="dark"] select option { background: var(--color-surface); color: var(--color-ink); }
 [data-theme="dark"] .focus-within\:ring-2 { --tw-ring-color: rgb(143 198 255 / 0.3); }
+[data-theme="dark"] [class*="focus:ring-[#d9ebfa]"]:focus { --tw-ring-color: rgb(143 198 255 / 0.28); }
+[data-theme="dark"] [class*="hover:border-[#b8c8d9]"]:hover,
+[data-theme="dark"] [class*="hover:border-[#9eb9d5]"]:hover { border-color: #7e9abc; }
 
 /* Risk and AI badges retain distinct, readable semantic colors. */
 [data-theme="dark"] .bg-\[\#fff0f1\],
@@ -186,6 +194,11 @@ html[lang="km"] .about-page h1 { line-height: 1.4; }
 [data-theme="dark"] .bg-\[\#fff7f7\] { background-color: #40232c; }
 [data-theme="dark"] .text-\[\#d92d3a\],
 [data-theme="dark"] .text-red-600 { color: #ff9ba7; }
+[data-theme="dark"] .bg-red-50 { background-color: #40232c; }
+[data-theme="dark"] .border-red-200 { border-color: #80505e; }
+[data-theme="dark"] .text-red-700 { color: #ffb1bb; }
+[data-theme="dark"] .bg-green-50 { background-color: #173d37; }
+[data-theme="dark"] .text-green-700 { color: #7ed8c0; }
 [data-theme="dark"] .bg-\[\#fff7e6\],
 [data-theme="dark"] .bg-\[\#fff3cf\] { background-color: #493819; }
 [data-theme="dark"] .text-\[\#b85f00\],

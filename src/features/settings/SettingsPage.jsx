@@ -165,6 +165,13 @@ export function SettingsPage() {
       className="settings-page mx-auto w-full max-w-[1060px] min-w-0 py-2 lg:px-6"
       id="main-content"
     >
+      <Link
+        to="/"
+        className="mb-5 inline-flex min-h-10 items-center gap-2 rounded-lg px-1 text-sm font-bold text-brand-800 transition hover:text-brand-700"
+      >
+        <Icon name="chevron" size={16} className="rotate-180" />
+        {tr("Back to community")}
+      </Link>
       <header className="mb-7 sm:mb-8">
         <h1 className="mb-1 mt-0 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           {tr("Settings")}

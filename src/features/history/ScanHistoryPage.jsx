@@ -14,8 +14,14 @@ import { deleteScan, listScans } from "../../services/scans";
 import { markScanHistorySeen } from "../../services/scanHistoryNotifications";
 import { useAuth } from "../../state/AuthStore";
 
-const riskFor = (assessment) =>
-  assessment === "STRONG_SCAM_INDICATORS"
+const riskFor = (assessment, riskLevel) =>
+  riskLevel === "HIGH" || riskLevel === "CRITICAL"
+    ? "High"
+    : riskLevel === "MEDIUM"
+      ? "Medium"
+      : riskLevel === "LOW"
+        ? "Low"
+        : assessment === "STRONG_SCAM_INDICATORS"
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
@@ -86,7 +92,7 @@ export function ScanHistoryPage() {
         : scan.reportStatus !== "REPORTED";
     })
     .filter(
-      (scan) => riskFilter === "ALL" || riskFor(scan.assessment) === riskFilter,
+      (scan) => riskFilter === "ALL" || riskFor(scan.assessment, scan.analysis?.riskLevel) === riskFilter,
     );
 
   const allVisibleScansSelected =
@@ -291,7 +297,7 @@ export function ScanHistoryPage() {
         <Card className="overflow-hidden">
           <ul className="m-0 divide-y divide-line p-0">
             {visibleScans.map((scan) => {
-              const risk = riskFor(scan.assessment);
+      const risk = riskFor(scan.assessment, scan.analysis?.riskLevel);
               return (
                 <li
                   key={scan.id}

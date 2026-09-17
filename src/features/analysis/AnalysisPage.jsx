@@ -76,8 +76,14 @@ const buildLocalPreview = ({ inputType, value }) => {
   };
 };*/
 
-const riskFromAssessment = (assessment) =>
-  assessment === "STRONG_SCAM_INDICATORS"
+const riskFromAssessment = (assessment, riskLevel) =>
+  riskLevel === "HIGH" || riskLevel === "CRITICAL"
+    ? "High"
+    : riskLevel === "MEDIUM"
+      ? "Medium"
+      : riskLevel === "LOW"
+        ? "Low"
+        : assessment === "STRONG_SCAM_INDICATORS"
     ? "High"
     : assessment === "SUSPICIOUS" || assessment === "CAUTION"
       ? "Medium"
@@ -87,10 +93,11 @@ const riskFromAssessment = (assessment) =>
 
 const serializeResult = (scan) => ({
   ...scan,
-  risk: riskFromAssessment(scan.assessment),
+  risk: riskFromAssessment(scan.assessment, scan.analysis?.riskLevel),
 });
 
 const asPercent = (score) => {
+  if (score === null || score === undefined || score === "") return null;
   const numericScore = Number(score);
   if (!Number.isFinite(numericScore)) return null;
   return Math.round(numericScore <= 1 ? numericScore * 100 : numericScore);
@@ -243,7 +250,7 @@ function ScanningOverlay() {
   const { t } = useTranslation();
   return (
     <div
-      className="absolute inset-0 z-10 grid place-items-center rounded-[var(--radius-card)] bg-white/90 p-6 backdrop-blur-sm"
+      className="scanner-overlay absolute inset-0 z-10 grid place-items-center rounded-[var(--radius-card)] p-6 backdrop-blur-sm"
       role="status"
       aria-live="polite"
     >
@@ -271,6 +278,7 @@ function RelatedScamResults({ result }) {
   const { t, i18n } = useTranslation();
   const matches = relatedScamMatches(result, i18n.resolvedLanguage, t);
   const retrievalStatus = result?.aiRetrieval?.status;
+  const aiConfidence = asPercent(result?.analysis?.confidenceScore);
 
   if (retrievalStatus === "UNAVAILABLE") {
     return (
@@ -284,6 +292,11 @@ function RelatedScamResults({ result }) {
         <p className="mb-0 mt-2 text-sm leading-6 text-muted">
           {t("scanExtra.relatedUnavailable")}
         </p>
+        {aiConfidence !== null ? (
+          <p className="mb-0 mt-2 text-sm font-bold text-brand-800">
+            {t("scanExtra.independentConfidence", { percent: aiConfidence })}
+          </p>
+        ) : null}
       </section>
     );
   }
@@ -300,6 +313,11 @@ function RelatedScamResults({ result }) {
         <p className="mb-0 mt-2 text-sm leading-6 text-muted">
           {t("scanExtra.relatedNone")}
         </p>
+        {aiConfidence !== null ? (
+          <p className="mb-0 mt-2 text-sm font-bold text-brand-800">
+            {t("scanExtra.independentConfidence", { percent: aiConfidence })}
+          </p>
+        ) : null}
       </section>
     );
   }
@@ -382,7 +400,7 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
       <section
         aria-labelledby="scan-result-title"
         aria-modal="true"
-        className="max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-2xl overflow-y-auto rounded-2xl bg-surface shadow-2xl"
         role="dialog"
       >
         <div className="border-b border-line p-5 sm:p-6">
@@ -433,10 +451,14 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
               <Icon name="shield" size={16} />
               {t("scanExtra.recommendedAction")}
             </h3>
-            <p className="mb-0 mt-3 text-sm leading-6 text-muted">
-              {result.analysis.recommendedActions[0] ||
-                t("scanExtra.defaultRecommendation")}
-            </p>
+            <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
+              {(result.analysis.recommendedActions.length
+                ? result.analysis.recommendedActions
+                : [t("scanExtra.defaultRecommendation")]
+              ).map((action, index) => (
+                <li key={`${action}-${index}`}>{action}</li>
+              ))}
+            </ul>
           </section>
         </div>
         <div className="border-t border-line p-5 sm:p-6">
@@ -444,7 +466,7 @@ export function ScanResultDialog({ result, onClose, onNewScan, onReport }) {
         </div>
         <div className="flex flex-col gap-2 border-t border-line bg-[#fbfcfe] p-5 sm:flex-row sm:justify-end sm:p-6">
           <button
-            className="min-h-11 rounded-lg border border-line bg-white px-5 text-sm font-bold text-brand-800"
+            className="min-h-11 rounded-lg border border-line bg-surface px-5 text-sm font-bold text-brand-800"
             onClick={onNewScan}
             type="button"
           >
@@ -505,7 +527,7 @@ export function ReportDialog({ scanId, onClose, onSuccess }) {
       <section
         aria-labelledby="report-title"
         aria-modal="true"
-        className="w-full max-w-xl rounded-2xl bg-white shadow-2xl"
+        className="w-full max-w-xl rounded-2xl bg-surface shadow-2xl"
         role="dialog"
       >
         <form onSubmit={submit}>
@@ -529,7 +551,7 @@ export function ReportDialog({ scanId, onClose, onSuccess }) {
                 required
                 value={reason}
                 onChange={(event) => setReason(event.target.value)}
-                className="min-h-11 rounded-lg border border-line bg-white px-3 font-normal"
+                className="min-h-11 rounded-lg border border-line bg-surface px-3 font-normal"
               >
                 <option value="">{tr("Select a reason")}</option>
                 <option value="Scam attempt">{tr("Scam attempt")}</option>
@@ -611,7 +633,7 @@ function AccountRequiredDialog({ onClose, onCreateAccount, onSignIn }) {
       <section
         aria-labelledby="account-required-title"
         aria-modal="true"
-        className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl sm:p-6"
+        className="w-full max-w-sm rounded-2xl bg-surface p-5 shadow-2xl sm:p-6"
         role="dialog"
       >
         <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-100 text-brand-800">
@@ -630,7 +652,7 @@ function AccountRequiredDialog({ onClose, onCreateAccount, onSignIn }) {
         </p>
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
           <button
-            className="min-h-11 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100"
+            className="min-h-11 rounded-lg border border-line bg-surface px-4 text-sm font-bold text-brand-800 hover:bg-brand-100"
             onClick={onSignIn}
             type="button"
           >
@@ -839,7 +861,7 @@ export function AnalysisPage() {
                     setError("");
                   }}
                   rows="7"
-                  className="w-full resize-y rounded-xl border border-line bg-white p-4 text-sm placeholder:text-sm text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
+                  className="w-full resize-y rounded-xl border border-line bg-canvas p-4 text-sm placeholder:text-sm text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
                   placeholder={t("scan.messagePlaceholder")}
                   aria-describedby={error ? "analysis-error" : "scan-help"}
                 />
@@ -865,7 +887,7 @@ export function AnalysisPage() {
                       setContent(event.target.value);
                       setError("");
                     }}
-                    className="min-h-12 w-full rounded-xl border border-line bg-white py-3 pl-11 pr-4 text-base text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
+                    className="min-h-12 w-full rounded-xl border border-line bg-canvas py-3 pl-11 pr-4 text-base text-ink shadow-sm outline-none transition placeholder:text-[#8a97a8] hover:border-brand-700 focus:border-brand-700 focus:ring-4 focus:ring-[#d9ebfa]"
                     placeholder={t("scan.urlPlaceholder")}
                     inputMode="url"
                     aria-describedby={error ? "analysis-error" : "scan-help"}
@@ -936,6 +958,9 @@ export function AnalysisPage() {
           </div>
         </form>
       </Card>
+      <p className="mb-0 mt-3 text-center text-xs leading-5 text-muted">
+        {t("scan.aiDisclaimer")}
+      </p>
       {result ? (
         <>
           <Card
@@ -978,12 +1003,14 @@ export function AnalysisPage() {
                     <Icon name="shield" size={16} />{" "}
                     {t("scanExtra.recommendedAction")}
                   </h3>
-                  <p className="mb-0 mt-3 text-sm leading-6 text-muted">
-                    {result.analysis.recommendedActions[0] ||
-                      tr(
-                        "Verify the sender through an official contact method.",
-                      )}
-                  </p>
+                  <ul className="mb-0 mt-3 grid gap-2 pl-5 text-sm leading-6 text-muted">
+                    {(result.analysis.recommendedActions.length
+                      ? result.analysis.recommendedActions
+                      : [tr("Verify the sender through an official contact method.")]
+                    ).map((action, index) => (
+                      <li key={`${action}-${index}`}>{action}</li>
+                    ))}
+                  </ul>
                 </section>
               </div>
               <RelatedScamResults result={result} />

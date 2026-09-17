@@ -20,7 +20,7 @@ const badgeTones = {
 export function Card({ className = "", children }) {
   return (
     <section
-      className={`rounded-(--radius-card) border border-line bg-white shadow-[var(--shadow-card)] ${className}`}
+      className={`rounded-(--radius-card) border border-line bg-surface shadow-[var(--shadow-card)] ${className}`}
     >
       {children}
     </section>
