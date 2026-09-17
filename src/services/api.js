@@ -18,6 +18,16 @@ async function request(path, options = {}) {
     data: payload,
   })
 
+  const contentType = response.headers?.['content-type'] || ''
+  if (typeof response.data === 'string' || !contentType.includes('application/json')) {
+    const error = new Error('The backend service is not connected yet.')
+    error.response = {
+      status: 503,
+      data: { message: 'The backend service is not connected yet.' },
+    }
+    throw error
+  }
+
   return response.data
 }
 

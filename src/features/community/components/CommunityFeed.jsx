@@ -31,8 +31,8 @@ export function CommunityFeed() {
     Promise.all([listCommunityPosts(), getCurrentUser()])
       .then(([postResponse, user]) => {
         if (!active) return
-        setPosts(postResponse.posts)
-        setMeta(postResponse.meta)
+        setPosts(Array.isArray(postResponse?.posts) ? postResponse.posts : [])
+        setMeta(postResponse?.meta || null)
         setCurrentUser(user)
       })
       .catch((requestError) => {
@@ -117,8 +117,9 @@ export function CommunityFeed() {
     setError('')
     try {
       const response = await listCommunityPosts({ page: meta.page + 1, limit: meta.limit })
-      setPosts((current) => [...current, ...response.posts.filter((post) => !current.some((known) => known.id === post.id))])
-      setMeta(response.meta)
+      const nextPosts = Array.isArray(response?.posts) ? response.posts : []
+      setPosts((current) => [...current, ...nextPosts.filter((post) => !current.some((known) => known.id === post.id))])
+      setMeta(response?.meta || meta)
     } catch (requestError) {
       setError(apiErrorMessage(requestError, 'Could not load more posts.'))
     } finally {
