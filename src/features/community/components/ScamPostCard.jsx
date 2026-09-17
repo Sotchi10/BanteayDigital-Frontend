@@ -1,5 +1,5 @@
 import { useInterfaceTranslation } from "../../../locales/useInterfaceTranslation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Avatar, Badge, Card, Icon } from "../../../components/ui";
@@ -256,6 +256,18 @@ export function ScamPostCard({
   const { i18n, t } = useTranslation();
   const authorName = post.author?.username || post.author?.name || t("community.safetyTeam");
   const description = post.reportDescription || post.summary || "";
+  const imageSource = post.imageUrl || post.image;
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
+  const [failedImageSource, setFailedImageSource] = useState(null);
+
+  useEffect(() => {
+    if (!isImageZoomed) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setIsImageZoomed(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [isImageZoomed]);
 
   return (
     <Card className="flex min-h-[270px] w-full flex-col overflow-hidden p-0 shadow-none">
@@ -299,6 +311,27 @@ export function ScamPostCard({
             <Icon name="chevron" size={16} />
           </Link>
         </div>
+        {imageSource && failedImageSource !== imageSource ? (
+          <figure className="mt-4 m-0 overflow-hidden rounded-md border border-line bg-canvas">
+            <button
+              aria-label={`Zoom image: ${post.title}`}
+              className="block w-full cursor-zoom-in border-0 bg-transparent p-0"
+              onClick={() => setIsImageZoomed(true)}
+              type="button"
+            >
+              <img
+                alt={post.title}
+                className="max-h-72 w-full object-contain"
+                loading="lazy"
+                onError={() => setFailedImageSource(imageSource)}
+                src={imageSource}
+              />
+            </button>
+            <figcaption className="community-meta border-t border-line bg-surface px-3 py-2">
+              {t("community.attachedEvidence")}
+            </figcaption>
+          </figure>
+        ) : null}
       </article>
       <PostActions
         onShare={onShare}
@@ -307,6 +340,33 @@ export function ScamPostCard({
         onToggleLike={onToggleLike}
         post={post}
       />
+      {isImageZoomed ? (
+        <div
+          aria-label="Image zoom viewer"
+          className="fixed inset-0 z-[60] grid place-items-center bg-[#071a33]/80 p-4"
+          onClick={() => setIsImageZoomed(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            aria-label="Zoom out and close image"
+            className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-xl font-bold text-brand-900 shadow-lg hover:bg-brand-100"
+            onClick={() => setIsImageZoomed(false)}
+            type="button"
+          >
+            ×
+          </button>
+          <img
+            alt={post.title}
+            className="max-h-[calc(100dvh-2rem)] max-w-full cursor-zoom-out rounded-md object-contain shadow-2xl"
+            onClick={(event) => {
+              event.stopPropagation();
+              setIsImageZoomed(false);
+            }}
+            src={imageSource}
+          />
+        </div>
+      ) : null}
     </Card>
   );
 }

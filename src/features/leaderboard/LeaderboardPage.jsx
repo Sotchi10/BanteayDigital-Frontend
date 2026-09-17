@@ -79,20 +79,22 @@ export function LeaderboardPage() {
       ) : null}
       {!loading && !error ? (
         <>
-          <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {statistics.map((item) => (
-              <Card key={item.label} className="p-4">
-                <span className="mb-2 grid h-9 w-9 place-items-center rounded-full bg-brand-100 text-brand-800">
-                  <Icon name={item.icon} size={17} />
-                </span>
-                <strong className="block text-xl text-brand-900">
-                  {item.value}
-                </strong>
-                <span className="text-xs text-muted">{tr(item.label)}</span>
-              </Card>
-            ))}
+          <div className="mt-4 flex items-start gap-3 rounded-xl border border-line bg-white p-4 text-sm text-muted">
+            <Icon
+              name="shield"
+              size={19}
+              className="mt-0.5 shrink-0 text-brand-800"
+            />
+            <p className="m-0">
+              <strong className="block text-ink">
+                {tr("Community activity")}
+              </strong>
+              {tr(
+                "Counts reflect published alerts and their visible interactions.",
+              )}
+            </p>
           </div>
-          <Card className="overflow-hidden">
+          <Card className="mt-3 overflow-hidden">
             <div className="border-b border-line bg-[#f8fbff] px-5 py-4">
               <h2 className="m-0 text-lg font-bold text-brand-900">
                 {tr("Alert publishers")}
@@ -160,21 +162,6 @@ export function LeaderboardPage() {
               </div>
             )}
           </Card>
-          <div className="mt-4 flex items-start gap-3 rounded-xl border border-line bg-white p-4 text-sm text-muted">
-            <Icon
-              name="shield"
-              size={19}
-              className="mt-0.5 shrink-0 text-brand-800"
-            />
-            <p className="m-0">
-              <strong className="block text-ink">
-                {tr("Community activity")}
-              </strong>
-              {tr(
-                "Counts reflect published alerts and their visible interactions.",
-              )}
-            </p>
-          </div>
         </>
       ) : null}
     </main>
