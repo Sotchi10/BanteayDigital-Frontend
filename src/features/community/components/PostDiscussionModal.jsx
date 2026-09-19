@@ -92,13 +92,23 @@ export function PostDiscussionModal({
             <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
               {t("community.verifiedSafetyAlert")}
             </p>
+            <h1 id="discussion-title" className="m-0 text-lg font-bold leading-7 text-brand-900 sm:text-xl">
+              {post.title}
+            </h1>
+            {post.userCase ? (
+              <section className="rounded-lg border border-line bg-canvas p-3">
+                <h2 className="m-0 text-xs font-bold uppercase tracking-wide text-brand-700">
+                  {t('community.userCase')}
+                </h2>
+                <p className="m-0 mt-1 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-ink">
+                  {post.userCase}
+                </p>
+              </section>
+            ) : null}
             <div className="flex flex-wrap gap-2">
               <RiskBadge level={post.risk} />
               <CategoryBadge category={post.category} />
             </div>
-            <h1 id="discussion-title" className="m-0 text-lg font-bold leading-7 text-brand-900 sm:text-xl">
-              {post.title}
-            </h1>
             <p className="m-0 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-muted">
               {post.content}
             </p>

@@ -29,7 +29,7 @@ export function AppLayout() {
       >{tr("Skip to main content")}</a>
       <TopNavbar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} feedQuery={feedQuery} onFeedQueryChange={setFeedQuery} onUnseenScanCountChange={setUnseenScanCount} />
       <div className={`community-layout mx-auto grid w-full max-w-[1640px] grid-cols-1 items-start gap-6 px-4 py-6 pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] transition-[grid-template-columns] duration-300 ease-in-out sm:px-6 lg:gap-8 lg:px-8 lg:pb-10 ${isFullWidth ? "lg:grid-cols-1" : sidebarOpen ? "lg:grid-cols-[220px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)_288px]" : "lg:grid-cols-[64px_minmax(0,1fr)] xl:grid-cols-[64px_minmax(0,1fr)_288px]"}`}>
-        <LeftSidebar expanded={sidebarOpen} unseenScanCount={unseenScanCount} onToggle={() => setSidebarOpen((open) => !open)} onOpenMobileMenu={() => setMobileMenuOpen(true)} mobileMenuOpen={mobileMenuOpen} desktopVisible={!isFullWidth} />
+        <LeftSidebar expanded={sidebarOpen} unseenScanCount={unseenScanCount} onToggle={() => setSidebarOpen((open) => !open)} desktopVisible={!isFullWidth} />
         <Outlet context={{ feedQuery }} />
         {!isFullWidth ? <RightSidebar /> : null}
       </div>

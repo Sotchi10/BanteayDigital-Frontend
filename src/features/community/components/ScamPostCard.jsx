@@ -312,6 +312,16 @@ export function ScamPostCard({
           >
             {post.title}
           </h2>
+          {post.userCase ? (
+            <section className="mt-3 rounded-lg border border-line bg-canvas p-3">
+              <h3 className="community-meta m-0 font-bold uppercase tracking-wide text-brand-700">
+                {tr("User's case")}
+              </h3>
+              <p className="community-body mb-0 mt-1 whitespace-pre-wrap wrap-break-word text-ink line-clamp-3">
+                {post.userCase}
+              </p>
+            </section>
+          ) : null}
           {post.risk ? (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span className="community-meta font-semibold">{tr("AI Result")}</span>

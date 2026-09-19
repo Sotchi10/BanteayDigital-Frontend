@@ -199,6 +199,16 @@ export function PostDetailPage() {
         >
           {post.title}
         </h1>
+        {post.userCase ? (
+          <section className="mt-3 w-full rounded-xl border border-line bg-surface p-4">
+            <h2 className="community-meta m-0 font-bold uppercase tracking-wide text-brand-700">
+              {tr("User's case")}
+            </h2>
+            <p className="community-body mb-0 mt-1 whitespace-pre-wrap wrap-break-word text-ink">
+              {post.userCase}
+            </p>
+          </section>
+        ) : null}
       </header>
 
       <Card className="overflow-hidden p-0 shadow-none">

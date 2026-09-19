@@ -735,6 +735,42 @@ export function AnalysisPage() {
     setError("");
   };
 
+  useEffect(() => {
+    if (inputType !== "IMAGE") return undefined;
+    const pasteImage = (event) => {
+      const target = event.target;
+      if (
+        target instanceof HTMLElement
+        && (target.isContentEditable || target.tagName === "TEXTAREA" || (target.tagName === "INPUT" && target.getAttribute("type") !== "file"))
+      ) return;
+      const file = Array.from(event.clipboardData?.items || [])
+        .find((item) => item.kind === "file" && item.type.startsWith("image/"))
+        ?.getAsFile();
+      if (!file) return;
+      event.preventDefault();
+      if (!supportedImageTypes.has(file.type)) {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setImage(null);
+        setPreviewUrl(null);
+        setError(t("scan.invalidImage"));
+        return;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setImage(null);
+        setPreviewUrl(null);
+        setError(t("scan.imageTooLarge"));
+        return;
+      }
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setError("");
+    };
+    document.addEventListener("paste", pasteImage);
+    return () => document.removeEventListener("paste", pasteImage);
+  }, [inputType, previewUrl, t]);
+
   const analyse = async (event) => {
     event.preventDefault();
     let value = content.trim();
@@ -916,6 +952,9 @@ export function AnalysisPage() {
                 </span>
                 <span className="mt-1 text-xs text-muted">
                   {tr("PNG, JPG, JPEG, or WEBP · up to 10 MB")}
+                </span>
+                <span className="mt-1 text-xs font-semibold text-brand-700">
+                  {tr("Or paste an image with Ctrl + V")}
                 </span>
                 {previewUrl ? (
                   <span className="mt-4 block overflow-hidden rounded-xl border border-line bg-white p-1 shadow-sm">

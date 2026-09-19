@@ -24,8 +24,6 @@ export function LeftSidebar({
   expanded,
   unseenScanCount,
   onToggle,
-  onOpenMobileMenu,
-  mobileMenuOpen,
   desktopVisible,
 }) {
   const tr = useInterfaceTranslation();

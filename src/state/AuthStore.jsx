@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from "react";
-import { apiClient, request } from "../services/api";
+import { request } from "../services/api";
 
 const AuthContext = createContext(null);
 const STORAGE_KEY = "banteay-auth-user";
@@ -11,8 +11,6 @@ function loadUser() {
 function clearClientAuthState() {
   localStorage.removeItem(STORAGE_KEY);
   sessionStorage.removeItem(STORAGE_KEY);
-  delete apiClient.defaults.headers.common.Authorization;
-  delete apiClient.defaults.headers.common.authorization;
 }
 
 export function AuthProvider({ children }) {

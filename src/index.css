@@ -16,14 +16,14 @@
     --color-brand-900: #082f6b;
     --color-brand-800: #0c4698;
     --color-brand-700: #1764c0;
-    --color-brand-200: #cbdcf0;
+    --color-brand-200: #b8c8dc;
     --color-brand-100: #eaf2ff;
     --color-brand-50: #f0f6ff;
     --color-surface: #ffffff;
-    --color-canvas: #ffffff;
+    --color-canvas: #f6f8fb;
     --color-ink: #15233b;
     --color-muted: #6c7890;
-    --color-line: #e5eaf1;
+    --color-line: #cbd5e1;
     --color-risk-high: #dc4455;
     --color-risk-medium: #c98311;
     --color-risk-low: #25845a;
@@ -47,20 +47,24 @@
   .type-badge { font-size: 14px; font-weight: 500; line-height: 1.4; }
 }
 
-:root { color-scheme: light; --radius-card: 0.8rem; --shadow-card: 0 1px 2px rgb(16 42 67 / 0.04); }
+:root {
+  color-scheme: light;
+  --radius-card: 0.8rem;
+  --shadow-card: 0 1px 3px rgb(16 42 67 / 0.09), 0 8px 24px rgb(16 42 67 / 0.055);
+}
 [data-theme="dark"] {
   color-scheme: dark;
-  --color-surface: #0a0a0a;
-  --color-canvas: #000000;
-  --color-ink: #303030;
-  --color-muted: #a3a3a3;
-  --color-line: #3a3a3a;
+  --color-surface: #0d1626;
+  --color-canvas: #070d18;
+  --color-ink: #edf4ff;
+  --color-muted: #b4c1d4;
+  --color-line: #34445c;
   --color-brand-50: #0a1b33;
   --color-brand-100: #102a4d;
   --color-brand-200: #1e3a5f;
   --color-brand-700: #3b82f6;
   --color-brand-800: #2563eb;
-  --color-brand-900: #081a36;
+  --color-brand-900: #e7f0ff;
   --color-risk-high: #ff9ba7;
   --color-risk-medium: #ffd28a;
   --color-risk-low: #7ed8b0;

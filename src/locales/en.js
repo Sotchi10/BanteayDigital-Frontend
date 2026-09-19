@@ -39,7 +39,7 @@ export default {
       categories: { PHISHING: 'Phishing', IMPERSONATION: 'Impersonation', INVESTMENT: 'Investment', JOB: 'Job scam', SHOPPING: 'Shopping scam', OTHER: 'Other' },
       like: 'Like', comment: 'Comment', share: 'Share', report: 'Report', save: 'Save', removeFromSaved: 'Remove from saved', reply: 'Reply', edit: 'Edit', delete: 'Delete', hide: 'Hide', restore: 'Restore',
       moreOptions: 'More options', seeMore: 'See more', seeLess: 'See less', shareToTelegram: 'Share to Telegram', copyPostLink: 'Copy post link', postLinkCopied: 'Post link copied.',
-      closeDiscussion: 'Close discussion', verifiedSafetyAlert: 'Verified safety alert', attachedEvidence: 'Attached evidence', communitySafetyAlert: 'Community safety alert', discussion: 'Discussion', comments: 'Comments',
+      closeDiscussion: 'Close discussion', verifiedSafetyAlert: 'Verified safety alert', attachedEvidence: 'Attached evidence', communitySafetyAlert: 'Community safety alert', discussion: 'Discussion', comments: 'Comments', userCase: "User's case",
       signInToDiscuss: 'Sign in to join this safety discussion.', writeComment: 'Write a comment…', addHelpfulContext: 'Add helpful context or a safety tip…', postComment: 'Post comment', posting: 'Posting…',
       loadingComments: 'Loading comments…', noComments: 'No comments yet. Start a helpful discussion.', loadMoreComments: 'Load more comments', loading: 'Loading…',
       communityMember: 'Community member', commentHidden: 'Comment hidden by a moderator.', commentDeleted: 'Comment deleted.', optionalDetails: 'Optional details', submitReport: 'Submit report', reportSubmitted: 'Report submitted for review.',

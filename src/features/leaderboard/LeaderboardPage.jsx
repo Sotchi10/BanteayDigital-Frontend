@@ -9,7 +9,6 @@ import {
 export function LeaderboardPage() {
   const tr = useInterfaceTranslation();
   const [posts, setPosts] = useState([]);
-  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -19,7 +18,6 @@ export function LeaderboardPage() {
       .then((response) => {
         if (active) {
           setPosts(response.posts || []);
-          setTotal(response.meta?.total || 0);
         }
       })
       .catch((requestError) => {
@@ -50,21 +48,6 @@ export function LeaderboardPage() {
       ).sort((a, b) => b.count - a.count),
     [posts],
   );
-  const interactions = posts.reduce(
-    (sum, post) => ({
-      likes: sum.likes + (post.interaction?.likeCount || 0),
-      comments: sum.comments + (post.interaction?.commentCount || 0),
-      shares: sum.shares + (post.interaction?.shareCount || 0),
-    }),
-    { likes: 0, comments: 0, shares: 0 },
-  );
-  const statistics = [
-    { label: "Published alerts", value: total, icon: "alert" },
-    { label: "Helpful actions", value: interactions.likes, icon: "heart" },
-    { label: "Comments", value: interactions.comments, icon: "message" },
-    { label: "Shares", value: interactions.shares, icon: "share" },
-  ];
-
   return (
     <main className="min-w-0 lg:px-6" id="main-content">
       {loading ? (

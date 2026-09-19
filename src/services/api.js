@@ -31,8 +31,4 @@ async function request(path, options = {}) {
   return response.data
 }
 
-function getHealth() {
-  return request('/health')
-}
-
-export { apiClient, getHealth, request }
+export { request }

@@ -1,7 +1,0 @@
-<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="675" fill="#F5F8FC"/>
-  <rect x="420" y="220" width="360" height="235" rx="18" fill="#E7EEF7"/>
-  <circle cx="505" cy="295" r="28" fill="#AFC1D6"/>
-  <path d="M450 420L550 330L625 395L675 350L750 420H450Z" fill="#8EA8C5"/>
-  <text x="600" y="505" text-anchor="middle" fill="#687C95" font-family="Arial, sans-serif" font-size="28">Evidence image</text>
-</svg>
