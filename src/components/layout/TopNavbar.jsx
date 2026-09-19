@@ -12,7 +12,7 @@ import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 
 const mobileNavClass = ({ isActive }) =>
-  `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-xs font-medium ${isActive ? "text-brand-800" : "text-black"}`;
+  `flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-[11px] transition-colors ${isActive ? "text-brand-800 font-bold" : "text-muted font-medium hover:text-ink"}`;
 
 const mobileMainLinks = [
   { label: "Home", icon: "home", to: "/" },
@@ -35,6 +35,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [unseenScanCount, setUnseenScanCount] = useState(0);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const profileMenuRef = useRef(null);
   const cancelLogoutRef = useRef(null);
 
@@ -119,22 +120,34 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
   return (
     <>
       <header className="app-navbar sticky top-0 z-30 border-b border-line bg-surface">
-        <div className="mx-auto flex min-h-[64px] max-w-[1640px] items-center gap-4 px-4 sm:px-6 lg:gap-6 lg:px-8">
-          <NavLink
-            className="flex shrink-0 items-center gap-2"
-            to="/"
-            aria-label={tr("BanteayDigital home")}
-          >
-            <img
+        <div className="mx-auto flex min-h-[64px] max-w-[1640px] items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:gap-6 lg:px-8">
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line text-muted transition-colors hover:bg-brand-100 hover:text-brand-800 lg:hidden"
+              aria-label={tr("Open navigation menu")}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navigation-drawer"
+            >
+              <Icon name="menu" size={20} />
+            </button>
+            <NavLink
+              className="flex shrink-0 items-center gap-2"
+              to="/"
+              aria-label={tr("BanteayDigital home")}
+            >
+              <img
                 className="h-8 w-8"
                 src="/BanteayDigitalLogo.svg"
                 alt={tr("BanteayDigital logo")}
               />
-            <span className="hidden whitespace-nowrap text-base font-bold tracking-tight text-brand-900 sm:inline">
-              Banteay Digital
-            </span>
-          </NavLink>
-          <label className="mx-auto flex h-10 min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-line bg-canvas px-3 text-muted" aria-label={tr("Search scams, users, or keywords...")}>
+              <span className="hidden whitespace-nowrap text-base font-bold tracking-tight text-brand-900 sm:inline">
+                Banteay Digital
+              </span>
+            </NavLink>
+          </div>
+          <label className="mx-auto hidden h-10 min-w-0 max-w-xl flex-1 items-center gap-2 rounded-full border border-line bg-canvas px-3 text-muted sm:flex" aria-label={tr("Search scams, users, or keywords...")}>
             <Icon name="search" size={17} className="shrink-0" />
             <input
               className="min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-muted placeholder:text-[13px]"
@@ -144,8 +157,15 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
               onChange={(event) => { onFeedQueryChange(event.target.value); navigate("/"); }}
             />
           </label>
-          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
-            
+          <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:ml-0 sm:gap-1.5">
+            <button
+              type="button"
+              onClick={() => setMobileSearchOpen((open) => !open)}
+              className={`inline-grid h-9 w-9 place-items-center rounded-lg transition sm:hidden ${mobileSearchOpen ? "bg-brand-100 text-brand-800" : "text-black hover:bg-[#f2f5f8] hover:text-brand-800"}`}
+              aria-label={tr("Search")}
+            >
+              <Icon name="search" size={17} />
+            </button>
             <button
               type="button"
               onClick={() =>
@@ -235,15 +255,15 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
                       className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-black transition hover:bg-brand-100 hover:text-brand-800"
                     >
                       <Icon name="edit" size={18} />{tr("My approved reports")}</NavLink>
-                    <button
-                      type="button"
+                    <NavLink
+                      to="/about"
                       role="menuitem"
-                      onClick={() => i18n.changeLanguage(i18n.resolvedLanguage === "km" ? "en" : "km")}
+                      onClick={() => setProfileMenuOpen(false)}
                       className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-base font-medium text-black transition hover:bg-brand-100 hover:text-brand-800"
                     >
-                      <Icon name="globe" size={18} />
-                      {t("nav.language")}
-                    </button>
+                      <Icon name="book" size={18} />
+                      {tr("About Us")}
+                    </NavLink>
                     <NavLink
                       to="/settings"
                       onClick={() => setProfileMenuOpen(false)}
@@ -297,6 +317,40 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
             )}
           </div>
         </div>
+        {mobileSearchOpen ? (
+          <div className="border-t border-line bg-surface px-4 py-2.5 sm:hidden">
+            <div className="flex items-center gap-2">
+              <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-line bg-canvas px-3 text-muted" aria-label={tr("Search scams, users, or keywords...")}>
+                <Icon name="search" size={16} className="shrink-0" />
+                <input
+                  autoFocus
+                  className="min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-muted placeholder:text-[13px]"
+                  type="search"
+                  placeholder={tr("Search community posts")}
+                  value={feedQuery}
+                  onChange={(event) => { onFeedQueryChange(event.target.value); navigate("/"); }}
+                />
+                {feedQuery ? (
+                  <button
+                    type="button"
+                    onClick={() => onFeedQueryChange("")}
+                    className="p-1 text-muted hover:text-ink"
+                    aria-label={tr("Clear search")}
+                  >
+                    <Icon name="close" size={15} />
+                  </button>
+                ) : null}
+              </label>
+              <button
+                type="button"
+                onClick={() => setMobileSearchOpen(false)}
+                className="shrink-0 px-2 py-1 text-sm font-medium text-brand-800"
+              >
+                {tr("Cancel")}
+              </button>
+            </div>
+          </div>
+        ) : null}
       </header>
       {mobileMenuOpen ? (
         <div className="fixed inset-0 z-50 lg:hidden" role="presentation">
@@ -495,12 +549,16 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
           className="flex flex-1 flex-col items-center justify-center -mt-3"
           aria-label={tr("Analyze Scam")}
         >
-          <span className="cyber-scanner-btn grid h-12 w-12 place-items-center rounded-full text-white shadow-lg">
-            <Icon name="shield" size={22} />
-          </span>
-          <span className="mt-1 text-xs font-bold text-brand-800">
-            {tr("Analyze")}
-          </span>
+          {({ isActive }) => (
+            <>
+              <span className={`cyber-scanner-btn grid h-12 w-12 place-items-center rounded-full text-white shadow-lg transition-transform ${isActive ? "ring-2 ring-brand-800 ring-offset-2 ring-offset-surface scale-105" : "hover:scale-105"}`}>
+                <Icon name="shield" size={22} />
+              </span>
+              <span className={`mt-1 text-[11px] font-bold transition-colors ${isActive ? "text-brand-800" : "text-muted"}`}>
+                {tr("Analyze")}
+              </span>
+            </>
+          )}
         </NavLink>
         <NavLink to="/safety" className={mobileNavClass}>
           <Icon name="book" size={20} />

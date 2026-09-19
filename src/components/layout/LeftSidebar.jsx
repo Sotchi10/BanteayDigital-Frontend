@@ -49,18 +49,6 @@ export function LeftSidebar({
 
   return (
     <>
-      <div className="flex items-center lg:hidden">
-        <button
-          type="button"
-          onClick={onOpenMobileMenu}
-          className="inline-grid h-11 w-11 place-items-center rounded-lg border border-line text-muted hover:bg-brand-100 hover:text-brand-800"
-          aria-label={tr("Open navigation menu")}
-          aria-expanded={mobileMenuOpen}
-          aria-controls="mobile-navigation-drawer"
-        >
-          <Icon name="menu" size={21} />
-        </button>
-      </div>
       {desktopVisible ? (
         <aside
           className={`desktop-left-sidebar hidden self-start overflow-hidden transition-[width] duration-300 ease-in-out lg:sticky lg:top-[88px] lg:flex lg:flex-col ${expanded ? "w-[220px]" : "w-16"}`}

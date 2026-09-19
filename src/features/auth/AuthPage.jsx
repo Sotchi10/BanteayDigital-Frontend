@@ -5,6 +5,11 @@ import { Icon } from "../../components/ui";
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 import {
+  emailWithDomainPattern,
+  normalizePhoneNumber,
+  validPhoneNumber,
+} from "./contactValidation";
+import {
   clearRememberedCredentials,
   getRememberedContact,
   getRememberedCredentials,
@@ -81,9 +86,18 @@ export function AuthPage() {
       setError(t("auth.passwordLength"));
       return;
     }
-    const payload = trimmedContact.includes("@")
+    const isEmail = trimmedContact.includes("@");
+    if (isEmail && !emailWithDomainPattern.test(trimmedContact)) {
+      setError(tr("Enter an email address with a valid domain."));
+      return;
+    }
+    if (!isEmail && !validPhoneNumber(trimmedContact)) {
+      setError(tr("Phone number must contain 9 to 10 digits and start with 0."));
+      return;
+    }
+    const payload = isEmail
       ? { email: trimmedContact, password }
-      : { phoneNumber: trimmedContact, password };
+      : { phoneNumber: normalizePhoneNumber(trimmedContact), password };
     setLoading(true);
     try {
       if (isSignUp) await signUp(payload);
@@ -185,11 +199,14 @@ export function AuthPage() {
                   setError("");
                 }}
                 className={inputClass}
-                placeholder={t("auth.contactPlaceholder")}
+                placeholder={tr("you@example.com or 012345678")}
                 autoComplete="username"
-                inputMode="email"
-                aria-describedby={error ? "auth-error" : undefined}
+                inputMode={contact.includes("@") ? "email" : "tel"}
+                aria-describedby={error ? "contact-format-help auth-error" : "contact-format-help"}
               />
+              <span id="contact-format-help" className="text-xs font-normal text-muted">
+                {tr("Phone number: 9 to 10 digits, with '0' at the front.")}
+              </span>
             </label>
             <label className="grid gap-1.5 text-sm font-bold text-ink">
               {t("auth.password")}

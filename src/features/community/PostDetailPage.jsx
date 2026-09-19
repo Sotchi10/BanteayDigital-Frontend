@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { Avatar, Badge, Card, Icon } from "../../components/ui";
 import {
   getCommunityPost,
@@ -25,9 +26,13 @@ const publishedDate = (value, locale) => {
     : new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
 };
 
+const contentLanguage = (value) =>
+  /[\u1780-\u17ff]/u.test(value || "") ? "km" : undefined;
+
 export function PostDetailPage() {
   const { postId } = useParams();
   const { i18n, t } = useTranslation();
+  const tr = useInterfaceTranslation();
   const [post, setPost] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -188,7 +193,10 @@ export function PostDetailPage() {
           <Icon name="chevron" size={17} className="rotate-180" />
           {t("community.feed")}
         </Link>
-        <h1 className="community-post-title m-0 text-xl sm:text-2xl">
+        <h1
+          className="community-post-title m-0 text-xl sm:text-2xl"
+          lang={contentLanguage(post.title)}
+        >
           {post.title}
         </h1>
       </header>
@@ -224,7 +232,7 @@ export function PostDetailPage() {
             <RiskBadge level={post.risk} />
             <CategoryBadge category={post.category} />
           </div>
-          <p className="community-body mb-3 mt-3 whitespace-pre-wrap wrap-break-word text-[#40546b]">
+          <p className="community-body mb-3 mt-3 whitespace-pre-wrap wrap-break-word text-ink">
             {reportDescription}
           </p>
           {imageSource ? (
@@ -242,7 +250,7 @@ export function PostDetailPage() {
           ) : null}
         </article>
 
-        {reportDetails.scannedContent || analysis.summary || relatedScams.length || reportDetails.evidence ? (
+        {reportDetails.scannedContent || analysis.summary || analysis.reasons?.length || analysis.recommendedActions?.length || relatedScams.length || reportDetails.evidence ? (
           <section className="grid gap-4 border-t border-line bg-surface p-5 sm:p-6">
             {reportDetails.scannedContent ? (
               <div>
@@ -254,10 +262,10 @@ export function PostDetailPage() {
                 </p>
               </div>
             ) : null}
-            {analysis.summary || analysis.reasons?.length || analysis.recommendedActions?.length ? (
+            {analysis.summary || analysis.reasons?.length ? (
               <div>
                 <h2 className="community-section-title m-0 text-base">
-                  {t("community.scamAnalysis", { defaultValue: "Scam analysis" })}
+                  {tr("Explanation")}
                 </h2>
                 {analysis.summary ? <p className="community-body mb-0 mt-2 text-[#40546b]">{analysis.summary}</p> : null}
                 {analysis.reasons?.length ? (
@@ -265,11 +273,16 @@ export function PostDetailPage() {
                     {analysis.reasons.map((reason, index) => <li key={`${reason}-${index}`}>{reason}</li>)}
                   </ul>
                 ) : null}
-                {analysis.recommendedActions?.length ? (
-                  <ul className="community-body mb-0 mt-3 grid gap-1.5 pl-5 text-[#40546b]">
-                    {analysis.recommendedActions.map((action, index) => <li key={`${action}-${index}`}>{action}</li>)}
-                  </ul>
-                ) : null}
+              </div>
+            ) : null}
+            {analysis.recommendedActions?.length ? (
+              <div>
+                <h2 className="community-section-title m-0 text-base">
+                  {tr("Recommended actions")}
+                </h2>
+                <ul className="community-body mb-0 mt-2 grid gap-1.5 pl-5 text-[#40546b]">
+                  {analysis.recommendedActions.map((action, index) => <li key={`${action}-${index}`}>{action}</li>)}
+                </ul>
               </div>
             ) : null}
             {relatedScams.length ? (
@@ -292,7 +305,7 @@ export function PostDetailPage() {
                 <h2 className="community-section-title m-0 text-base">
                   {t("community.evidence", { defaultValue: "Evidence" })}
                 </h2>
-                <p className="community-body mb-0 mt-2 whitespace-pre-wrap text-[#40546b]">{reportDetails.evidence}</p>
+                <p className="community-body mb-0 mt-2 whitespace-pre-wrap text-ink">{reportDetails.evidence}</p>
               </div>
             ) : null}
           </section>

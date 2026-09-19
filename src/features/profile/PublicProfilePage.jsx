@@ -26,6 +26,9 @@ const formatDate = (value) =>
     year: "numeric",
   }).format(new Date(value));
 
+const contentLanguage = (value) =>
+  /[\u1780-\u17ff]/u.test(value || "") ? "km" : undefined;
+
 export function PublicProfilePage() {
   const tr = useInterfaceTranslation();
   const { username } = useParams();
@@ -120,21 +123,42 @@ export function PublicProfilePage() {
           <div className="grid gap-4">
             {profile.reports.map((report) => (
               <Card key={report.communityPost.id} className="p-5 sm:p-6">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="m-0 text-lg font-bold text-black">
-                      {report.communityPost.title}
-                    </h3>
-                    <p className="mb-0 mt-1 text-xs text-muted">
-                      {tr("Published")}{" "}
-                      {formatDate(report.communityPost.publishedAt)}
-                    </p>
-                  </div>
+                <div className="min-w-0">
+                  <h3
+                    className="community-post-title m-0 wrap-break-word text-lg font-bold text-black"
+                    lang={contentLanguage(report.communityPost.title)}
+                  >
+                    {report.communityPost.title}
+                  </h3>
+                  <p className="mb-0 mt-1 text-xs text-muted">
+                    {tr("Published")}{" "}
+                    {formatDate(report.communityPost.publishedAt)}
+                  </p>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                   {report.scan?.assessment ? (
                     <Badge tone={assessmentTone(report.scan.assessment)}>
                       {tr(report.scan.assessment.replaceAll("_", " "))}
                     </Badge>
                   ) : null}
+                  <div className="ml-auto flex items-center gap-4 text-sm font-medium text-muted">
+                    <span
+                      aria-label={`${tr("Likes")}: ${report.communityPost._count?.likes || 0}`}
+                      className="inline-flex items-center gap-1.5"
+                      title={tr("Likes")}
+                    >
+                      <Icon name="heart" size={16} />
+                      {report.communityPost._count?.likes || 0}
+                    </span>
+                    <span
+                      aria-label={`${tr("Comments")}: ${report.communityPost._count?.comments || 0}`}
+                      className="inline-flex items-center gap-1.5"
+                      title={tr("Comments")}
+                    >
+                      <Icon name="message" size={16} />
+                      {report.communityPost._count?.comments || 0}
+                    </span>
+                  </div>
                 </div>
                 <p className="mb-0 mt-3 text-sm leading-6 text-[#40546b]">
                   {report.communityPost.summary}

@@ -186,7 +186,7 @@ export function CommentItem({
               {editing ? (
                 <div className="mt-2 space-y-2">
                   <textarea
-                    className="min-h-16 w-full resize-y rounded-lg border border-line p-2 text-sm outline-none focus:border-brand-600"
+                    className="min-h-16 w-full resize-y rounded-lg border border-line bg-surface p-2 text-sm text-ink outline-none focus:border-brand-600"
                     maxLength={1000}
                     onChange={(event) => setEditContent(event.target.value)}
                     value={editContent}
@@ -201,7 +201,7 @@ export function CommentItem({
                       {t("community.save")}
                     </button>
                     <button
-                      className="rounded-md border border-line bg-white px-2.5 py-1 text-xs"
+                      className="rounded-md border border-line bg-surface px-2.5 py-1 text-xs text-ink hover:bg-brand-100"
                       onClick={() => setEditing(false)}
                       type="button"
                     >
@@ -210,7 +210,7 @@ export function CommentItem({
                   </div>
                 </div>
               ) : (
-                <p className="community-body my-1 whitespace-pre-wrap wrap-break-words text-[#3f4f66]">
+                <p className="community-body my-1 whitespace-pre-wrap wrap-break-words text-ink">
                   {comment.content}
                 </p>
               )}
@@ -223,7 +223,7 @@ export function CommentItem({
             </p>
           )}
 
-          <div className="flex flex-wrap gap-3 text-sm font-medium text-[#68778d]">
+          <div className="flex flex-wrap gap-3 text-sm font-medium text-muted">
             {currentUser && isActive && !comment.parentId ? (
               <button
                 className="border-0 bg-transparent p-0 hover:text-brand-700"
@@ -272,9 +272,9 @@ export function CommentItem({
           </div>
 
           {reporting ? (
-            <div className="mt-2 flex flex-wrap items-center gap-2 rounded-lg bg-[#fff7f7] p-2">
+            <div className="mt-2 flex flex-wrap items-center gap-2 rounded-lg border border-risk-high/30 bg-risk-high/10 p-2">
               <select
-                className="rounded-md border border-line bg-white px-2 py-1 text-xs"
+                className="rounded-md border border-line bg-surface px-2 py-1 text-xs text-ink"
                 onChange={(event) => setReportReason(event.target.value)}
                 value={reportReason}
               >
@@ -285,7 +285,7 @@ export function CommentItem({
                 ))}
               </select>
               <input
-                className="min-w-48 flex-1 rounded-md border border-line bg-white px-2 py-1 text-xs"
+                className="min-w-48 flex-1 rounded-md border border-line bg-surface px-2 py-1 text-xs text-ink placeholder:text-muted"
                 maxLength={500}
                 onChange={(event) => setReportDetails(event.target.value)}
                 placeholder={t("community.optionalDetails")}
@@ -300,7 +300,7 @@ export function CommentItem({
                 {t("community.submitReport")}
               </button>
               <button
-                className="text-xs"
+                className="text-xs text-muted hover:text-ink"
                 onClick={() => setReporting(false)}
                 type="button"
               >
@@ -310,7 +310,7 @@ export function CommentItem({
           ) : null}
           {replying ? (
             <div className="mt-3">
-                <CommentComposer
+              <CommentComposer
                 autoFocus
                 compact
                 currentUser={currentUser}
@@ -365,7 +365,7 @@ export function CommentItem({
           <section
             aria-modal="true"
             aria-labelledby={`delete-comment-${comment.id}`}
-            className="w-full max-w-sm rounded-xl border border-line bg-white p-5 shadow-2xl"
+            className="w-full max-w-sm rounded-xl border border-line bg-surface p-5 shadow-2xl"
             role="dialog"
           >
             <h2 id={`delete-comment-${comment.id}`} className="m-0 text-lg font-bold text-brand-900">
@@ -380,7 +380,7 @@ export function CommentItem({
                 type="button"
                 disabled={busy}
                 onClick={() => setDeleteConfirmOpen(false)}
-                className="min-h-10 rounded-lg border border-line bg-white px-4 text-sm font-bold text-brand-800 hover:bg-brand-100 disabled:opacity-60"
+                className="min-h-10 rounded-lg border border-line bg-surface px-4 text-sm font-bold text-brand-800 hover:bg-brand-100 disabled:opacity-60"
               >
                 {t("common.cancel")}
               </button>

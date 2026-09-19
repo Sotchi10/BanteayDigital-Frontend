@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Avatar, Card, Icon } from "../../components/ui";
 import { useAuth } from "../../state/AuthStore";
 import { getThemePreference, setThemePreference } from "../../state/theme";
+import { emailWithDomainPattern } from "../auth/contactValidation";
 
 const sections = [
   { id: "account", label: "Account & Profile", icon: "user" },
@@ -139,6 +140,8 @@ export function SettingsPage() {
     };
     if (!details.name || !details.email || !details.username)
       return setError("Enter your full name, username, and email address.");
+    if (!emailWithDomainPattern.test(details.email))
+      return setError("Enter an email address with a valid domain.");
     if (!/^[a-zA-Z0-9_]+$/.test(details.username))
       return setError(
         "Username can only contain letters, numbers, and underscores.",

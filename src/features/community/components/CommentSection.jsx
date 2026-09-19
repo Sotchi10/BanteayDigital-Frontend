@@ -114,7 +114,7 @@ export function CommentSection({
       </div>
       {meta.hasMore ? (
         <button
-          className="mt-4 w-full rounded-lg border border-line bg-white py-2 text-sm font-semibold text-brand-700"
+          className="mt-4 w-full rounded-lg border border-line bg-surface py-2 text-sm font-semibold text-brand-800 hover:bg-brand-100"
           disabled={loadingMore}
           onClick={loadMore}
           type="button"
@@ -135,7 +135,7 @@ export function CommentSection({
 
   return (
     <section
-      className={` border-line bg-[#fbfcfe] px-1 py-4 ${className}`}
+      className={` border-line bg-transparent px-1 py-4 ${className}`}
       aria-label={t("community.comments")}
     >
       {pinnedComposer ? (
@@ -143,7 +143,7 @@ export function CommentSection({
           <div className="min-h-0 flex-1 overflow-y-auto pr-1">
             {commentList}
           </div>
-          <div className="mt-3 shrink-0 border-t border-line bg-[#fbfcfe] pt-3">
+          <div className="mt-3 shrink-0 border-t border-line bg-surface pt-3">
             {composer}
           </div>
         </>

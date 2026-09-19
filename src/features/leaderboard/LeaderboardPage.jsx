@@ -140,12 +140,14 @@ export function LeaderboardPage() {
                       </span>
                     </div>
                     {index === 0 ? (
-                      <Badge tone="blue" className="hidden sm:inline-flex">
-                        <Icon name="trophy" size={13} />
-                        {tr("Most alerts")}
-                      </Badge>
+                      <span className="hidden sm:inline-flex shrink-0">
+                        <Badge tone="blue">
+                          <Icon name="trophy" size={13} />
+                          {tr("Most alerts")}
+                        </Badge>
+                      </span>
                     ) : null}
-                    <div className="text-right">
+                    <div className="shrink-0 text-right">
                       <strong className="block text-lg text-brand-900">
                         {person.count}
                       </strong>

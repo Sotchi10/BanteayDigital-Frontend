@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Icon } from "../../components/ui";
-import { Rith, Leng } from "../../assets";
+import { Rith, Leng, Ching } from "../../assets";
 
 const members = [
   { name: "Yan Sovanpisoth", initials: "YS", specialization: "software", roles: ["lead", "backend", "ai"], photo: null },
   { name: "Kong Sothearith", initials: "KS", specialization: "software", roles: ["backend", "ai"], photo: Rith },
   { name: "Siv Kimleng", initials: "SK", specialization: "software", roles: ["design", "frontend"], photo: Leng },
-  { name: "Kov Cheaching", initials: "KC", specialization: "software", roles: ["rag", "frontend"], photo: null },
+  { name: "Kov Cheaching", initials: "KC", specialization: "software", roles: ["rag", "frontend"], photo: Ching },
   { name: "Rous Sovannmakra", initials: "RS", specialization: "cyber", roles: ["placeholder"], photo: null },
   { name: "Chan Sopheak", initials: "CS", specialization: "cyber", roles: ["placeholder"], photo: null },
   { name: "Gnoeuk Rithykun", initials: "GR", specialization: "business", roles: ["placeholder"], photo: null },
@@ -113,7 +113,13 @@ export function AboutPage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {members.map((member) => <article key={member.name} className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-line bg-surface">
             <div role="img" aria-label={t("team.photo", { name: member.name })} className="relative grid aspect-[4/3] place-items-center border-b border-line bg-canvas text-muted">
-              <span className="grid h-20 w-20 place-items-center rounded-full border border-line bg-surface"><img src={member.photo} alt={member.initials} size={36} className="rounded-[50%]" /></span>
+              <span className="grid h-20 w-20 place-items-center overflow-hidden rounded-full border border-line bg-surface">
+                {member.photo ? (
+                  <img src={member.photo} alt={member.name} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="font-mono text-xl font-bold text-brand-700">{member.initials}</span>
+                )}
+              </span>
               <span aria-hidden="true" className="absolute bottom-3 left-4 font-mono text-sm font-semibold">{member.initials}</span>
             </div>
             <div className="flex flex-1 flex-col p-5">

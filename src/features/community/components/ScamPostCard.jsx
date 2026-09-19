@@ -6,10 +6,15 @@ import { Avatar, Badge, Card, Icon } from "../../../components/ui";
 import { apiErrorMessage } from "../api/communityApi";
 
 export function RiskBadge({ level }) {
+  const tr = useInterfaceTranslation();
   const { t } = useTranslation();
   if (!level) return null;
   const normalizedLevel = `${level}`.charAt(0).toUpperCase() + `${level}`.slice(1).toLowerCase();
-  return <Badge tone={normalizedLevel === "Critical" ? "high" : normalizedLevel.toLowerCase()}>{t("community.risk", { level: t(`community.riskLevels.${normalizedLevel}`, { defaultValue: normalizedLevel }) })}</Badge>;
+  const tone = normalizedLevel === "Critical" ? "high" : normalizedLevel === "Unknown" ? "neutral" : normalizedLevel.toLowerCase();
+  const label = normalizedLevel === "Unknown"
+    ? tr("Unknown")
+    : t(`community.riskLevels.${normalizedLevel}`, { defaultValue: normalizedLevel });
+  return <Badge tone={tone}>{t("community.risk", { level: label })}</Badge>;
 }
 export function CategoryBadge({ category }) {
   const { t } = useTranslation();
@@ -33,6 +38,9 @@ function postTimestamp(value, locale) {
     date,
   );
 }
+
+const contentLanguage = (value) =>
+  /[\u1780-\u17ff]/u.test(value || "") ? "km" : undefined;
 
 function copyText(value) {
   if (navigator.clipboard && window.isSecureContext)
@@ -164,72 +172,76 @@ export function PostActions({
 
   return (
     <>
-      <div className="flex min-h-12 flex-wrap items-center gap-2 border-t border-line px-4 py-2 sm:px-5">
-        <button
-          aria-label={`${t("community.like")}: ${post.interaction.likeCount}`}
-          aria-pressed={post.interaction.likedByMe}
-          title={t("community.like")}
-          className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium transition hover:bg-[#f2f5f8] ${post.interaction.likedByMe ? "text-red-600 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
-          disabled={likePending}
-          onClick={toggleLike}
-          type="button"
-        >
-          <Icon name="heart" size={16} />
-          <span>{post.interaction.likeCount}</span>
-        </button>
-        <button
-          aria-label={`${t("community.comment")}: ${post.interaction.commentCount}`}
-          title={t("community.comment")}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-[#61718a] transition hover:bg-[#f2f5f8] hover:text-brand-700"
-          onClick={onOpenComments}
-          type="button"
-        >
-          <Icon name="message" size={15} />
-          <span>{post.interaction.commentCount}</span>
-        </button>
-        {onToggleSave ? (
+      <div className="flex min-h-12 items-center justify-between gap-2 border-t border-line px-3 py-1.5 sm:px-5 sm:py-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <button
-            aria-label={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
-            aria-pressed={post.interaction.savedByMe}
-            title={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
-            className={`inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium transition hover:bg-[#f2f5f8] ${post.interaction.savedByMe ? "text-brand-800 [&_svg]:fill-current" : "text-[#61718a] hover:text-brand-700"}`}
-            disabled={savePending}
-            onClick={toggleSave}
+            aria-label={`${t("community.like")}: ${post.interaction.likeCount}`}
+            aria-pressed={post.interaction.likedByMe}
+            title={t("community.like")}
+            className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium transition hover:bg-[#f2f5f8] sm:min-h-9 ${post.interaction.likedByMe ? "text-red-600 [&_svg]:fill-current" : "text-muted hover:text-brand-700"}`}
+            disabled={likePending}
+            onClick={toggleLike}
             type="button"
           >
-            <Icon name="bookmark" size={15} />
+            <Icon name="heart" size={16} />
+            <span>{post.interaction.likeCount}</span>
           </button>
-        ) : null}
-        <div className="relative">
           <button
-            aria-label={t("community.share")}
-            aria-expanded={shareOpen}
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-[#61718a] transition hover:bg-[#f2f5f8] hover:text-brand-700"
-            disabled={sharePending}
-            onClick={openShareOptions}
-            title={t("community.share")}
+            aria-label={`${t("community.comment")}: ${post.interaction.commentCount}`}
+            title={t("community.comment")}
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-muted transition hover:bg-[#f2f5f8] hover:text-brand-700 sm:min-h-9"
+            onClick={onOpenComments}
             type="button"
           >
-            <Icon name="share" size={15} />
+            <Icon name="message" size={15} />
+            <span>{post.interaction.commentCount}</span>
           </button>
-          {shareOpen ? (
-            <div className="absolute bottom-full right-0 sm:right-2 z-10 mb-2 min-w-40 rounded-lg border border-line bg-white p-1.5 shadow-lg">
-              <button
-                className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
-                onClick={shareToTelegram}
-                type="button"
-              >
-                {t("community.shareToTelegram")}
-              </button>
-              <button
-                className="w-full rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-[#3f4e66] hover:bg-brand-100 hover:text-brand-800"
-                onClick={copyLink}
-                type="button"
-              >
-                {t("community.copyPostLink")}
-              </button>
-            </div>
+        </div>
+        <div className="flex items-center gap-1 sm:gap-2">
+          {onToggleSave ? (
+            <button
+              aria-label={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
+              aria-pressed={post.interaction.savedByMe}
+              title={post.interaction.savedByMe ? t("Remove saved post") : t("Save post")}
+              className={`inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg px-2 text-sm font-medium transition hover:bg-[#f2f5f8] sm:min-h-9 sm:min-w-0 sm:px-2.5 ${post.interaction.savedByMe ? "text-brand-800 [&_svg]:fill-current" : "text-muted hover:text-brand-700"}`}
+              disabled={savePending}
+              onClick={toggleSave}
+              type="button"
+            >
+              <Icon name="bookmark" size={16} />
+            </button>
           ) : null}
+          <div className="relative">
+            <button
+              aria-label={t("community.share")}
+              aria-expanded={shareOpen}
+              className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg px-2 text-sm font-medium text-muted transition hover:bg-[#f2f5f8] hover:text-brand-700 sm:min-h-9 sm:min-w-0 sm:px-2.5"
+              disabled={sharePending}
+              onClick={openShareOptions}
+              title={t("community.share")}
+              type="button"
+            >
+              <Icon name="share" size={16} />
+            </button>
+            {shareOpen ? (
+              <div className="absolute bottom-full right-0 z-20 mb-2 min-w-44 rounded-xl border border-line bg-surface p-1.5 shadow-xl sm:right-0">
+                <button
+                  className="w-full rounded-lg border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-ink hover:bg-brand-100 hover:text-brand-800"
+                  onClick={shareToTelegram}
+                  type="button"
+                >
+                  {t("community.shareToTelegram")}
+                </button>
+                <button
+                  className="w-full rounded-lg border-0 bg-transparent px-3 py-2 text-left text-sm font-medium text-ink hover:bg-brand-100 hover:text-brand-800"
+                  onClick={copyLink}
+                  type="button"
+                >
+                  {t("community.copyPostLink")}
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
       {error ? (
@@ -253,6 +265,7 @@ export function ScamPostCard({
   onToggleLike,
   post,
 }) {
+  const tr = useInterfaceTranslation();
   const { i18n, t } = useTranslation();
   const authorName = post.author?.username || post.author?.name || t("community.safetyTeam");
   const description = post.reportDescription || post.summary || "";
@@ -291,13 +304,21 @@ export function ScamPostCard({
               {postTimestamp(post.publishedAt, i18n.language)} · {t("community.public")}
             </p>
           </div>
-          <RiskBadge level={post.risk} />
         </header>
         <div className="mt-4 flex flex-1 flex-col">
-          <h2 className="community-post-title m-0 line-clamp-2 min-h-[2rem] text-[18px] leading-4">
+          <h2
+            className="community-post-title m-0 line-clamp-2 min-h-[2rem] text-[18px] leading-snug"
+            lang={contentLanguage(post.title)}
+          >
             {post.title}
           </h2>
-          <p className="community-body whitespace-pre-wrap wrap-break-word text-[#44536a] line-clamp-3">
+          {post.risk ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="community-meta font-semibold">{tr("AI Result")}</span>
+              <RiskBadge level={post.risk} />
+            </div>
+          ) : null}
+          <p className="community-body whitespace-pre-wrap wrap-break-word text-muted line-clamp-3">
             {description}
           </p>
         </div>

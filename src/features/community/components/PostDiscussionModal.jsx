@@ -57,10 +57,10 @@ export function PostDiscussionModal({
       <section
         aria-labelledby="discussion-title"
         aria-modal="true"
-        className="flex h-[100dvh] w-full max-w-2xl flex-col overflow-hidden rounded-none border-0 bg-white shadow-2xl sm:h-[min(760px,calc(100dvh-2.5rem))] sm:rounded-2xl sm:border sm:border-line"
+        className="flex h-[100dvh] w-full max-w-2xl flex-col overflow-hidden rounded-none border-0 bg-surface shadow-2xl sm:h-[min(760px,calc(100dvh-2.5rem))] sm:rounded-2xl sm:border sm:border-line"
         role="dialog"
       >
-        <article className="max-h-[46%] shrink-0 overflow-y-auto border-b border-line bg-white">
+        <article className="max-h-[46%] shrink-0 overflow-y-auto border-b border-line bg-surface">
           <header className="flex items-start justify-between gap-3 border-b border-line px-4 py-3 sm:px-6 sm:py-4">
             <div className="flex min-w-0 items-center gap-3">
               <Avatar imageUrl={post.author?.avatarUrl} name={authorName} tone="indigo" />
@@ -99,11 +99,11 @@ export function PostDiscussionModal({
             <h1 id="discussion-title" className="m-0 text-lg font-bold leading-7 text-brand-900 sm:text-xl">
               {post.title}
             </h1>
-            <p className="m-0 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-[#40546b]">
+            <p className="m-0 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-muted">
               {post.content}
             </p>
             {showImage && imageSource ? (
-              <figure className="m-0 overflow-hidden rounded-xl border border-line bg-[#f5f8fc]">
+              <figure className="m-0 overflow-hidden rounded-xl border border-line bg-canvas">
                 <img
                   alt={post.title}
                   className="aspect-video max-h-64 w-full object-cover"
@@ -115,7 +115,7 @@ export function PostDiscussionModal({
                   }}
                   src={imageSource}
                 />
-                <figcaption className="border-t border-line bg-white px-3 py-2 text-xs font-medium text-muted">
+                <figcaption className="border-t border-line bg-surface px-3 py-2 text-xs font-medium text-muted">
                   {t("community.attachedEvidence")}
                 </figcaption>
               </figure>
@@ -126,10 +126,10 @@ export function PostDiscussionModal({
           </div>
         </article>
         <aside
-          className="flex min-h-0 flex-1 flex-col bg-[#fbfcfe]"
+          className="flex min-h-0 flex-1 flex-col bg-surface"
           aria-label={t("community.comments")}
         >
-          <div className="flex items-center justify-between border-b border-line bg-white px-5 py-4">
+          <div className="flex items-center justify-between border-b border-line bg-surface px-5 py-4">
             <div>
               <p className="m-0 text-xs font-bold uppercase tracking-widest text-brand-700">
                 {t("community.discussion")}
