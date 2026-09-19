@@ -5,7 +5,9 @@ import { Icon } from "../../components/ui";
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 import {
+  acceptedEmailDomains,
   emailWithDomainPattern,
+  hasAcceptedEmailDomain,
   normalizePhoneNumber,
   validPhoneNumber,
 } from "./contactValidation";
@@ -36,6 +38,7 @@ const benefits = (t) => [
 
 const inputClass =
   "min-h-12 w-full rounded-lg border border-[#cbd8e5] bg-white px-3.5 text-base text-ink outline-none placeholder:text-[#7c899b] transition hover:border-[#9eb9d5] focus:border-brand-700 focus:ring-2 focus:ring-[#d9ebfa] disabled:cursor-wait disabled:opacity-65";
+const acceptedDomainsMessage = `Accepted domains: ${acceptedEmailDomains.map((domain) => `@${domain}`).join(", ")}.`;
 
 export function AuthPage() {
   const tr = useInterfaceTranslation();
@@ -91,6 +94,10 @@ export function AuthPage() {
       setError(tr("Enter an email address with a valid domain."));
       return;
     }
+    if (isEmail && !hasAcceptedEmailDomain(trimmedContact)) {
+      setError(tr(acceptedDomainsMessage));
+      return;
+    }
     if (!isEmail && !validPhoneNumber(trimmedContact)) {
       setError(tr("Phone number must contain 9 to 10 digits and start with 0."));
       return;
@@ -116,6 +123,8 @@ export function AuthPage() {
       setLoading(false);
     }
   };
+  const showUnsupportedEmailDomain =
+    emailWithDomainPattern.test(contact.trim()) && !hasAcceptedEmailDomain(contact);
 
   return (
     <main className="min-h-screen bg-canvas text-ink lg:grid lg:grid-cols-2">
@@ -198,12 +207,25 @@ export function AuthPage() {
                   setContact(event.target.value);
                   setError("");
                 }}
-                className={inputClass}
+                className={`${inputClass} ${showUnsupportedEmailDomain ? "border-risk-high focus:border-risk-high focus:ring-[#fee2e2]" : ""}`}
                 placeholder={tr("you@example.com or 012345678")}
                 autoComplete="username"
-                inputMode={contact.includes("@") ? "email" : "tel"}
-                aria-describedby={error ? "contact-format-help auth-error" : "contact-format-help"}
+                inputMode="text"
+                aria-invalid={showUnsupportedEmailDomain}
+                aria-describedby={showUnsupportedEmailDomain ? "accepted-domains-help" : error ? "contact-format-help auth-error" : "contact-format-help"}
               />
+              {showUnsupportedEmailDomain ? (
+                <div
+                  id="accepted-domains-help"
+                  className="relative -mt-0.5 flex items-center gap-3 rounded-lg border border-[#dbe2ea] bg-white px-3 py-3 text-sm font-normal leading-5 text-[#1d2d44] shadow-lg before:absolute before:-top-2 before:left-8 before:h-4 before:w-4 before:rotate-45 before:border-l before:border-t before:border-[#dbe2ea] before:bg-white"
+                  role="alert"
+                >
+                  <span className="relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-md bg-orange-500 text-white">
+                    <Icon name="alert" size={18} />
+                  </span>
+                  <span className="relative z-10">{tr(acceptedDomainsMessage)}</span>
+                </div>
+              ) : null}
               <span id="contact-format-help" className="text-xs font-normal text-muted">
                 {tr("Phone number: 9 to 10 digits, with '0' at the front.")}
               </span>
