@@ -8,6 +8,11 @@ import {
   initializeScanHistorySeenAt,
   scanHistoryUnreadCount,
 } from "../../services/scanHistoryNotifications";
+import { listAlerts } from "../../features/alerts/api/alertsApi";
+import {
+  ALERT_READ_STATE_EVENT,
+  readAlertIds,
+} from "../../features/alerts/alertReadState";
 import { useAuth } from "../../state/AuthStore";
 import { useTranslation } from "react-i18next";
 
@@ -35,6 +40,7 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [unseenScanCount, setUnseenScanCount] = useState(0);
+  const [unreadAlertCount, setUnreadAlertCount] = useState(0);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const profileMenuRef = useRef(null);
   const cancelLogoutRef = useRef(null);
@@ -68,6 +74,27 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
       window.removeEventListener("storage", handleStorage);
     };
   }, [isAuthenticated, user?.id]);
+
+  useEffect(() => {
+    let active = true;
+    const refreshUnreadAlerts = async () => {
+      try {
+        const response = await listAlerts();
+        const readIds = readAlertIds();
+        if (active) setUnreadAlertCount((response.alerts || []).filter((alert) => !readIds.has(alert.id)).length);
+      } catch {
+        if (active) setUnreadAlertCount(0);
+      }
+    };
+    refreshUnreadAlerts();
+    const interval = window.setInterval(refreshUnreadAlerts, 60000);
+    window.addEventListener(ALERT_READ_STATE_EVENT, refreshUnreadAlerts);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      window.removeEventListener(ALERT_READ_STATE_EVENT, refreshUnreadAlerts);
+    };
+  }, []);
 
   const handleLogout = async () => {
     if (loggingOut) return;
@@ -196,6 +223,11 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
               aria-label={tr("Safety alerts")}
             >
               <Icon name="bell" size={19} />
+              {unreadAlertCount ? (
+                <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full border-2 border-white bg-risk-high px-1 text-[10px] font-bold leading-none text-white">
+                  {unreadAlertCount > 99 ? "99+" : unreadAlertCount}
+                </span>
+              ) : null}
             </NavLink>
             {isAuthenticated ? (
               <div className="relative" ref={profileMenuRef}>
