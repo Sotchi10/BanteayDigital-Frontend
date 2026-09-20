@@ -125,6 +125,20 @@ export function AuthPage() {
   };
   const showUnsupportedEmailDomain =
     emailWithDomainPattern.test(contact.trim()) && !hasAcceptedEmailDomain(contact);
+  const changeRememberPreference = async (checked) => {
+    setRemember(checked);
+    if (!checked) {
+      clearRememberedCredentials();
+      return;
+    }
+
+    const credentials = await getRememberedCredentials({
+      interactive: true,
+      contact: contact.trim(),
+    });
+    if (credentials.contact) setContact(credentials.contact);
+    if (credentials.password) setPassword(credentials.password);
+  };
 
   return (
     <main className="min-h-screen bg-canvas text-ink lg:grid lg:grid-cols-2">
@@ -196,7 +210,15 @@ export function AuthPage() {
                 : t("auth.loginSubtitle")}
             </p>
           </div>
-          <form onSubmit={submit} noValidate className="grid gap-4">
+          <form
+            id="auth-form"
+            action={isSignUp ? "/api/v1/auth/register" : "/api/v1/auth/login"}
+            method="post"
+            autoComplete="on"
+            onSubmit={submit}
+            noValidate
+            className="grid gap-4"
+          >
             <label className="grid gap-1.5 text-sm font-bold text-ink">
               {t("auth.contact")}
               <input
@@ -269,8 +291,11 @@ export function AuthPage() {
               <div className="-mt-1 flex items-center justify-between gap-3">
                 <label className="flex items-center gap-2 text-sm text-[#40546b]">
                   <input
+                    name="remember"
                     checked={remember}
-                    onChange={(event) => setRemember(event.target.checked)}
+                    onChange={(event) => {
+                      void changeRememberPreference(event.target.checked);
+                    }}
                     type="checkbox"
                     className="h-4 w-4 accent-brand-800"
                   />

@@ -165,17 +165,17 @@ export function SettingsPage() {
 
   return (
     <main
-      className="settings-page mx-auto w-full max-w-[1060px] min-w-0 py-2 lg:px-6"
+      className="settings-page mx-auto w-full max-w-[1120px] min-w-0 lg:px-6"
       id="main-content"
     >
       <Link
         to="/"
-        className="mb-5 inline-flex min-h-10 items-center gap-2 rounded-lg px-1 text-sm font-bold text-brand-800 transition hover:text-brand-700"
+        className="mb-3 inline-flex min-h-10 items-center gap-2 rounded-lg px-1 text-sm font-bold text-brand-800 transition hover:text-brand-700 sm:mb-5"
       >
         <Icon name="chevron" size={16} className="rotate-180" />
         {tr("Back to community")}
       </Link>
-      <header className="mb-7 sm:mb-8">
+      <header className="mb-5 sm:mb-8">
         <h1 className="mb-1 mt-0 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
           {tr("Settings")}
         </h1>
@@ -183,18 +183,18 @@ export function SettingsPage() {
           {tr("Manage your profile, appearance, and support resources.")}
         </p>
       </header>
-      <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
+      <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
         <nav
-          className="lg:sticky lg:top-[92px] lg:self-start"
+          className="sticky top-[68px] z-20 -mx-4 bg-canvas/95 px-4 py-2 backdrop-blur-sm sm:-mx-6 sm:px-6 lg:top-[92px] lg:mx-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
           aria-label={tr("Settings navigation")}
         >
-          <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar lg:hidden">
+          <div className="flex snap-x gap-2 overflow-x-auto pb-1 no-scrollbar lg:hidden">
             {sections.map((section) => (
               <button
                 key={section.id}
                 type="button"
                 onClick={() => setActive(section.id)}
-                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition ${active === section.id ? "bg-brand-100 text-brand-800 shadow-sm" : "border border-line bg-surface text-black hover:bg-canvas hover:text-brand-800"}`}
+                className={`flex min-h-11 shrink-0 snap-start items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition ${active === section.id ? "border-brand-200 bg-brand-100 text-brand-800 shadow-sm" : "border-line bg-surface text-black hover:bg-canvas hover:text-brand-800"}`}
                 aria-current={active === section.id ? "page" : undefined}
               >
                 <Icon name={section.icon} size={16} />
@@ -236,7 +236,7 @@ export function SettingsPage() {
                   {tr("Keep your account information current.")}
                 </p>
               </div>
-              <Card className="p-5 sm:p-6">
+              <Card className="p-4 sm:p-6">
                 {loading ? (
                   <div className="grid place-items-center py-10" role="status">
                     <span className="h-9 w-9 animate-spin rounded-full border-4 border-brand-100 border-t-brand-800" />
@@ -381,7 +381,7 @@ export function SettingsPage() {
                   <p className="mb-0 mt-1 text-sm text-muted">
                     {tr("Your preference is saved automatically.")}
                   </p>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="mt-4 grid auto-cols-[minmax(210px,82%)] snap-x grid-flow-col gap-3 overflow-x-auto pb-2 no-scrollbar sm:auto-cols-auto sm:grid-flow-row sm:grid-cols-3 sm:overflow-visible sm:pb-0">
                     {themes.map((option) => (
                       <button
                         key={option.id}
@@ -390,12 +390,12 @@ export function SettingsPage() {
                           setThemePreference(option.id);
                           setTheme(option.id);
                         }}
-                        className={`settings-theme-option rounded-xl border p-3 text-left transition ${theme === option.id ? "border-brand-700 bg-brand-100" : "border-line bg-surface hover:border-[#b8c8d9]"}`}
+                        className={`settings-theme-option snap-start rounded-xl border p-3 text-left transition ${theme === option.id ? "border-brand-700 bg-brand-100 shadow-sm" : "border-line bg-surface hover:border-[#b8c8d9]"}`}
                         aria-pressed={theme === option.id}
                       >
                         <span
                           aria-hidden="true"
-                          className={`settings-theme-preview settings-theme-preview--${option.id} mb-4 block h-24 rounded-lg border p-3`}
+                          className={`settings-theme-preview settings-theme-preview--${option.id} mb-4 block h-20 rounded-lg border p-3 sm:h-24`}
                         >
                           <span className="settings-preview-accent block h-2 w-1/2 rounded" />
                           <span className="mt-2 settings-preview-line block h-2 w-full rounded" />
@@ -437,13 +437,13 @@ export function SettingsPage() {
                   {tr("Find guidance and get the help you need.")}
                 </p>
               </div>
-              <Card className="overflow-hidden">
-                <div className="divide-y divide-line">
+              <Card className="overflow-hidden p-2 sm:p-3">
+                <div className="grid gap-2 sm:grid-cols-2">
                   {supportItems.map((item) => (
                     <Link
                       key={item.title}
                       to={item.to}
-                      className="flex min-h-20 items-center gap-3 px-5 py-3 transition hover:bg-canvas sm:px-6"
+                      className="group flex min-h-20 items-start gap-3 rounded-xl border border-transparent px-3 py-3 transition hover:border-line hover:bg-canvas sm:px-4"
                     >
                       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-100 text-brand-800">
                         <Icon name={item.icon} size={17} />
@@ -459,7 +459,7 @@ export function SettingsPage() {
                       <Icon
                         name="chevron"
                         size={18}
-                        className="shrink-0 text-brand-800"
+                        className="mt-2 shrink-0 text-brand-800 transition group-hover:translate-x-0.5"
                       />
                     </Link>
                   ))}

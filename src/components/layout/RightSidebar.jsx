@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { listSafetyKnowledge } from "../../services/safetyKnowledge";
@@ -16,11 +17,13 @@ function Panel({ title, children }) {
 
 export function RightSidebar() {
   const tr = useInterfaceTranslation();
+  const { i18n } = useTranslation();
+  const language = i18n.resolvedLanguage?.startsWith("km") ? "km" : "en";
   const [topics, setTopics] = useState([]);
 
   useEffect(() => {
     let active = true;
-    listSafetyKnowledge()
+    listSafetyKnowledge(language)
       .then((response) => {
         if (active) setTopics(response.knowledge || []);
       })
@@ -30,7 +33,7 @@ export function RightSidebar() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [language]);
 
   return (
     <aside

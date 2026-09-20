@@ -534,10 +534,20 @@ export function TopNavbar({ mobileMenuOpen, setMobileMenuOpen, feedQuery, onFeed
               <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-muted">{tr("More")}</p>
               <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs font-medium">
                 <Link to="/settings?section=support" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Help & support")}</Link>
-                <Link to="/" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Guidelines")}</Link>
-                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Privacy")}</Link>
-                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Terms")}</Link>
-                <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="min-h-9 py-2 text-[#52647a] hover:text-brand-800">{tr("Accessibility")}</Link>
+                {[
+                  "Guidelines",
+                  "Privacy",
+                  "Terms",
+                  "Accessibility",
+                ].map((label) => (
+                  <span
+                    key={label}
+                    aria-disabled="true"
+                    className="min-h-9 cursor-not-allowed select-none py-2 text-[#7c899b] opacity-65"
+                  >
+                    {tr(label)}
+                  </span>
+                ))}
               </div>
             </div>
             {isAuthenticated ? (

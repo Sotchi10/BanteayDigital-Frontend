@@ -1,5 +1,6 @@
 import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { Badge, Card, Icon } from "../../components/ui";
 import { getSafetyKnowledge } from "../../services/safetyKnowledge";
@@ -27,27 +28,34 @@ function GuidanceList({ icon, items, title }) {
 
 export function SafetyKnowledgeDetailPage() {
   const tr = useInterfaceTranslation();
+  const { i18n } = useTranslation();
+  const language = i18n.resolvedLanguage?.startsWith("km") ? "km" : "en";
   const { slug } = useParams();
-  const [topic, setTopic] = useState(null);
-  const [error, setError] = useState("");
+  const requestKey = `${slug}:${language}`;
+  const [result, setResult] = useState({ key: null, topic: null, error: "" });
 
   useEffect(() => {
     let active = true;
-    getSafetyKnowledge(slug)
+    getSafetyKnowledge(slug, language)
       .then((response) => {
-        if (active) setTopic(response.knowledge);
+        if (active) setResult({ key: requestKey, topic: response.knowledge, error: "" });
       })
       .catch((requestError) => {
         if (active)
-          setError(
-            requestError.response?.data?.message ||
-              "We could not load this safety guidance.",
-          );
+          setResult({
+            key: requestKey,
+            topic: null,
+            error: requestError.response?.data?.message || "We could not load this safety guidance.",
+          });
       });
     return () => {
       active = false;
     };
-  }, [slug]);
+  }, [language, requestKey, slug]);
+
+  const loading = result.key !== requestKey;
+  const topic = loading ? null : result.topic;
+  const error = loading ? "" : result.error;
 
   if (!topic && !error)
     return (

@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Icon } from "../../components/ui";
-import { Rith, Leng, Ching } from "../../assets";
+import { Rith, Leng, Ching, Makra, Sopheak, Kun } from "../../assets";
 
 const members = [
   { name: "Yan Sovanpisoth", initials: "YS", specialization: "software", roles: ["lead", "backend", "ai"], photo: null },
   { name: "Kong Sothearith", initials: "KS", specialization: "software", roles: ["backend", "ai"], photo: Rith },
   { name: "Siv Kimleng", initials: "SK", specialization: "software", roles: ["design", "frontend"], photo: Leng },
   { name: "Kov Cheaching", initials: "KC", specialization: "software", roles: ["rag", "frontend"], photo: Ching },
-  { name: "Rous Sovannmakra", initials: "RS", specialization: "cyber", roles: ["placeholder"], photo: null },
-  { name: "Chan Sopheak", initials: "CS", specialization: "cyber", roles: ["placeholder"], photo: null },
-  { name: "Gnoeuk Rithykun", initials: "GR", specialization: "business", roles: ["placeholder"], photo: null },
+  { name: "Rous Sovannmakra", initials: "RS", specialization: "cyber", roles: ["placeholder"], photo: Makra },
+  { name: "Chan Sopheak", initials: "CS", specialization: "cyber", roles: ["placeholder"], photo: Sopheak },
+  { name: "Gnoeuk Rithykun", initials: "GR", specialization: "business", roles: ["placeholder"], photo: Kun },
 ];
 const objectives = ["literacy", "recognize", "report", "prevent", "resource"];
 const steps = [

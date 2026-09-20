@@ -8,8 +8,8 @@ export function getRememberedContact() {
   }
 }
 
-export async function getRememberedCredentials() {
-  const contact = getRememberedContact();
+export async function getRememberedCredentials({ interactive = false, contact: requestedContact = "" } = {}) {
+  const contact = requestedContact || getRememberedContact();
   if (!contact || !navigator.credentials?.get || !window.PasswordCredential) {
     return { contact, password: "" };
   }
@@ -17,7 +17,7 @@ export async function getRememberedCredentials() {
   try {
     const credential = await navigator.credentials.get({
       password: true,
-      mediation: "optional",
+      mediation: interactive ? "required" : "optional",
     });
 
     if (credential instanceof window.PasswordCredential && credential.id === contact) {

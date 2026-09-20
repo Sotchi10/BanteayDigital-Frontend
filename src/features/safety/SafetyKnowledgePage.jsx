@@ -1,5 +1,6 @@
 import { useInterfaceTranslation } from "../../locales/useInterfaceTranslation";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
   Badge,
@@ -13,33 +14,38 @@ import { listSafetyKnowledge } from "../../services/safetyKnowledge";
 
 export function SafetyKnowledgePage() {
   const tr = useInterfaceTranslation();
-  const [knowledge, setKnowledge] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { i18n } = useTranslation();
+  const language = i18n.resolvedLanguage?.startsWith("km") ? "km" : "en";
+  const [result, setResult] = useState({ language: null, knowledge: [], error: null });
   const [query, setQuery] = useState("");
 
   useEffect(() => {
     let active = true;
-    listSafetyKnowledge()
+    listSafetyKnowledge(language)
       .then((response) => {
-        if (active) setKnowledge(response.knowledge || []);
+        if (active) setResult({ language, knowledge: response.knowledge || [], error: null });
       })
       .catch((requestError) => {
         if (active)
-          setError({
-            message:
-              requestError.response?.data?.message ||
-              "We could not load Community Safety guidance.",
-            status: requestError.response?.status,
+          setResult({
+            language,
+            knowledge: [],
+            error: {
+              message:
+                requestError.response?.data?.message ||
+                "We could not load Community Safety guidance.",
+              status: requestError.response?.status,
+            },
           });
-      })
-      .finally(() => {
-        if (active) setLoading(false);
       });
     return () => {
       active = false;
     };
-  }, []);
+  }, [language]);
+
+  const loading = result.language !== language;
+  const knowledge = loading ? [] : result.knowledge;
+  const error = loading ? null : result.error;
 
   const normalizedQuery = query.trim().toLocaleLowerCase();
   const visibleKnowledge = normalizedQuery
