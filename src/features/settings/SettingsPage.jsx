@@ -165,7 +165,7 @@ export function SettingsPage() {
 
   return (
     <main
-      className="settings-page mx-auto w-full max-w-[1120px] min-w-0 lg:px-6"
+      className="settings-page mx-auto w-full max-w-[1120px] min-w-0 pb-12 sm:pb-16 lg:px-6 lg:pb-12"
       id="main-content"
     >
       <Link
@@ -185,20 +185,24 @@ export function SettingsPage() {
       </header>
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
         <nav
-          className="sticky top-[68px] z-20 -mx-4 bg-canvas/95 px-4 py-2 backdrop-blur-sm sm:-mx-6 sm:px-6 lg:top-[92px] lg:mx-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
+          className="sticky top-16 z-20 -mx-4 border-b border-line/60 bg-canvas/95 px-4 py-2.5 backdrop-blur-md transition-all sm:-mx-6 sm:px-6 lg:top-[92px] lg:mx-0 lg:self-start lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
           aria-label={tr("Settings navigation")}
         >
-          <div className="flex snap-x gap-2 overflow-x-auto pb-1 no-scrollbar lg:hidden">
+          <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 no-scrollbar after:w-2 after:shrink-0 sm:grid sm:grid-cols-3 sm:gap-2 sm:overflow-visible sm:pb-0 sm:after:hidden lg:hidden">
             {sections.map((section) => (
               <button
                 key={section.id}
                 type="button"
                 onClick={() => setActive(section.id)}
-                className={`flex min-h-11 shrink-0 snap-start items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition ${active === section.id ? "border-brand-200 bg-brand-100 text-brand-800 shadow-sm" : "border-line bg-surface text-black hover:bg-canvas hover:text-brand-800"}`}
+                className={`flex min-h-11 shrink-0 snap-start items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-xs sm:text-sm font-semibold transition ${
+                  active === section.id
+                    ? "border-brand-700 bg-brand-100 text-brand-800 shadow-sm dark:border-brand-600 dark:bg-brand-900/40 dark:text-brand-200"
+                    : "border-line bg-surface text-ink hover:bg-canvas hover:text-brand-800"
+                }`}
                 aria-current={active === section.id ? "page" : undefined}
               >
-                <Icon name={section.icon} size={16} />
-                <span>{tr(section.label)}</span>
+                <Icon name={section.icon} size={16} className="shrink-0" />
+                <span className="whitespace-nowrap">{tr(section.label)}</span>
               </button>
             ))}
           </div>
@@ -209,7 +213,11 @@ export function SettingsPage() {
                   key={section.id}
                   type="button"
                   onClick={() => setActive(section.id)}
-                  className={`flex min-h-12 items-center gap-3 rounded-lg px-3 text-left text-base font-semibold transition ${active === section.id ? "bg-brand-100 text-brand-800" : "text-black hover:bg-canvas hover:text-brand-800"}`}
+                  className={`flex min-h-12 items-center gap-3 rounded-lg px-3 text-left text-base font-semibold transition ${
+                    active === section.id
+                      ? "bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-200"
+                      : "text-ink hover:bg-canvas hover:text-brand-800"
+                  }`}
                   aria-current={active === section.id ? "page" : undefined}
                 >
                   <Icon name={section.icon} size={18} className="shrink-0" />
@@ -252,7 +260,7 @@ export function SettingsPage() {
                         <h3 className="m-0 text-base font-semibold text-ink">
                           {tr("Profile picture")}
                         </h3>
-                        <p className="m-0 mt-1 text-base text-muted">
+                        <p className="m-0 mt-1 text-sm sm:text-base text-muted">
                           {tr("Update your personal identification here.")}
                         </p>
                       </div>
@@ -265,7 +273,7 @@ export function SettingsPage() {
                           disabled={saving}
                           value={profile.name}
                           onChange={updateField("name")}
-                          className="settings-input min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-base font-normal outline-none focus:border-brand-700 focus:ring-2 focus:ring-[#d9ebfa] disabled:opacity-60"
+                          className="settings-input min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-base font-normal outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-700/20 disabled:opacity-60"
                         />
                       </label>
                       <label className="grid gap-2 text-base font-semibold text-ink">
@@ -275,7 +283,7 @@ export function SettingsPage() {
                           disabled={saving}
                           value={profile.username}
                           onChange={updateField("username")}
-                          className="settings-input min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-base font-normal outline-none focus:border-brand-700 focus:ring-2 focus:ring-[#d9ebfa] disabled:opacity-60"
+                          className="settings-input min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-base font-normal outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-700/20 disabled:opacity-60"
                         />
                       </label>
                     </div>
@@ -287,7 +295,7 @@ export function SettingsPage() {
                         type="email"
                         value={profile.email}
                         onChange={updateField("email")}
-                        className="settings-input min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-base font-normal outline-none focus:border-brand-700 focus:ring-2 focus:ring-[#d9ebfa] disabled:opacity-60"
+                        className="settings-input min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-base font-normal outline-none focus:border-brand-700 focus:ring-2 focus:ring-brand-700/20 disabled:opacity-60"
                       />
                     </label>
                     {error ? (
@@ -298,17 +306,17 @@ export function SettingsPage() {
                         {tr(error)}
                       </p>
                     ) : null}
-                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
+                    <div className="mt-6 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
                       <button
                         type="button"
-                        className="min-h-10 px-1 text-base font-semibold text-brand-800 hover:underline"
+                        className="inline-flex min-h-11 items-center justify-center rounded-lg px-2 text-sm sm:text-base font-semibold text-brand-800 transition hover:underline"
                       >
                         {tr("Change password")}
                       </button>
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         {saved ? (
                           <span
-                            className="text-base font-semibold text-risk-low"
+                            className="text-center sm:text-left text-sm sm:text-base font-semibold text-risk-low"
                             role="status"
                           >
                             {tr("Changes saved")}
@@ -317,7 +325,7 @@ export function SettingsPage() {
                         <button
                           disabled={saving}
                           type="submit"
-                          className="min-h-11 rounded-lg bg-brand-800 px-5 text-base font-bold text-white hover:bg-brand-700 disabled:opacity-60"
+                          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-800 px-6 text-sm sm:text-base font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
                         >
                           {saving ? tr("Saving…") : tr("Save changes")}
                         </button>
@@ -330,20 +338,20 @@ export function SettingsPage() {
                 <h3 className="m-0 text-base font-bold text-risk-high">
                   {tr("Delete account")}
                 </h3>
-                <p className="mb-3 mt-1 text-base leading-6 text-muted">
+                <p className="mb-4 mt-1 text-sm sm:text-base leading-relaxed text-muted">
                   {tr(
                     "This action is permanent. Contact support if you need help with your account first.",
                   )}
                 </p>
                 {deletePrompt ? (
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-base text-muted">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <span className="text-sm sm:text-base text-muted">
                       {tr("Account deletion requires support confirmation.")}
                     </span>
                     <button
                       type="button"
                       onClick={() => setDeletePrompt(false)}
-                      className="min-h-10 rounded-lg border border-line bg-surface px-3 text-base font-semibold text-brand-800"
+                      className="inline-flex min-h-10 items-center justify-center rounded-lg border border-line bg-surface px-4 text-sm sm:text-base font-semibold text-brand-800 hover:bg-canvas"
                     >
                       {tr("Cancel")}
                     </button>
@@ -352,7 +360,7 @@ export function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => setDeletePrompt(true)}
-                    className="min-h-10 rounded-lg settings-danger-button border bg-surface px-3 text-base font-semibold text-risk-high hover:bg-[#fff6f7]"
+                    className="settings-danger-button inline-flex min-h-10 items-center justify-center rounded-lg border bg-surface px-4 text-sm sm:text-base font-semibold text-risk-high hover:bg-risk-high/10"
                   >
                     {tr("Delete account")}
                   </button>
@@ -373,7 +381,7 @@ export function SettingsPage() {
                   {tr("Choose how BanteayDigital looks on this device.")}
                 </p>
               </div>
-              <Card className="p-5 sm:p-6">
+              <Card className="p-4 sm:p-6">
                 <fieldset className="min-w-0 border-0 p-0">
                   <legend className="text-base font-semibold text-ink">
                     {tr("Theme")}
@@ -381,7 +389,7 @@ export function SettingsPage() {
                   <p className="mb-0 mt-1 text-sm text-muted">
                     {tr("Your preference is saved automatically.")}
                   </p>
-                  <div className="mt-4 grid auto-cols-[minmax(210px,82%)] snap-x grid-flow-col gap-3 overflow-x-auto pb-2 no-scrollbar sm:auto-cols-auto sm:grid-flow-row sm:grid-cols-3 sm:overflow-visible sm:pb-0">
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
                     {themes.map((option) => (
                       <button
                         key={option.id}
@@ -390,33 +398,46 @@ export function SettingsPage() {
                           setThemePreference(option.id);
                           setTheme(option.id);
                         }}
-                        className={`settings-theme-option snap-start rounded-xl border p-3 text-left transition ${theme === option.id ? "border-brand-700 bg-brand-100 shadow-sm" : "border-line bg-surface hover:border-[#b8c8d9]"}`}
+                        className={`settings-theme-option group flex w-full flex-row items-center gap-3.5 rounded-xl border p-3 text-left transition-all sm:flex-col sm:items-stretch sm:justify-between sm:p-4 ${
+                          theme === option.id
+                            ? "border-brand-700 bg-brand-50/70 shadow-sm ring-1 ring-brand-700/30 dark:bg-brand-900/30 dark:border-brand-600 dark:ring-brand-500/30"
+                            : "border-line bg-surface hover:border-brand-200 hover:bg-canvas/50"
+                        }`}
                         aria-pressed={theme === option.id}
                       >
                         <span
                           aria-hidden="true"
-                          className={`settings-theme-preview settings-theme-preview--${option.id} mb-4 block h-20 rounded-lg border p-3 sm:h-24`}
+                          className={`settings-theme-preview settings-theme-preview--${option.id} block h-14 w-20 shrink-0 rounded-lg border p-2 sm:mb-3.5 sm:h-24 sm:w-full sm:p-3`}
                         >
-                          <span className="settings-preview-accent block h-2 w-1/2 rounded" />
-                          <span className="mt-2 settings-preview-line block h-2 w-full rounded" />
-                          <span className="mt-1 settings-preview-line block h-2 w-3/4 rounded" />
+                          <span className="settings-preview-accent block h-1.5 w-1/2 rounded sm:h-2" />
+                          <span className="settings-preview-line mt-1.5 block h-1.5 w-full rounded sm:mt-2 sm:h-2" />
+                          <span className="settings-preview-line mt-1 block h-1.5 w-3/4 rounded sm:h-2" />
                         </span>
-                        <span className="flex items-center justify-between gap-2">
-                          <strong className="text-base text-ink">
-                            {tr(option.title)}
-                          </strong>
-                          <span
-                            aria-hidden="true"
-                            className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${theme === option.id ? "border-brand-800 bg-brand-800 text-white" : "border-line"}`}
-                          >
-                            {theme === option.id ? (
-                              <Icon name="check" size={12} />
-                            ) : null}
-                          </span>
-                        </span>
-                        <span className="mt-1 block text-sm text-muted">
-                          {tr(option.description)}
-                        </span>
+                        <div className="min-w-0 flex-1 sm:w-full">
+                          <div className="flex items-center justify-between gap-2">
+                            <strong
+                              style={{ whiteSpace: "nowrap" }}
+                              className="text-sm font-bold text-ink sm:text-base whitespace-nowrap shrink-0"
+                            >
+                              {tr(option.title)}
+                            </strong>
+                            <span
+                              aria-hidden="true"
+                              className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border transition-colors ${
+                                theme === option.id
+                                  ? "border-brand-800 bg-brand-800 text-white dark:border-brand-600 dark:bg-brand-600"
+                                  : "border-line bg-surface"
+                              }`}
+                            >
+                              {theme === option.id ? (
+                                <Icon name="check" size={12} />
+                              ) : null}
+                            </span>
+                          </div>
+                          <p className="mb-0 mt-0.5 text-xs text-muted leading-relaxed sm:mt-1 sm:text-sm">
+                            {tr(option.description)}
+                          </p>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -437,29 +458,29 @@ export function SettingsPage() {
                   {tr("Find guidance and get the help you need.")}
                 </p>
               </div>
-              <Card className="overflow-hidden p-2 sm:p-3">
-                <div className="grid gap-2 sm:grid-cols-2">
+              <Card className="p-3 sm:p-5">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
                   {supportItems.map((item) => (
                     <Link
                       key={item.title}
                       to={item.to}
-                      className="group flex min-h-20 items-start gap-3 rounded-xl border border-transparent px-3 py-3 transition hover:border-line hover:bg-canvas sm:px-4"
+                      className="group flex h-full min-h-[72px] items-center gap-3.5 rounded-xl border border-line/60 bg-surface/80 p-3 sm:p-4 transition-all hover:border-brand-300 hover:bg-canvas hover:shadow-xs active:scale-[0.99] dark:hover:border-brand-700"
                     >
-                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-100 text-brand-800">
-                        <Icon name={item.icon} size={17} />
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-100 text-brand-800 transition-colors group-hover:bg-brand-800 group-hover:text-white dark:bg-brand-900/50 dark:text-brand-300 dark:group-hover:bg-brand-700 dark:group-hover:text-white">
+                        <Icon name={item.icon} size={18} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <strong className="block text-base text-ink">
+                        <strong className="block text-sm sm:text-base font-bold text-ink leading-snug">
                           {tr(item.title)}
                         </strong>
-                        <small className="mt-1 block text-sm leading-5 text-muted">
+                        <span className="mt-0.5 block text-xs sm:text-sm text-muted leading-relaxed line-clamp-2">
                           {tr(item.description)}
-                        </small>
+                        </span>
                       </span>
                       <Icon
                         name="chevron"
                         size={18}
-                        className="mt-2 shrink-0 text-brand-800 transition group-hover:translate-x-0.5"
+                        className="shrink-0 text-brand-800 transition group-hover:translate-x-1 dark:text-brand-400"
                       />
                     </Link>
                   ))}
