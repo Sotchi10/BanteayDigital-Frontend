@@ -8,9 +8,9 @@ const members = [
   { name: "Kong Sothearith", initials: "KS", specialization: "software", roles: ["backend", "ai"], photo: Rith },
   { name: "Siv Kimleng", initials: "SK", specialization: "software", roles: ["design", "frontend"], photo: Leng },
   { name: "Kov Cheaching", initials: "KC", specialization: "software", roles: ["rag", "frontend"], photo: Ching },
-  { name: "Rous Sovannmakra", initials: "RS", specialization: "cyber", roles: ["placeholder"], photo: Makra },
-  { name: "Chan Sopheak", initials: "CS", specialization: "cyber", roles: ["placeholder"], photo: Sopheak },
-  { name: "Gnoeuk Rithykun", initials: "GR", specialization: "business", roles: ["placeholder"], photo: Kun },
+  { name: "Rous Sovannmakra", initials: "RS", specialization: "cyber", roles: ["threatResearch", "securityReview"], photo: Makra },
+  { name: "Chan Sopheak", initials: "CS", specialization: "cyber", roles: ["securityTesting", "safetyContent"], photo: Sopheak },
+  { name: "Gnoeuk Rithykun", initials: "GR", specialization: "business", roles: ["productStrategy", "communityResearch"], photo: Kun },
 ];
 const objectives = ["literacy", "recognize", "report", "prevent", "resource"];
 const steps = [

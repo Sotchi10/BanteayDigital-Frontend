@@ -53,7 +53,12 @@
       "design": "UX/UI Designer",
       "frontend": "Frontend Developer",
       "rag": "Data Research for RAG",
-      "placeholder": "Role to be added"
+      "threatResearch": "Scam & Threat Research",
+      "securityReview": "Security Review",
+      "securityTesting": "Security Testing",
+      "safetyContent": "Digital Safety Content",
+      "productStrategy": "Product Strategy",
+      "communityResearch": "User & Community Research"
     }
   },
   "context": {

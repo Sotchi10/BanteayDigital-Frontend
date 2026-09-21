@@ -183,18 +183,18 @@ export function SettingsPage() {
           {tr("Manage your profile, appearance, and support resources.")}
         </p>
       </header>
-      <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
         <nav
-          className="sticky top-16 z-20 -mx-4 border-b border-line/60 bg-canvas/95 px-4 py-2.5 backdrop-blur-md transition-all sm:-mx-6 sm:px-6 lg:top-[92px] lg:mx-0 lg:self-start lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
+          className="sticky top-16 z-20 -mx-4 min-w-0 max-w-[calc(100%+2rem)] border-b border-line/60 bg-canvas/95 px-4 py-2.5 backdrop-blur-md transition-all sm:-mx-6 sm:max-w-[calc(100%+3rem)] sm:px-6 lg:top-[92px] lg:mx-0 lg:max-w-full lg:self-start lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none"
           aria-label={tr("Settings navigation")}
         >
-          <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 no-scrollbar after:w-2 after:shrink-0 sm:grid sm:grid-cols-3 sm:gap-2 sm:overflow-visible sm:pb-0 sm:after:hidden lg:hidden">
+          <div className="grid w-full min-w-0 max-w-full grid-cols-3 gap-2 lg:hidden">
             {sections.map((section) => (
               <button
                 key={section.id}
                 type="button"
                 onClick={() => setActive(section.id)}
-                className={`flex min-h-11 shrink-0 snap-start items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-xs sm:text-sm font-semibold transition ${
+                className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-xs font-semibold transition sm:min-h-11 sm:flex-row sm:gap-2 sm:px-2 sm:text-sm ${
                   active === section.id
                     ? "border-brand-700 bg-brand-100 text-brand-800 shadow-sm dark:border-brand-600 dark:bg-brand-900/40 dark:text-brand-200"
                     : "border-line bg-surface text-ink hover:bg-canvas hover:text-brand-800"
@@ -202,7 +202,9 @@ export function SettingsPage() {
                 aria-current={active === section.id ? "page" : undefined}
               >
                 <Icon name={section.icon} size={16} className="shrink-0" />
-                <span className="whitespace-nowrap">{tr(section.label)}</span>
+                <span className="break-words text-center leading-snug">
+                  {tr(section.label)}
+                </span>
               </button>
             ))}
           </div>
@@ -415,10 +417,7 @@ export function SettingsPage() {
                         </span>
                         <div className="min-w-0 flex-1 sm:w-full">
                           <div className="flex items-center justify-between gap-2">
-                            <strong
-                              style={{ whiteSpace: "nowrap" }}
-                              className="text-sm font-bold text-ink sm:text-base whitespace-nowrap shrink-0"
-                            >
+                            <strong className="min-w-0 break-words text-sm font-bold leading-snug text-ink sm:text-base">
                               {tr(option.title)}
                             </strong>
                             <span
@@ -464,7 +463,7 @@ export function SettingsPage() {
                     <Link
                       key={item.title}
                       to={item.to}
-                      className="group flex h-full min-h-[72px] items-center gap-3.5 rounded-xl border border-line/60 bg-surface/80 p-3 sm:p-4 transition-all hover:border-brand-300 hover:bg-canvas hover:shadow-xs active:scale-[0.99] dark:hover:border-brand-700"
+                      className="group flex h-full min-h-[72px] min-w-0 items-start gap-3 rounded-xl border border-line/60 bg-surface/80 p-3 transition-all hover:border-brand-300 hover:bg-canvas hover:shadow-xs active:scale-[0.99] sm:items-center sm:gap-3.5 sm:p-4 dark:hover:border-brand-700"
                     >
                       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-100 text-brand-800 transition-colors group-hover:bg-brand-800 group-hover:text-white dark:bg-brand-900/50 dark:text-brand-300 dark:group-hover:bg-brand-700 dark:group-hover:text-white">
                         <Icon name={item.icon} size={18} />
@@ -480,7 +479,7 @@ export function SettingsPage() {
                       <Icon
                         name="chevron"
                         size={18}
-                        className="shrink-0 text-brand-800 transition group-hover:translate-x-1 dark:text-brand-400"
+                        className="mt-2 shrink-0 text-brand-800 transition group-hover:translate-x-1 sm:mt-0 dark:text-brand-400"
                       />
                     </Link>
                   ))}
