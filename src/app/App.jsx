@@ -1,5 +1,7 @@
-import { MaintenancePage } from '../features/maintenance/MaintenancePage'
+import { AppRoutes } from './AppRoutes'
+import { AuthProvider } from '../state/AuthStore'
+import { ProfileCompletionModal } from '../features/auth/ProfileCompletionModal'
 
 export default function App() {
-  return <MaintenancePage />
+  return <AuthProvider><AppRoutes /><ProfileCompletionModal /></AuthProvider>
 }
